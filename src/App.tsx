@@ -46,6 +46,8 @@ import {
   loadLocalAccounts,
   saveActiveUserAccount,
 } from './utils/localAuthEngine';
+import { AdSlot } from './components/ads/AdSlot';
+import { SITE_ADS_CONFIG } from './config/adsConfig';
 
 function getTodayIsoDate(): string {
   const d = new Date();
@@ -632,6 +634,11 @@ export default function App() {
       />
 
       <main className="flex-1 pb-16">
+        {/* Top Leaderboard Ad Slot */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+          <AdSlot slot={SITE_ADS_CONFIG.slots.topLeaderboard} />
+        </div>
+
         {activeTab === 'dashboard' && (
           <Dashboard
             lessons={COURSES_DATA}
@@ -691,6 +698,11 @@ export default function App() {
             onStartRemediationLesson={handleStartRemediationLesson}
           />
         )}
+
+        {/* Bottom Banner Ad Slot */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+          <AdSlot slot={SITE_ADS_CONFIG.slots.bottomBanner} />
+        </div>
       </main>
 
       {accountModalNode}

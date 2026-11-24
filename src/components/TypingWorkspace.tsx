@@ -13,6 +13,8 @@ import { applyRemediationHealing, formatHotspotKeyLabel } from '../engines/remed
 import { TypingHandsKeyboard } from './TypingHandsKeyboard';
 import { soundManager } from '../utils/audio';
 import { ArrowLeft, RotateCcw, ChevronRight, AlertCircle, CheckCircle2, Award } from 'lucide-react';
+import { AdSlot } from './ads/AdSlot';
+import { SITE_ADS_CONFIG } from '../config/adsConfig';
 
 interface TypingWorkspaceProps {
   mode: WorkspaceMode;
@@ -892,6 +894,11 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               </p>
             )}
 
+            {/* Results Screen AdSlot */}
+            <div className="w-full flex justify-center py-1">
+              <AdSlot slot={SITE_ADS_CONFIG.slots.resultsCard} />
+            </div>
+
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
               <button
                 type="button"
@@ -935,47 +942,61 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
             </div>
           </div>
         </main>
-      ) : showKeyboardStage ? (
-        /* LESSONS & PRACTICE: SINGLE DIRECT-TYPING TEXT BOX + ENLARGED KEYBOARD & HANDS */
-        <main className="flex-1 min-h-0 w-full max-w-7xl mx-auto flex flex-col justify-center gap-4 sm:gap-5 px-4 sm:px-8 pt-14 pb-4 sm:pt-12 sm:pb-5 overflow-hidden">
-          {renderHiddenInputCapture()}
-
-          <div
-            className={`w-full max-w-5xl mx-auto flex-none bg-slate-900/95 border rounded-2xl px-6 py-4 sm:px-10 sm:py-5 shadow-xl transition-colors ${
-              isErrorState
-                ? 'border-rose-500/80 ring-2 ring-rose-500/20'
-                : 'border-slate-800'
-            }`}
-          >
-            {renderTypingParagraph()}
-          </div>
-
-          <div className="w-full flex-1 min-h-[280px] max-h-[72vh] flex items-center justify-center">
-            <TypingHandsKeyboard
-              guidanceState={guidanceState}
-              pressedKey={pressedKey}
-              lastResult={lastResult}
-              targetKeyVisible={guidanceConfig.targetKeyVisible}
-              handsVisible={guidanceConfig.handsVisible}
-              onVirtualKeyClick={handleVirtualKeyClick}
-            />
-          </div>
-        </main>
       ) : (
-        /* TESTS & EXAMS: SINGLE CENTERED DIRECT-TYPING TEXT SURFACE (No Keyboard) */
-        <main className="flex-1 min-h-0 w-full max-w-5xl mx-auto flex flex-col items-center justify-center px-6 sm:px-10 py-10 overflow-hidden">
-          {renderHiddenInputCapture()}
-
-          <div
-            className={`w-full bg-slate-900/95 border rounded-2xl px-7 py-8 sm:px-12 sm:py-10 shadow-2xl transition-colors ${
-              isErrorState
-                ? 'border-rose-500/80 ring-2 ring-rose-500/20'
-                : 'border-slate-800'
-            }`}
-          >
-            {renderTypingParagraph()}
+        <div className="flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden">
+          {/* Left Skyscraper Rail (Visible on wide screens) */}
+          <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
+            <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceLeftRail} />
           </div>
-        </main>
+
+          {showKeyboardStage ? (
+            /* LESSONS & PRACTICE: SINGLE DIRECT-TYPING TEXT BOX + ENLARGED KEYBOARD & HANDS */
+            <main className="flex-1 min-h-0 w-full max-w-7xl mx-auto flex flex-col justify-center gap-4 sm:gap-5 px-4 sm:px-8 pt-14 pb-4 sm:pt-12 sm:pb-5 overflow-hidden">
+              {renderHiddenInputCapture()}
+
+              <div
+                className={`w-full max-w-5xl mx-auto flex-none bg-slate-900/95 border rounded-2xl px-6 py-4 sm:px-10 sm:py-5 shadow-xl transition-colors ${
+                  isErrorState
+                    ? 'border-rose-500/80 ring-2 ring-rose-500/20'
+                    : 'border-slate-800'
+                }`}
+              >
+                {renderTypingParagraph()}
+              </div>
+
+              <div className="w-full flex-1 min-h-[280px] max-h-[72vh] flex items-center justify-center">
+                <TypingHandsKeyboard
+                  guidanceState={guidanceState}
+                  pressedKey={pressedKey}
+                  lastResult={lastResult}
+                  targetKeyVisible={guidanceConfig.targetKeyVisible}
+                  handsVisible={guidanceConfig.handsVisible}
+                  onVirtualKeyClick={handleVirtualKeyClick}
+                />
+              </div>
+            </main>
+          ) : (
+            /* TESTS & EXAMS: SINGLE CENTERED DIRECT-TYPING TEXT SURFACE (No Keyboard) */
+            <main className="flex-1 min-h-0 w-full max-w-5xl mx-auto flex flex-col items-center justify-center px-6 sm:px-10 py-10 overflow-hidden">
+              {renderHiddenInputCapture()}
+
+              <div
+                className={`w-full bg-slate-900/95 border rounded-2xl px-7 py-8 sm:px-12 sm:py-10 shadow-2xl transition-colors ${
+                  isErrorState
+                    ? 'border-rose-500/80 ring-2 ring-rose-500/20'
+                    : 'border-slate-800'
+                }`}
+              >
+                {renderTypingParagraph()}
+              </div>
+            </main>
+          )}
+
+          {/* Right Skyscraper Rail (Visible on wide screens) */}
+          <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
+            <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceRightRail} />
+          </div>
+        </div>
       )}
     </div>
   );
