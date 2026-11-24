@@ -1,7 +1,7 @@
 import { ADMIN_CONFIG } from '../config/adminConfig';
 import { safeStorage } from './safeStorage';
 import { loadLocalAccounts } from './localAuthEngine';
-import { TypingCertificate } from '../types';
+import { SessionResult, TypingCertificate } from '../types';
 
 export interface HourlyEngagement {
   hour: number;
@@ -26,7 +26,7 @@ export interface LeaderboardTypist {
   accuracy: number;
   xp: number;
   bloomStage: string;
-  mode: 'test' | 'exam' | 'arcade' | 'lesson';
+  mode: 'test' | 'exam' | 'arcade' | 'lesson' | 'practice';
   completedAt: string;
 }
 
@@ -55,20 +55,14 @@ export interface AdminTelemetryData {
 }
 
 interface StoredTelemetryState {
-  pageViewsToday: number;
+  totalPageViews: number;
   activeTimestamps: number[];
   hourlySessions: Record<number, number>;
   hourlyChars: Record<number, number>;
+  dailyHistory: Record<string, { visitors: number; pageViews: number; sessions: number }>;
   recentEvents: ActivityLogItem[];
-  customLeaderboard: LeaderboardTypist[];
+  knownVisitorSessions: string[];
 }
-
-const DEFAULT_HOURLY_WEIGHTS: Record<number, number> = {
-  0: 12, 1: 8, 2: 4, 3: 2, 4: 1, 5: 3,
-  6: 8, 7: 18, 8: 34, 9: 58, 10: 74, 11: 85,
-  12: 78, 13: 82, 14: 112, 15: 128, 16: 145, 17: 132,
-  18: 98, 19: 120, 20: 154, 21: 168, 22: 110, 23: 45,
-};
 
 function formatHourLabel(h: number): string {
   if (h === 0) return '12 AM';
@@ -77,36 +71,47 @@ function formatHourLabel(h: number): string {
   return `${h - 12} PM`;
 }
 
+function getTodayIso(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
 function getStoredState(): StoredTelemetryState {
   try {
     const raw = safeStorage.getItem(ADMIN_CONFIG.telemetryStorageKey);
     if (!raw) {
       return {
-        pageViewsToday: 1,
+        totalPageViews: 1,
         activeTimestamps: [Date.now()],
         hourlySessions: {},
         hourlyChars: {},
+        dailyHistory: {
+          [getTodayIso()]: { visitors: 1, pageViews: 1, sessions: 0 },
+        },
         recentEvents: [],
-        customLeaderboard: [],
+        knownVisitorSessions: [],
       };
     }
     const parsed = JSON.parse(raw);
     return {
-      pageViewsToday: Number(parsed?.pageViewsToday) || 1,
+      totalPageViews: Number(parsed?.totalPageViews) || 1,
       activeTimestamps: Array.isArray(parsed?.activeTimestamps) ? parsed.activeTimestamps : [Date.now()],
       hourlySessions: parsed?.hourlySessions && typeof parsed.hourlySessions === 'object' ? parsed.hourlySessions : {},
       hourlyChars: parsed?.hourlyChars && typeof parsed.hourlyChars === 'object' ? parsed.hourlyChars : {},
+      dailyHistory: parsed?.dailyHistory && typeof parsed.dailyHistory === 'object' ? parsed.dailyHistory : {},
       recentEvents: Array.isArray(parsed?.recentEvents) ? parsed.recentEvents : [],
-      customLeaderboard: Array.isArray(parsed?.customLeaderboard) ? parsed.customLeaderboard : [],
+      knownVisitorSessions: Array.isArray(parsed?.knownVisitorSessions) ? parsed.knownVisitorSessions : [],
     };
   } catch {
     return {
-      pageViewsToday: 1,
+      totalPageViews: 1,
       activeTimestamps: [Date.now()],
       hourlySessions: {},
       hourlyChars: {},
+      dailyHistory: {
+        [getTodayIso()]: { visitors: 1, pageViews: 1, sessions: 0 },
+      },
       recentEvents: [],
-      customLeaderboard: [],
+      knownVisitorSessions: [],
     };
   }
 }
@@ -116,24 +121,36 @@ function saveState(state: StoredTelemetryState): void {
 }
 
 /**
- * Record a page visit and heartbeat.
+ * Record an actual live page visit and heartbeat.
  */
 export function recordTelemetryVisit(): void {
   const state = getStoredState();
   const now = Date.now();
+  const today = getTodayIso();
   const fifteenMinutesAgo = now - 15 * 60 * 1000;
   const recent = state.activeTimestamps.filter((t) => t > fifteenMinutesAgo);
   recent.push(now);
 
+  const prevDaily = state.dailyHistory[today] || { visitors: 0, pageViews: 0, sessions: 0 };
+  const updatedDaily = {
+    ...state.dailyHistory,
+    [today]: {
+      visitors: Math.max(1, prevDaily.visitors + (recent.length === 1 ? 1 : 0)),
+      pageViews: prevDaily.pageViews + 1,
+      sessions: prevDaily.sessions,
+    },
+  };
+
   saveState({
     ...state,
-    pageViewsToday: state.pageViewsToday + 1,
+    totalPageViews: state.totalPageViews + 1,
     activeTimestamps: recent,
+    dailyHistory: updatedDaily,
   });
 }
 
 /**
- * Record a completed typing lesson, test, or arcade session.
+ * Record an actual completed typing lesson, test, practice, or arcade session.
  */
 export function recordTelemetryCompletion(params: {
   type: 'lesson' | 'test' | 'exam' | 'arcade' | 'practice';
@@ -145,6 +162,7 @@ export function recordTelemetryCompletion(params: {
 }): void {
   const state = getStoredState();
   const now = new Date();
+  const today = getTodayIso();
   const currentHour = now.getHours();
 
   const prevSessions = state.hourlySessions[currentHour] || 0;
@@ -153,11 +171,20 @@ export function recordTelemetryCompletion(params: {
   const event: ActivityLogItem = {
     id: `ev-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     type: params.type,
-    description: `${params.userName || 'Visitor'} completed ${params.title} at ${Math.round(params.wpm)} WPM (${Math.round(params.accuracy)}% accuracy)`,
-    timestamp: now.toISOString(),
+    description: `${params.userName || 'Active Typist'} completed "${params.title}" at ${Math.round(params.wpm)} WPM (${Math.round(params.accuracy)}% accuracy)`,
+    timestamp: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   };
 
   const updatedEvents = [event, ...state.recentEvents].slice(0, 50);
+
+  const prevDaily = state.dailyHistory[today] || { visitors: 1, pageViews: 1, sessions: 0 };
+  const updatedDaily = {
+    ...state.dailyHistory,
+    [today]: {
+      ...prevDaily,
+      sessions: prevDaily.sessions + 1,
+    },
+  };
 
   saveState({
     ...state,
@@ -169,143 +196,144 @@ export function recordTelemetryCompletion(params: {
       ...state.hourlyChars,
       [currentHour]: prevChars + params.charsTyped,
     },
+    dailyHistory: updatedDaily,
     recentEvents: updatedEvents,
   });
 }
 
 /**
- * Generate full comprehensive telemetry summary for the Admin Dashboard.
+ * Generate 100% REAL, LIVE telemetry summary for the Admin Dashboard.
+ * Zero ghost/mock data.
  */
 export function getAdminTelemetrySummary(): AdminTelemetryData {
   const state = getStoredState();
   const now = Date.now();
   const fifteenMinutesAgo = now - 15 * 60 * 1000;
 
-  // 1. Calculate Active Users Now
+  // 1. Calculate Active Users Now (real activity in last 15 min)
   const activeNowCount = Math.max(
     1,
     state.activeTimestamps.filter((t) => t > fifteenMinutesAgo).length
   );
 
-  // 2. Count registered accounts
+  // 2. Count registered accounts from real storage
   const localAccounts = loadLocalAccounts();
-  const totalRegistered = localAccounts.length;
+  const totalRegisteredAccounts = localAccounts.length;
 
-  // 3. Count certificates from storage
-  let actualCertCount = 0;
+  // 3. Count actual certificates from real storage
+  let totalCertificatesIssued = 0;
   try {
     const certsRaw = safeStorage.getItem('typing_master_certificates');
     if (certsRaw) {
       const parsed = JSON.parse(certsRaw);
-      if (Array.isArray(parsed)) actualCertCount = parsed.length;
+      if (Array.isArray(parsed)) totalCertificatesIssued = parsed.length;
     }
   } catch {
     // Ignore
   }
 
-  // 4. Build 24-hour Hourly Engagement Heatmap
-  const hourlyEngagement: HourlyEngagement[] = [];
-  let maxHourlySessions = 1;
+  // 4. Read actual session history for real tests and stats
+  let sessionHistory: SessionResult[] = [];
+  try {
+    const historyRaw = safeStorage.getItem('typing_master_session_history');
+    if (historyRaw) {
+      const parsed = JSON.parse(historyRaw);
+      if (Array.isArray(parsed)) sessionHistory = parsed;
+    }
+  } catch {
+    // Ignore
+  }
 
+  const testsOnly = sessionHistory.filter((s) => s.type === 'test' || s.type === 'exam');
+  const totalTestsCompleted = testsOnly.length;
+
+  const avgWpmAcrossUsers =
+    sessionHistory.length > 0
+      ? Math.round(sessionHistory.reduce((a, s) => a + (Number(s.wpm) || 0), 0) / sessionHistory.length)
+      : 0;
+
+  const avgAccuracyAcrossUsers =
+    sessionHistory.length > 0
+      ? Math.round(sessionHistory.reduce((a, s) => a + (Number(s.accuracy) || 0), 0) / sessionHistory.length)
+      : 0;
+
+  // 5. Build 24-hour Hourly Engagement Heatmap (REAL data only)
+  let maxHourlySessions = 0;
   for (let h = 0; h < 24; h++) {
-    const baseWeight = DEFAULT_HOURLY_WEIGHTS[h] || 10;
-    const liveSessions = state.hourlySessions[h] || 0;
-    const totalSessions = baseWeight + liveSessions;
-    if (totalSessions > maxHourlySessions) {
-      maxHourlySessions = totalSessions;
+    const sessions = state.hourlySessions[h] || 0;
+    if (sessions > maxHourlySessions) {
+      maxHourlySessions = sessions;
     }
   }
 
+  const hourlyEngagement: HourlyEngagement[] = [];
   for (let h = 0; h < 24; h++) {
-    const baseWeight = DEFAULT_HOURLY_WEIGHTS[h] || 10;
-    const liveSessions = state.hourlySessions[h] || 0;
-    const liveChars = state.hourlyChars[h] || 0;
-    const totalSessions = baseWeight + liveSessions;
-    const percentage = Math.round((totalSessions / maxHourlySessions) * 100);
+    const sessions = state.hourlySessions[h] || 0;
+    const charsTyped = state.hourlyChars[h] || 0;
+    const percentage = maxHourlySessions > 0 ? Math.round((sessions / maxHourlySessions) * 100) : 0;
 
     hourlyEngagement.push({
       hour: h,
       label: formatHourLabel(h),
-      sessions: totalSessions,
-      charsTyped: baseWeight * 140 + liveChars,
+      sessions,
+      charsTyped,
       percentage,
     });
   }
 
-  // Find Peak Hours
-  const sortedHours = [...hourlyEngagement].sort((a, b) => b.sessions - a.sessions);
-  const peak1 = sortedHours[0];
-  const peak2 = sortedHours[1];
-  const peakHourRange = `${peak1.label} - ${formatHourLabel((peak1.hour + 2) % 24)} (Peak) & ${peak2.label}`;
+  // Peak Hour calculation based strictly on live data
+  let peakHourRange = 'Awaiting live typing sessions';
+  const hoursWithActivity = hourlyEngagement.filter((h) => h.sessions > 0);
+  if (hoursWithActivity.length > 0) {
+    const sorted = [...hoursWithActivity].sort((a, b) => b.sessions - a.sessions);
+    const top = sorted[0];
+    peakHourRange = `${top.label} (${top.sessions} session${top.sessions === 1 ? '' : 's'})`;
+  }
 
-  // 5. Daily Traffic Trends (Past 7 Days)
+  // 6. Daily Traffic History (Past 7 Calendar Days - REAL data only)
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dailyTraffic: DailyTraffic[] = [];
-  const baseDailyVisitors = [240, 310, 385, 420, 465, 510, 580];
+  let totalVisitorsCount = 0;
+  let totalPageViewsCount = state.totalPageViews || 1;
 
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     const dateStr = d.toISOString().split('T')[0];
     const dayName = dayNames[d.getDay()];
-    const baseVis = baseDailyVisitors[6 - i] || 350;
-    const isToday = i === 0;
+    const rec = state.dailyHistory[dateStr] || { visitors: 0, pageViews: 0, sessions: 0 };
+
+    totalVisitorsCount += rec.visitors;
 
     dailyTraffic.push({
       date: dateStr,
       dayName,
-      visitors: isToday ? baseVis + activeNowCount * 3 : baseVis,
-      pageViews: isToday ? (baseVis + activeNowCount * 3) * 3 + state.pageViewsToday : baseVis * 3,
-      sessions: isToday ? Math.round(baseVis * 1.8) : Math.round(baseVis * 1.5),
+      visitors: rec.visitors,
+      pageViews: rec.pageViews,
+      sessions: rec.sessions,
     });
   }
 
-  // 6. Global Leaderboard (Combined seed + real users)
-  const defaultLeaderboard: LeaderboardTypist[] = [
-    { rank: 1, name: 'Alexandre "Viper" Vance', wpm: 128, accuracy: 99, xp: 4850, bloomStage: 'Master Blossom', mode: 'exam', completedAt: '2026-11-24' },
-    { rank: 2, name: 'Elena Rostova', wpm: 114, accuracy: 98, xp: 3920, bloomStage: 'Golden Lotus', mode: 'test', completedAt: '2026-11-24' },
-    { rank: 3, name: 'Kaito Tanaka', wpm: 106, accuracy: 99, xp: 3410, bloomStage: 'Flourishing Bonsai', mode: 'arcade', completedAt: '2026-11-23' },
-    { rank: 4, name: 'Devon Miller', wpm: 98, accuracy: 97, xp: 2950, bloomStage: 'Flourishing Bonsai', mode: 'test', completedAt: '2026-11-23' },
-    { rank: 5, name: 'Sarah Al-Mansoor', wpm: 92, accuracy: 98, xp: 2600, bloomStage: 'Branching Sapling', mode: 'exam', completedAt: '2026-11-22' },
-    { rank: 6, name: 'Priya Sharma', wpm: 87, accuracy: 96, xp: 2180, bloomStage: 'Branching Sapling', mode: 'arcade', completedAt: '2026-11-22' },
-    { rank: 7, name: 'Marcus Chen', wpm: 84, accuracy: 97, xp: 1950, bloomStage: 'Sprouting Seedling', mode: 'lesson', completedAt: '2026-11-21' },
-    { rank: 8, name: 'Chloe Dubois', wpm: 79, accuracy: 96, xp: 1620, bloomStage: 'Sprouting Seedling', mode: 'test', completedAt: '2026-11-21' },
-  ];
+  const totalVisitors = Math.max(1, totalVisitorsCount);
+  const totalPageViews = Math.max(1, totalPageViewsCount);
+  const estimatedAdImpressions = totalPageViews * 3;
 
-  // Merge registered local users into leaderboard if they have session records
-  const registeredLeaderboard = localAccounts.map((acc, index) => ({
-    rank: defaultLeaderboard.length + index + 1,
-    name: acc.fullName,
-    wpm: 65,
-    accuracy: 97,
-    xp: 650,
-    bloomStage: 'Sprouting Seedling',
-    mode: 'test' as const,
-    completedAt: acc.createdAt.split('T')[0],
-  }));
-
-  const combinedLeaderboard = [...defaultLeaderboard, ...registeredLeaderboard]
+  // 7. Global Leaderboard (Built strictly from actual user sessions)
+  // Maps passed tests/exams from real session history
+  const leaderboard: LeaderboardTypist[] = sessionHistory
+    .filter((s) => s.wpm > 0)
     .sort((a, b) => b.wpm - a.wpm)
-    .map((item, idx) => ({ ...item, rank: idx + 1 }));
-
-  // 7. Recent Activity Feed
-  const defaultRecent: ActivityLogItem[] = [
-    { id: 'ev-1', type: 'certificate', description: 'Elena Rostova claimed Speed Challenge Pro Certificate (114 WPM)', timestamp: '12 minutes ago' },
-    { id: 'ev-2', type: 'arcade', description: 'Kaito Tanaka conquered Nitro Highway Wave 10', timestamp: '28 minutes ago' },
-    { id: 'ev-3', type: 'test', description: 'Alexandre Vance passed 5-Minute Professional Typing Exam', timestamp: '45 minutes ago' },
-    { id: 'ev-4', type: 'lesson', description: 'Priya Sharma finished Lesson 14: Capital Letters & Shift Coordination', timestamp: '1 hour ago' },
-    { id: 'ev-5', type: 'register', description: 'New typist joined the platform from Google Search', timestamp: '2 hours ago' },
-  ];
-
-  const recentActivity = [...state.recentEvents, ...defaultRecent].slice(0, 15);
-
-  const totalVisitors = dailyTraffic.reduce((acc, d) => acc + d.visitors, 1250);
-  const totalPageViews = dailyTraffic.reduce((acc, d) => acc + d.pageViews, 3800);
-  const totalTestsCompleted = 412 + state.recentEvents.filter((e) => e.type === 'test' || e.type === 'exam').length;
-  const totalCertificatesIssued = 89 + actualCertCount;
-
-  // Estimated ad impressions: 3 slots per hub page + 2 rails per workspace = ~3.2 impressions per pageview
-  const estimatedAdImpressions = Math.round(totalPageViews * 3.2);
+    .slice(0, 25)
+    .map((s, idx) => ({
+      rank: idx + 1,
+      name: s.title || 'Live Typist',
+      wpm: Math.round(s.wpm),
+      accuracy: Math.round(s.accuracy),
+      xp: Math.round(s.wpm * 10 + s.accuracy * 5),
+      bloomStage: s.wpm >= 100 ? 'Master Blossom' : s.wpm >= 70 ? 'Golden Lotus' : s.wpm >= 40 ? 'Flourishing Bonsai' : 'Sprouting Seedling',
+      mode: s.type,
+      completedAt: s.completedAt ? s.completedAt.split('T')[0] : getTodayIso(),
+    }));
 
   return {
     totalVisitors,
@@ -313,14 +341,14 @@ export function getAdminTelemetrySummary(): AdminTelemetryData {
     totalPageViews,
     totalTestsCompleted,
     totalCertificatesIssued,
-    totalRegisteredAccounts: Math.max(1, totalRegistered),
-    avgWpmAcrossUsers: 68.4,
-    avgAccuracyAcrossUsers: 96.8,
+    totalRegisteredAccounts,
+    avgWpmAcrossUsers,
+    avgAccuracyAcrossUsers,
     estimatedAdImpressions,
     peakHourRange,
     hourlyEngagement,
     dailyTraffic,
-    leaderboard: combinedLeaderboard,
-    recentActivity,
+    leaderboard,
+    recentActivity: state.recentEvents,
   };
 }

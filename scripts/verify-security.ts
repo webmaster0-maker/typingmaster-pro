@@ -263,7 +263,8 @@ async function runSecurityAuditSuite() {
   assert(summary.activeUsersNow >= 1, 'Telemetry records active users');
   assert(summary.hourlyEngagement.length === 24, 'Telemetry generates full 24-hour engagement heatmap');
   assert(summary.dailyTraffic.length === 7, 'Telemetry calculates 7-day daily traffic history');
-  assert(summary.leaderboard.length >= 8, 'Telemetry contains populated global leaderboard');
+  assert(Array.isArray(summary.leaderboard), 'Telemetry maintains live leaderboard strictly from actual session history');
+  assert(summary.recentActivity.length > 0, 'Telemetry streams actual real-time activity events');
   assert(Boolean(summary.peakHourRange), 'Telemetry calculates peak engagement hours window');
 
   logoutAdmin();

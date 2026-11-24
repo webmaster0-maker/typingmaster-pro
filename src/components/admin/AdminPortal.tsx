@@ -11,7 +11,8 @@ import {
   AdminTelemetryData,
 } from '../../utils/adminTelemetry';
 import { loadLocalAccounts } from '../../utils/localAuthEngine';
-import { LocalAccountRecord } from '../../types';
+import { safeStorage } from '../../utils/safeStorage';
+import { LocalAccountRecord, TypingCertificate } from '../../types';
 import {
   Shield,
   Lock,
@@ -59,6 +60,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
   // Telemetry data
   const [telemetry, setTelemetry] = useState<AdminTelemetryData>(() => getAdminTelemetrySummary());
   const [registeredAccounts, setRegisteredAccounts] = useState<LocalAccountRecord[]>(() => loadLocalAccounts());
+
+  const certificatesList: TypingCertificate[] = useMemo(() => {
+    try {
+      const raw = safeStorage.getItem('typing_master_certificates');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {
+      // Ignore
+    }
+    return [];
+  }, [telemetry]);
+
+  const avgCertSpeed =
+    certificatesList.length > 0
+      ? Math.round(
+          certificatesList.reduce((acc, c) => acc + (Number(c.wpm) || 0), 0) /
+            certificatesList.length
+        )
+      : 0;
+
+  const avgCertAccuracy =
+    certificatesList.length > 0
+      ? Math.round(
+          certificatesList.reduce((acc, c) => acc + (Number(c.accuracy) || 0), 0) /
+            certificatesList.length
+        )
+      : 0;
 
   // Check lockout on mount and periodically
   useEffect(() => {
@@ -357,7 +387,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
             <div className="text-2xl font-extrabold text-white font-mono">
               {telemetry.totalVisitors.toLocaleString()}
             </div>
-            <div className="text-[10px] text-emerald-400 mt-1">+14.2% this week</div>
+            <div className="text-[10px] text-slate-500 mt-1">Live recorded visits</div>
           </div>
 
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
@@ -368,7 +398,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
             <div className="text-2xl font-extrabold text-indigo-300 font-mono">
               {telemetry.totalPageViews.toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-500 mt-1">~3.2 pages / user</div>
+            <div className="text-[10px] text-slate-500 mt-1">Total page requests</div>
           </div>
 
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
@@ -379,7 +409,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
             <div className="text-2xl font-extrabold text-amber-400 font-mono">
               {telemetry.totalTestsCompleted.toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-500 mt-1">Avg 68 WPM</div>
+            <div className="text-[10px] text-slate-500 mt-1">Avg {telemetry.avgWpmAcrossUsers} WPM</div>
           </div>
 
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
@@ -401,7 +431,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
             <div className="text-2xl font-extrabold text-teal-300 font-mono">
               {telemetry.estimatedAdImpressions.toLocaleString()}
             </div>
-            <div className="text-[10px] text-emerald-400 mt-1">AdSense Ready</div>
+            <div className="text-[10px] text-slate-500 mt-1">~3 slots / view</div>
           </div>
         </div>
 
@@ -539,18 +569,25 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                 </h3>
 
                 <div className="flex-1 space-y-3 overflow-y-auto max-h-[360px] pr-1">
-                  {telemetry.recentActivity.map((act) => (
-                    <div
-                      key={act.id}
-                      className="p-3 rounded-xl bg-slate-950 border border-slate-800/70 text-xs flex items-start gap-3"
-                    >
-                      <div className="w-2 h-2 rounded-full bg-indigo-400 mt-1.5 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-slate-200 leading-snug">{act.description}</div>
-                        <div className="text-[10px] text-slate-500 mt-0.5">{act.timestamp}</div>
-                      </div>
+                  {telemetry.recentActivity.length === 0 ? (
+                    <div className="p-8 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2">
+                      <Activity className="w-5 h-5 text-slate-600" />
+                      <span>No activity recorded yet. Live events will stream here as visitors practice.</span>
                     </div>
-                  ))}
+                  ) : (
+                    telemetry.recentActivity.map((act) => (
+                      <div
+                        key={act.id}
+                        className="p-3 rounded-xl bg-slate-950 border border-slate-800/70 text-xs flex items-start gap-3"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-indigo-400 mt-1.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-slate-200 leading-snug">{act.description}</div>
+                          <div className="text-[10px] text-slate-500 mt-0.5">{act.timestamp}</div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -576,60 +613,69 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
-                    <th className="py-3 px-3">Rank</th>
-                    <th className="py-3 px-4">Typist</th>
-                    <th className="py-3 px-3">Speed</th>
-                    <th className="py-3 px-3">Accuracy</th>
-                    <th className="py-3 px-3">XP Earned</th>
-                    <th className="py-3 px-3">Growth Bloom</th>
-                    <th className="py-3 px-3">Mode</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
-                  {telemetry.leaderboard.map((typist) => {
-                    const isTop1 = typist.rank === 1;
-                    const isTop3 = typist.rank <= 3;
+            {telemetry.leaderboard.length === 0 ? (
+              <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2">
+                <Flame className="w-8 h-8 text-slate-600" />
+                <span className="font-semibold text-slate-400">No live test scores recorded yet.</span>
+                <span className="text-[11px] text-slate-500">
+                  Scores will automatically rank here in real-time as users complete typing tests and exams.
+                </span>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+                      <th className="py-3 px-3">Rank</th>
+                      <th className="py-3 px-4">Typist</th>
+                      <th className="py-3 px-3">Speed</th>
+                      <th className="py-3 px-3">Accuracy</th>
+                      <th className="py-3 px-3">XP Earned</th>
+                      <th className="py-3 px-3">Growth Bloom</th>
+                      <th className="py-3 px-3">Mode</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 font-mono">
+                    {telemetry.leaderboard.map((typist) => {
+                      const isTop1 = typist.rank === 1;
 
-                    return (
-                      <tr
-                        key={typist.rank}
-                        className={`hover:bg-slate-800/40 transition-colors ${
-                          isTop1 ? 'bg-amber-500/5' : ''
-                        }`}
-                      >
-                        <td className="py-3 px-3 font-bold">
-                          {typist.rank === 1 ? '🥇 1' : typist.rank === 2 ? '🥈 2' : typist.rank === 3 ? '🥉 3' : `#${typist.rank}`}
-                        </td>
-                        <td className="py-3 px-4 font-sans font-semibold text-white">
-                          {typist.name}
-                        </td>
-                        <td className="py-3 px-3 font-bold text-sky-400">
-                          {typist.wpm} WPM
-                        </td>
-                        <td className="py-3 px-3 text-emerald-400">
-                          {typist.accuracy}%
-                        </td>
-                        <td className="py-3 px-3 text-amber-300 font-bold">
-                          +{typist.xp} XP
-                        </td>
-                        <td className="py-3 px-3 font-sans text-slate-300">
-                          {typist.bloomStage}
-                        </td>
-                        <td className="py-3 px-3">
-                          <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-sans text-slate-300 uppercase">
-                            {typist.mode}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      return (
+                        <tr
+                          key={typist.rank}
+                          className={`hover:bg-slate-800/40 transition-colors ${
+                            isTop1 ? 'bg-amber-500/5' : ''
+                          }`}
+                        >
+                          <td className="py-3 px-3 font-bold">
+                            {typist.rank === 1 ? '🥇 1' : typist.rank === 2 ? '🥈 2' : typist.rank === 3 ? '🥉 3' : `#${typist.rank}`}
+                          </td>
+                          <td className="py-3 px-4 font-sans font-semibold text-white">
+                            {typist.name}
+                          </td>
+                          <td className="py-3 px-3 font-bold text-sky-400">
+                            {typist.wpm} WPM
+                          </td>
+                          <td className="py-3 px-3 text-emerald-400">
+                            {typist.accuracy}%
+                          </td>
+                          <td className="py-3 px-3 text-amber-300 font-bold">
+                            +{typist.xp} XP
+                          </td>
+                          <td className="py-3 px-3 font-sans text-slate-300">
+                            {typist.bloomStage}
+                          </td>
+                          <td className="py-3 px-3">
+                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-sans text-slate-300 uppercase">
+                              {typist.mode}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -737,7 +783,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
               <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800">
                 <div className="text-[11px] text-slate-400">Average Certification Speed</div>
                 <div className="text-2xl font-extrabold text-sky-400 font-mono mt-1">
-                  72.4 WPM
+                  {avgCertSpeed > 0 ? `${avgCertSpeed} WPM` : '0 WPM'}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1">Pass threshold: 35 WPM</div>
               </div>
@@ -745,11 +791,67 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
               <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800">
                 <div className="text-[11px] text-slate-400">Average Certification Accuracy</div>
                 <div className="text-2xl font-extrabold text-amber-400 font-mono mt-1">
-                  97.8%
+                  {avgCertAccuracy > 0 ? `${avgCertAccuracy}%` : '0%'}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1">Pass threshold: 95%</div>
               </div>
             </div>
+
+            {certificatesList.length === 0 ? (
+              <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2">
+                <Award className="w-8 h-8 text-slate-600" />
+                <span className="font-semibold text-slate-400">No certificates issued yet.</span>
+                <span className="text-[11px] text-slate-500">
+                  Pass a test or exam with ≥ 35 WPM &amp; ≥ 95% accuracy to generate an official verified certificate.
+                </span>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+                      <th className="py-3 px-3">Certificate Code</th>
+                      <th className="py-3 px-4">Recipient Name</th>
+                      <th className="py-3 px-4">Test Title</th>
+                      <th className="py-3 px-3">Speed</th>
+                      <th className="py-3 px-3">Accuracy</th>
+                      <th className="py-3 px-3">Issued Date</th>
+                      <th className="py-3 px-3">Integrity</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 font-mono">
+                    {certificatesList.map((cert) => (
+                      <tr key={cert.id} className="hover:bg-slate-800/40 transition-colors">
+                        <td className="py-3 px-3 font-bold text-amber-300">
+                          {cert.certificateCode}
+                        </td>
+                        <td className="py-3 px-4 font-sans font-bold text-white">
+                          {cert.recipientName}
+                        </td>
+                        <td className="py-3 px-4 text-slate-300">
+                          {cert.testTitle}
+                        </td>
+                        <td className="py-3 px-3 font-bold text-sky-400">
+                          {cert.wpm} WPM
+                        </td>
+                        <td className="py-3 px-3 text-emerald-400">
+                          {cert.accuracy}%
+                        </td>
+                        <td className="py-3 px-3 text-slate-400 text-[11px]">
+                          {cert.issuedAt.split('T')[0]}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className="inline-flex items-center gap-1 text-emerald-400 text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Signed</span>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
               <div className="flex items-center gap-2">
