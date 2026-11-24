@@ -12,7 +12,7 @@
     "lint": "tsc --noEmit",
     "sync": "node scripts/auto-sync.js --once",
     "sync:watch": "node scripts/auto-sync.js",
-    "deploy": "vite build && wrangler pages deploy dist --project-name=typingmaster-pro --branch=main"
+    "deploy": "vite build && npx wrangler pages deploy dist --project-name=typingmaster-pro --branch=main"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
