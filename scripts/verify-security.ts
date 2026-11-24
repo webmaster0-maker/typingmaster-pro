@@ -17,6 +17,17 @@ import {
   signCertificate,
   verifyCertificate,
 } from '../src/utils/integrityEngine';
+import {
+  loginAdmin,
+  getAdminSession,
+  logoutAdmin,
+  checkAdminLockout,
+} from '../src/utils/adminAuth';
+import {
+  getAdminTelemetrySummary,
+  recordTelemetryVisit,
+  recordTelemetryCompletion,
+} from '../src/utils/adminTelemetry';
 import { UserStats, TypingCertificate, LocalAccountRecord } from '../src/types';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -219,6 +230,44 @@ async function runSecurityAuditSuite() {
     recipientName: 'Bob Attacker',
   };
   assert(!verifyCertificate(forgedNameCert).valid, 'Tampered certificate (forged recipient name) is rejected');
+
+  // ------------------------------------------------------------------
+  // 5. MASTER ADMIN PORTAL SECURITY & TELEMETRY
+  // ------------------------------------------------------------------
+  console.log('\n>>> [5/5] AUDITING MASTER ADMIN PORTAL SECURITY & TELEMETRY...');
+  logoutAdmin();
+  assert(!getAdminSession().authenticated, 'Admin session starts unauthenticated');
+
+  // Wrong admin password rejected
+  const badAdminLogin = await loginAdmin('admin@typingmaster.pro', 'WrongAdminPass999!');
+  assert(!badAdminLogin.ok, 'Admin portal rejects invalid credentials');
+
+  // Valid admin login
+  const goodAdminLogin = await loginAdmin('admin@typingmaster.pro', 'AdminMaster2026!');
+  assert(goodAdminLogin.ok && Boolean(goodAdminLogin.session), 'Master Admin login succeeds with AdminMaster2026!');
+  assert(getAdminSession().authenticated, 'Admin session is active and verified in session storage');
+
+  // Admin Telemetry Verification
+  recordTelemetryVisit();
+  recordTelemetryCompletion({
+    type: 'test',
+    title: 'Audit Speed Test',
+    wpm: 88,
+    accuracy: 99,
+    charsTyped: 440,
+    userName: 'Security Auditor',
+  });
+
+  const summary = getAdminTelemetrySummary();
+  assert(summary.totalVisitors > 0, 'Telemetry calculates total visitors');
+  assert(summary.activeUsersNow >= 1, 'Telemetry records active users');
+  assert(summary.hourlyEngagement.length === 24, 'Telemetry generates full 24-hour engagement heatmap');
+  assert(summary.dailyTraffic.length === 7, 'Telemetry calculates 7-day daily traffic history');
+  assert(summary.leaderboard.length >= 8, 'Telemetry contains populated global leaderboard');
+  assert(Boolean(summary.peakHourRange), 'Telemetry calculates peak engagement hours window');
+
+  logoutAdmin();
+  assert(!getAdminSession().authenticated, 'Admin logout cleanly invalidates admin session');
 
   console.log('\n======================================================');
   console.log(`🎉 ALL ${passedTests}/${totalTests} SECURITY TESTS PASSED GREEN 100%!`);

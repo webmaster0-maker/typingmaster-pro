@@ -54,6 +54,8 @@ import {
   signCertificate,
   verifyCertificate,
 } from './utils/integrityEngine';
+import { AdminPortal } from './components/admin/AdminPortal';
+import { recordTelemetryVisit, recordTelemetryCompletion } from './utils/adminTelemetry';
 
 function getTodayIsoDate(): string {
   const d = new Date();
@@ -80,7 +82,23 @@ function computeNextStreak(prevStreak: number, lastPracticeDate?: string): { str
   return { streak: 1, today };
 }
 
+function isDirectAdminUrl(): boolean {
+  if (typeof window === 'undefined') return false;
+  const hash = window.location.hash.toLowerCase();
+  const search = window.location.search.toLowerCase();
+  const path = window.location.pathname.toLowerCase();
+  return (
+    hash === '#admin' ||
+    hash === '#/admin' ||
+    search.includes('portal=admin') ||
+    search.includes('admin=true') ||
+    path === '/admin' ||
+    path.endsWith('/admin')
+  );
+}
+
 export default function App() {
+  const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(() => isDirectAdminUrl());
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isArcadeOpen, setIsArcadeOpen] = useState<boolean>(false);
   const [showAssessment, setShowAssessment] = useState<boolean>(false);
@@ -304,6 +322,31 @@ export default function App() {
   const [activeCertificateModal, setActiveCertificateModal] = useState<TypingCertificate | null>(null);
   const [workspaceIssuedCertificate, setWorkspaceIssuedCertificate] = useState<TypingCertificate | null>(null);
 
+  useEffect(() => {
+    recordTelemetryVisit();
+    const handleUrlChange = () => {
+      setIsAdminPortalOpen(isDirectAdminUrl());
+    };
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, []);
+
+  const handleExitAdminPortal = useCallback(() => {
+    setIsAdminPortalOpen(false);
+    if (typeof window !== 'undefined') {
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+      if (window.location.search.includes('admin')) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }, []);
+
   const openAccountModal = useCallback(
     (
       context: AccountModalContext = 'default',
@@ -503,6 +546,15 @@ export default function App() {
       return updatedHistory;
     });
 
+    recordTelemetryCompletion({
+      type: result.type,
+      title: result.title,
+      wpm: result.wpm,
+      accuracy: result.accuracy,
+      charsTyped: Math.round(result.wpm * 5 * (result.durationSeconds / 60)) || 100,
+      userName: userAccount?.fullName,
+    });
+
     // Automatically generate & save certificate on passed test, or prompt unnamed visitor at certificate time
     if (isEligibleForCertificate(result)) {
       if (userAccount) {
@@ -621,6 +673,10 @@ export default function App() {
         )}
       </>
     );
+  }
+
+  if (isAdminPortalOpen) {
+    return <AdminPortal onExit={handleExitAdminPortal} />;
   }
 
   if (showAssessment) {
