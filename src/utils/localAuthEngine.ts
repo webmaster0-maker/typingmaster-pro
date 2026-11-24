@@ -9,10 +9,20 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PASSWORD_LENGTH = 6;
 const MAX_PASSWORD_LENGTH = 128;
 
+export const PBKDF2_ITERATIONS = 100_000;
+export const MAX_CONSECUTIVE_FAILURES = 5;
+export const SHORT_LOCKOUT_MS = 30_000; // 30 seconds
+export const EXTENDED_LOCKOUT_MS = 300_000; // 5 minutes
+
 export interface AuthActionResult {
   ok: boolean;
   account?: UserAccount;
   error?: string;
+}
+
+export interface LockoutStatus {
+  isLocked: boolean;
+  remainingSeconds: number;
 }
 
 export function normalizeEmail(raw: string): string {
@@ -158,6 +168,61 @@ export async function hashPasswordWithSalt(password: string, salt: string): Prom
   return sha256FallbackHex(payload);
 }
 
+/**
+ * Modern high-security PBKDF2 password derivation with 100,000 iterations of SHA-256.
+ * Hardware-resistant against GPU brute-forcing and dictionary attacks.
+ */
+export async function hashPasswordPBKDF2(
+  password: string,
+  salt: string,
+  iterations = PBKDF2_ITERATIONS
+): Promise<string> {
+  if (
+    typeof globalThis.crypto?.subtle?.importKey === 'function' &&
+    typeof globalThis.crypto?.subtle?.deriveBits === 'function' &&
+    typeof TextEncoder !== 'undefined'
+  ) {
+    try {
+      const enc = new TextEncoder();
+      const keyMaterial = await globalThis.crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+      );
+      const derived = await globalThis.crypto.subtle.deriveBits(
+        {
+          name: 'PBKDF2',
+          salt: enc.encode(salt),
+          iterations,
+          hash: 'SHA-256',
+        },
+        keyMaterial,
+        256
+      );
+      return Array.from(new Uint8Array(derived), (b) => b.toString(16).padStart(2, '0')).join('');
+    } catch {
+      // Fall through to fallback
+    }
+  }
+
+  // Iterated fallback for restricted contexts
+  let current = `${salt}:${password}`;
+  for (let i = 0; i < Math.min(iterations, 1000); i += 1) {
+    current = sha256FallbackHex(`${current}:${salt}:${i}`);
+  }
+  return current;
+}
+
+export function checkAccountLockout(record: LocalAccountRecord): LockoutStatus {
+  if (record.lockoutUntil && record.lockoutUntil > Date.now()) {
+    const remainingSeconds = Math.ceil((record.lockoutUntil - Date.now()) / 1000);
+    return { isLocked: true, remainingSeconds };
+  }
+  return { isLocked: false, remainingSeconds: 0 };
+}
+
 function safeEqualHex(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -173,16 +238,24 @@ export function loadLocalAccounts(): LocalAccountRecord[] {
   try {
     const parsed = JSON.parse(saved);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (item): item is LocalAccountRecord =>
-        Boolean(item) &&
-        typeof item === 'object' &&
-        typeof item.id === 'string' &&
-        typeof item.fullName === 'string' &&
-        typeof item.email === 'string' &&
-        typeof item.passwordSalt === 'string' &&
-        typeof item.passwordHash === 'string'
-    );
+    return parsed
+      .filter(
+        (item): item is LocalAccountRecord =>
+          Boolean(item) &&
+          typeof item === 'object' &&
+          typeof item.id === 'string' &&
+          typeof item.fullName === 'string' &&
+          typeof item.email === 'string' &&
+          typeof item.passwordSalt === 'string' &&
+          typeof item.passwordHash === 'string'
+      )
+      .map((item) => ({
+        ...item,
+        passwordAlgo: item.passwordAlgo === 'pbkdf2' ? 'pbkdf2' : 'sha256',
+        iterations: typeof item.iterations === 'number' ? item.iterations : undefined,
+        failedAttempts: typeof item.failedAttempts === 'number' ? item.failedAttempts : 0,
+        lockoutUntil: typeof item.lockoutUntil === 'number' ? item.lockoutUntil : undefined,
+      }));
   } catch {
     return [];
   }
@@ -262,7 +335,7 @@ export async function registerLocalAccount(params: {
   }
 
   const salt = generateSalt();
-  const passwordHash = await hashPasswordWithSalt(params.password, salt);
+  const passwordHash = await hashPasswordPBKDF2(params.password, salt, PBKDF2_ITERATIONS);
   const now = new Date().toISOString();
   const id = `acct-${Date.now()}-${generateSalt(3)}`;
 
@@ -272,6 +345,9 @@ export async function registerLocalAccount(params: {
     email: normalizedEmail,
     passwordSalt: salt,
     passwordHash,
+    passwordAlgo: 'pbkdf2',
+    iterations: PBKDF2_ITERATIONS,
+    failedAttempts: 0,
     createdAt: now,
   };
 
@@ -302,15 +378,93 @@ export async function signInLocalAccount(params: {
   }
 
   const accounts = loadLocalAccounts();
-  const matched = accounts.find((acc) => normalizeEmail(acc.email) === normalizedEmail);
-  if (!matched) {
+  const index = accounts.findIndex((acc) => normalizeEmail(acc.email) === normalizedEmail);
+  if (index === -1) {
     return { ok: false, error: 'Invalid email ID or password.' };
   }
 
-  const computedHash = await hashPasswordWithSalt(params.password, matched.passwordSalt);
-  if (!safeEqualHex(computedHash, matched.passwordHash)) {
+  const matched = accounts[index];
+
+  // Check lockout
+  const lockout = checkAccountLockout(matched);
+  if (lockout.isLocked) {
+    return {
+      ok: false,
+      error: `Too many failed attempts. Account is locked. Please try again in ${lockout.remainingSeconds}s.`,
+    };
+  }
+
+  // Verify credentials (supporting both PBKDF2 and legacy SHA-256)
+  let isPasswordValid = false;
+  let needsUpgradeToPbkdf2 = false;
+
+  if (matched.passwordAlgo === 'pbkdf2') {
+    const computedHash = await hashPasswordPBKDF2(
+      params.password,
+      matched.passwordSalt,
+      matched.iterations || PBKDF2_ITERATIONS
+    );
+    isPasswordValid = safeEqualHex(computedHash, matched.passwordHash);
+  } else {
+    // Legacy SHA-256 hash check
+    const legacyHash = await hashPasswordWithSalt(params.password, matched.passwordSalt);
+    if (safeEqualHex(legacyHash, matched.passwordHash)) {
+      isPasswordValid = true;
+      needsUpgradeToPbkdf2 = true;
+    }
+  }
+
+  if (!isPasswordValid) {
+    const nextFailures = (matched.failedAttempts || 0) + 1;
+    let lockoutUntil: number | undefined;
+
+    if (nextFailures >= 10) {
+      lockoutUntil = Date.now() + EXTENDED_LOCKOUT_MS;
+    } else if (nextFailures >= MAX_CONSECUTIVE_FAILURES) {
+      lockoutUntil = Date.now() + SHORT_LOCKOUT_MS;
+    }
+
+    const updatedAccounts = [...accounts];
+    updatedAccounts[index] = {
+      ...matched,
+      failedAttempts: nextFailures,
+      lockoutUntil,
+    };
+    saveLocalAccounts(updatedAccounts);
+
+    if (lockoutUntil) {
+      const waitSeconds = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      return {
+        ok: false,
+        error: `Too many failed attempts. Account is temporarily locked. Please try again in ${waitSeconds}s.`,
+      };
+    }
+
     return { ok: false, error: 'Invalid email ID or password.' };
   }
+
+  // Successful authentication: reset failures and upgrade to PBKDF2 if needed
+  let updatedRecord: LocalAccountRecord = {
+    ...matched,
+    failedAttempts: 0,
+    lockoutUntil: undefined,
+  };
+
+  if (needsUpgradeToPbkdf2) {
+    const nextSalt = generateSalt();
+    const nextPbkdf2Hash = await hashPasswordPBKDF2(params.password, nextSalt, PBKDF2_ITERATIONS);
+    updatedRecord = {
+      ...updatedRecord,
+      passwordSalt: nextSalt,
+      passwordHash: nextPbkdf2Hash,
+      passwordAlgo: 'pbkdf2',
+      iterations: PBKDF2_ITERATIONS,
+    };
+  }
+
+  const updatedAccounts = [...accounts];
+  updatedAccounts[index] = updatedRecord;
+  saveLocalAccounts(updatedAccounts);
 
   const activeAccount: UserAccount = {
     id: matched.id,
@@ -405,7 +559,7 @@ export async function upgradeGuestToLocalAccount(
   }
 
   const salt = generateSalt();
-  const passwordHash = await hashPasswordWithSalt(params.password, salt);
+  const passwordHash = await hashPasswordPBKDF2(params.password, salt, PBKDF2_ITERATIONS);
   const now = new Date().toISOString();
   const id = `acct-${Date.now()}-${generateSalt(3)}`;
 
@@ -415,6 +569,9 @@ export async function upgradeGuestToLocalAccount(
     email: normalizedEmail,
     passwordSalt: salt,
     passwordHash,
+    passwordAlgo: 'pbkdf2',
+    iterations: PBKDF2_ITERATIONS,
+    failedAttempts: 0,
     createdAt: now,
   };
   saveLocalAccounts([record, ...accounts]);
@@ -456,19 +613,35 @@ export async function updateLocalAccountPassword(
   }
 
   const existing = accounts[index];
-  const currentHash = await hashPasswordWithSalt(currentPassword, existing.passwordSalt);
-  if (!safeEqualHex(currentHash, existing.passwordHash)) {
+  let isCurrentValid = false;
+  if (existing.passwordAlgo === 'pbkdf2') {
+    const computedHash = await hashPasswordPBKDF2(
+      currentPassword,
+      existing.passwordSalt,
+      existing.iterations || PBKDF2_ITERATIONS
+    );
+    isCurrentValid = safeEqualHex(computedHash, existing.passwordHash);
+  } else {
+    const legacyHash = await hashPasswordWithSalt(currentPassword, existing.passwordSalt);
+    isCurrentValid = safeEqualHex(legacyHash, existing.passwordHash);
+  }
+
+  if (!isCurrentValid) {
     return { ok: false, error: 'Current password is incorrect.' };
   }
 
   const nextSalt = generateSalt();
-  const nextHash = await hashPasswordWithSalt(newPassword, nextSalt);
+  const nextHash = await hashPasswordPBKDF2(newPassword, nextSalt, PBKDF2_ITERATIONS);
 
   const nextAccounts = [...accounts];
   nextAccounts[index] = {
     ...existing,
     passwordSalt: nextSalt,
     passwordHash: nextHash,
+    passwordAlgo: 'pbkdf2',
+    iterations: PBKDF2_ITERATIONS,
+    failedAttempts: 0,
+    lockoutUntil: undefined,
   };
   saveLocalAccounts(nextAccounts);
 

@@ -48,6 +48,12 @@ import {
 } from './utils/localAuthEngine';
 import { AdSlot } from './components/ads/AdSlot';
 import { SITE_ADS_CONFIG } from './config/adsConfig';
+import {
+  signUserStats,
+  verifyUserStats,
+  signCertificate,
+  verifyCertificate,
+} from './utils/integrityEngine';
 
 function getTodayIsoDate(): string {
   const d = new Date();
@@ -193,16 +199,28 @@ export default function App() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
-          baseStats = {
-            xp: Number(parsed.xp) || 0,
-            streak: Number(parsed.streak) || 1,
-            lessonsCompleted: Number(parsed.lessonsCompleted) || 0,
-            avgWpm: Number(parsed.avgWpm) || 0,
-            avgAccuracy: Number(parsed.avgAccuracy) || 0,
-            totalPracticeTimeSeconds: Number(parsed.totalPracticeTimeSeconds) || 0,
-            weakKeys: parsed.weakKeys && typeof parsed.weakKeys === 'object' ? parsed.weakKeys : {},
-            lastPracticeDate: typeof parsed.lastPracticeDate === 'string' ? parsed.lastPracticeDate : undefined,
-          };
+          const verification = verifyUserStats(parsed);
+          if (verification.valid) {
+            baseStats = {
+              xp: Number(parsed.xp) || 0,
+              streak: Number(parsed.streak) || 1,
+              lessonsCompleted: Number(parsed.lessonsCompleted) || 0,
+              avgWpm: Number(parsed.avgWpm) || 0,
+              avgAccuracy: Number(parsed.avgAccuracy) || 0,
+              totalPracticeTimeSeconds: Number(parsed.totalPracticeTimeSeconds) || 0,
+              weakKeys: parsed.weakKeys && typeof parsed.weakKeys === 'object' ? parsed.weakKeys : {},
+              lastPracticeDate: typeof parsed.lastPracticeDate === 'string' ? parsed.lastPracticeDate : undefined,
+              _integrity: parsed._integrity,
+            };
+            if (verification.wasUnsigned) {
+              baseStats = signUserStats(baseStats);
+              safeStorage.setItem('typing_master_user_stats', JSON.stringify(baseStats));
+            }
+          } else {
+            console.warn('[Security] Detected manual tampering with user stats. Resetting stats to defaults.');
+            baseStats = signUserStats(baseStats);
+            safeStorage.setItem('typing_master_user_stats', JSON.stringify(baseStats));
+          }
         }
       } catch {
         // Fallback to defaults if stored JSON is corrupted
@@ -221,7 +239,7 @@ export default function App() {
               ...baseStats,
               xp: baseStats.xp + legacyXp,
             };
-            safeStorage.setItem('typing_master_user_stats', JSON.stringify(baseStats));
+            safeStorage.setItem('typing_master_user_stats', JSON.stringify(signUserStats(baseStats)));
           }
         } catch {
           // Ignore malformed legacy arcade profile
@@ -253,7 +271,18 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          const validCerts: TypingCertificate[] = [];
+          for (const item of parsed) {
+            const ver = verifyCertificate(item);
+            if (ver.valid) {
+              validCerts.push(ver.wasUnsigned ? signCertificate(item) : item);
+            } else {
+              console.warn('[Security] Quarantining tampered certificate:', item.id);
+            }
+          }
+          return validCerts;
+        }
       } catch {
         // Ignore corrupted certificate list
       }
@@ -467,7 +496,7 @@ export default function App() {
           streakInfo,
           overrideWeakKeys
         );
-        safeStorage.setItem('typing_master_user_stats', JSON.stringify(nextStats));
+        safeStorage.setItem('typing_master_user_stats', JSON.stringify(signUserStats(nextStats)));
         return nextStats;
       });
 
@@ -501,7 +530,7 @@ export default function App() {
           arcadeSession.xpEarned,
           streakInfo
         );
-        safeStorage.setItem('typing_master_user_stats', JSON.stringify(nextStats));
+        safeStorage.setItem('typing_master_user_stats', JSON.stringify(signUserStats(nextStats)));
         return nextStats;
       });
 
@@ -523,7 +552,7 @@ export default function App() {
         avgWpm: prev.avgWpm > 0 ? prev.avgWpm : wpm,
         avgAccuracy: prev.avgAccuracy > 0 ? prev.avgAccuracy : accuracy,
       };
-      safeStorage.setItem('typing_master_user_stats', JSON.stringify(nextStats));
+      safeStorage.setItem('typing_master_user_stats', JSON.stringify(signUserStats(nextStats)));
       return nextStats;
     });
     setShowAssessment(false);

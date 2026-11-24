@@ -174,6 +174,7 @@ export interface UserStats {
   totalPracticeTimeSeconds: number;
   weakKeys: { [key: string]: number };
   lastPracticeDate?: string;
+  _integrity?: string;
 }
 
 export interface UserAccount {
@@ -190,6 +191,10 @@ export interface LocalAccountRecord {
   email: string;
   passwordSalt: string;
   passwordHash: string;
+  passwordAlgo?: 'pbkdf2' | 'sha256';
+  iterations?: number;
+  failedAttempts?: number;
+  lockoutUntil?: number;
   createdAt: string;
 }
 
@@ -206,5 +211,6 @@ export interface TypingCertificate {
   durationSeconds: number;
   scoring: 'standard' | 'strict';
   issuedAt: string;
+  _integrity?: string;
 }
 

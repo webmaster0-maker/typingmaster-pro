@@ -1,4 +1,5 @@
 import { SessionResult, TypingCertificate } from '../types';
+import { signCertificate, verifyCertificate } from './integrityEngine';
 
 const CODE_ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
@@ -57,7 +58,7 @@ export function createCertificateFromSession(
     `${result.id}|${result.itemId}|${recipientName}|${result.wpm}|${result.accuracy}`
   );
 
-  return {
+  return signCertificate({
     id: `cert-${result.id}`,
     certificateCode,
     sessionId: result.id,
@@ -70,7 +71,7 @@ export function createCertificateFromSession(
     durationSeconds: Math.max(1, Math.round(result.durationSeconds)),
     scoring: result.scoring === 'strict' ? 'strict' : 'standard',
     issuedAt,
-  };
+  });
 }
 
 export function upsertCertificate(
@@ -81,7 +82,8 @@ export function upsertCertificate(
   if (alreadyExists) {
     return existing;
   }
-  return [nextCert, ...existing];
+  const signed = signCertificate(nextCert);
+  return [signed, ...existing];
 }
 
 export function formatCertificateDate(iso: string): string {
