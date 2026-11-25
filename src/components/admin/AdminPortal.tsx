@@ -46,7 +46,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
   });
 
   // Login form state
-  const [emailInput, setEmailInput] = useState('admin@typingmaster.pro');
+  const [emailInput, setEmailInput] = useState('admin@typecrest.pro');
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -165,7 +165,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
               <Shield className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-extrabold text-white tracking-tight">Master Admin Portal</h1>
-            <p className="text-xs text-slate-400 mt-1">TypingMaster Pro Management &amp; Analytics Console</p>
+            <p className="text-xs text-slate-400 mt-1">TypeCrest Management &amp; Analytics Console</p>
           </div>
 
           {/* Lockout Warning */}
@@ -200,7 +200,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                   onChange={(e) => setEmailInput(e.target.value)}
                   disabled={lockoutSecs > 0 || isSubmitting}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-                  placeholder="admin@typingmaster.pro"
+                  placeholder="admin@typecrest.pro"
                   required
                 />
               </div>
@@ -277,7 +277,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-sm sm:text-base text-white tracking-tight">TypingMaster Pro</span>
+              <span className="font-extrabold text-sm sm:text-base text-white tracking-tight">TypeCrest</span>
               <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold uppercase tracking-wider">
                 Admin
               </span>

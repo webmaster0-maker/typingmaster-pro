@@ -498,7 +498,7 @@ export const NeonArcadeHub: React.FC<NeonArcadeHubProps> = ({
             <PixelInvaderIcon className="w-5 h-4 sm:w-6 sm:h-5 drop-shadow-[0_0_8px_rgba(232,121,249,0.75)]" />
           </div>
 
-          {/* Main Glowing TYPING MASTER Sign */}
+          {/* Main Glowing TYPECREST Sign */}
           <div className="relative flex items-center justify-center gap-2 sm:gap-4">
             {/* Left Electric Lightning Bolt */}
             <svg
@@ -520,7 +520,7 @@ export const NeonArcadeHub: React.FC<NeonArcadeHubProps> = ({
                 className="text-3xl sm:text-5xl lg:text-[52px] font-bold tracking-[0.06em] leading-none bg-gradient-to-b from-[#FFFFFF] via-[#7DD3FC] to-[#C084FC] bg-clip-text text-transparent drop-shadow-[0_3px_12px_rgba(56,189,248,0.55)]"
                 style={{ fontFamily: 'var(--font-arcade)' }}
               >
-                TYPING MASTER
+                TYPECREST
               </h1>
             </div>
 

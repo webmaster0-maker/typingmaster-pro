@@ -65,7 +65,10 @@ export async function loginAdmin(email: string, password: string): Promise<Admin
   }
 
   const normalizedEmail = email.trim().toLowerCase();
-  const targetEmail = ADMIN_CONFIG.defaultAdminEmail.trim().toLowerCase();
+  const allowedEmails = [
+    ADMIN_CONFIG.defaultAdminEmail,
+    ...(ADMIN_CONFIG.legacyAdminEmails || []),
+  ].map((e) => e.trim().toLowerCase());
 
   const computedHash = await hashPasswordPBKDF2(
     password,
@@ -73,7 +76,7 @@ export async function loginAdmin(email: string, password: string): Promise<Admin
     PBKDF2_ITERATIONS
   );
 
-  const isEmailValid = normalizedEmail === targetEmail;
+  const isEmailValid = allowedEmails.includes(normalizedEmail);
   const isPassValid = constantTimeCompare(computedHash, ADMIN_CONFIG.masterPasswordPbkdf2Hash);
 
   if (!isEmailValid || !isPassValid) {

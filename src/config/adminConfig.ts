@@ -1,11 +1,12 @@
 /**
- * TypingMaster Pro - Master Admin Configuration
+ * TypeCrest - Master Admin Configuration
  * Stores admin credentials, security settings, and direct URL entry routes.
  */
 
 export const ADMIN_CONFIG = {
   // Master Admin Account
-  defaultAdminEmail: 'admin@typingmaster.pro',
+  defaultAdminEmail: 'admin@typecrest.pro',
+  legacyAdminEmails: ['admin@typingmaster.pro'],
 
   // Master Admin PBKDF2 Password Credentials (default: AdminMaster2026!)
   // Salt and PBKDF2 (100,000 iterations SHA-256) hash for "AdminMaster2026!"

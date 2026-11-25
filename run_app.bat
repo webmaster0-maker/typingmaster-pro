@@ -1,11 +1,11 @@
 @echo off
 setlocal
-title TypingMaster Pro Server & Auto-Sync
+title TypeCrest Server & Auto-Sync
 
 cd /d "C:\Users\Administrator\Pictures\typingmaster"
 
 echo ==========================================================
-echo   Starting TypingMaster Pro Server & GitHub Auto-Sync...
+echo   Starting TypeCrest Server & GitHub Auto-Sync...
 echo ==========================================================
 echo.
 echo 1. Launching Google Chrome to http://localhost:3000...

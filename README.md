@@ -1,4 +1,4 @@
-# TypingMaster Pro — Guided Touch Typing Instructor
+# TypeCrest — Guided Touch Typing Instructor
 
 > A modern, gamified, local-first touch typing platform featuring 3D articulated hands, biomechanical kinematics, adaptive remediation drills, official certificates, and a retro synthwave typing arcade.
 
@@ -6,7 +6,7 @@
 
 ## ✨ Overview
 
-**TypingMaster Pro** is designed to take typists from complete beginners to keyboard mastery through structured muscle-memory training, real-time visual feedback, and game-inspired progression loops.
+**TypeCrest** is designed to take typists from complete beginners to keyboard mastery through structured muscle-memory training, real-time visual feedback, and game-inspired progression loops.
 
 The application runs entirely client-side with zero external database requirements, preserving user privacy while delivering 60 FPS animations, Web Audio procedural sound effects, and anti-tamper certification verification.
 

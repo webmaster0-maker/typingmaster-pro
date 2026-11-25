@@ -91,7 +91,7 @@ function performSync() {
 }
 
 console.log('\x1b[32m===============================================================');
-console.log('  TypingMaster Pro — Real-Time GitHub Auto-Sync Watcher');
+console.log('  TypeCrest — Real-Time GitHub Auto-Sync Watcher');
 console.log('  Repository: webmaster0-maker/typingmaster-pro (branch: main)');
 console.log('===============================================================\x1b[0m');
 

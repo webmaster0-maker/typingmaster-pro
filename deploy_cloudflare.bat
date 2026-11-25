@@ -5,8 +5,8 @@ title Cloudflare Pages Deployment - $0 Free Plan
 cd /d "C:\Users\Administrator\Pictures\typingmaster"
 
 echo ==========================================================
-echo   Deploying TypingMaster Pro to Cloudflare Pages ($0 Plan)
-echo   Project: typingmaster-pro
+echo   Deploying TypeCrest to Cloudflare Pages ($0 Plan)
+echo   Project: typecrest
 echo ==========================================================
 echo.
 echo Step 1: Building production bundle...
@@ -21,11 +21,11 @@ if errorlevel 1 (
 
 echo.
 echo Step 2: Deploying to Cloudflare Pages...
-npx wrangler pages deploy dist --project-name=typingmaster-pro --branch=main
+npx wrangler pages deploy dist --project-name=typecrest --branch=main
 
 echo.
 echo ==========================================================
 echo   Deployment Complete!
-echo   Live URL: https://typingmaster-pro.pages.dev
+echo   Live URL: https://typecrest.pages.dev
 echo ==========================================================
 pause

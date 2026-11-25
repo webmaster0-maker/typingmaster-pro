@@ -122,7 +122,7 @@ export function sanitizeCertificateFilename(recipientName: string, testTitle: st
       .slice(0, 36);
   const nameSlug = slugify(recipientName) || 'recipient';
   const testSlug = slugify(testTitle) || 'typing-test';
-  return `TypingMaster-Certificate-${nameSlug}-${testSlug}.png`;
+  return `TypeCrest-Certificate-${nameSlug}-${testSlug}.png`;
 }
 
 function drawCornerFlourish(
@@ -319,7 +319,7 @@ export function renderCertificateToCanvas(
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#9E7630';
   ctx.font = '700 18px "Plus Jakarta Sans", system-ui, sans-serif';
-  ctx.fillText('TYPINGMASTER PRO  •  OFFICIAL CERTIFICATION', width / 2, 146);
+  ctx.fillText('TYPECREST  •  OFFICIAL CERTIFICATION', width / 2, 146);
 
   // Decorative divider under brand
   ctx.strokeStyle = '#B48A3E';
@@ -439,7 +439,7 @@ export function renderCertificateToCanvas(
   const rightX = width - 330;
   ctx.fillStyle = '#0F172A';
   ctx.font = 'italic 700 28px Georgia, "Times New Roman", serif';
-  ctx.fillText('TypingMaster Pro', rightX, footerY - 12);
+  ctx.fillText('TypeCrest', rightX, footerY - 12);
 
   ctx.strokeStyle = '#94A3B8';
   ctx.lineWidth = 1.5;

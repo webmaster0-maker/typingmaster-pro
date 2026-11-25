@@ -1,5 +1,5 @@
 {
-  "name": "TypingMaster Pro - Guided Touch Typing Instructor",
+  "name": "TypeCrest - Guided Touch Typing Instructor",
   "description": "Professional touch typing course platform featuring a shared guidance workspace, virtual keyboard, hand animation model, adaptive drills, lessons, tests, and real-time analytics.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

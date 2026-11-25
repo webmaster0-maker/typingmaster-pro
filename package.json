@@ -1,7 +1,7 @@
 {
-  "name": "typingmaster-pro",
+  "name": "typecrest",
   "version": "1.0.0",
-  "description": "Professional touch typing course platform featuring 3D articulated hands, guidance workspace, adaptive drills, and retro arcade universe.",
+  "description": "TypeCrest — Professional touch typing course platform featuring 3D articulated hands, guidance workspace, adaptive drills, and retro arcade universe.",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
     "lint": "tsc --noEmit",
     "sync": "node scripts/auto-sync.js --once",
     "sync:watch": "node scripts/auto-sync.js",
-    "deploy": "vite build && npx wrangler pages deploy dist --project-name=typingmaster-pro --branch=main"
+    "deploy": "vite build && npx wrangler pages deploy dist --project-name=typecrest --branch=main"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",

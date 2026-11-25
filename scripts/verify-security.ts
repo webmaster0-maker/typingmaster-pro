@@ -239,11 +239,11 @@ async function runSecurityAuditSuite() {
   assert(!getAdminSession().authenticated, 'Admin session starts unauthenticated');
 
   // Wrong admin password rejected
-  const badAdminLogin = await loginAdmin('admin@typingmaster.pro', 'WrongAdminPass999!');
+  const badAdminLogin = await loginAdmin('admin@typecrest.pro', 'WrongAdminPass999!');
   assert(!badAdminLogin.ok, 'Admin portal rejects invalid credentials');
 
   // Valid admin login
-  const goodAdminLogin = await loginAdmin('admin@typingmaster.pro', 'AdminMaster2026!');
+  const goodAdminLogin = await loginAdmin('admin@typecrest.pro', 'AdminMaster2026!');
   assert(goodAdminLogin.ok && Boolean(goodAdminLogin.session), 'Master Admin login succeeds with AdminMaster2026!');
   assert(getAdminSession().authenticated, 'Admin session is active and verified in session storage');
 

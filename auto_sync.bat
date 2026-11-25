@@ -5,7 +5,7 @@ title GitHub Auto-Sync Watcher - webmaster0-maker
 cd /d "C:\Users\Administrator\Pictures\typingmaster"
 
 echo ==========================================================
-echo   TypingMaster Pro - GitHub Real-Time Auto-Sync Watcher
+echo   TypeCrest - GitHub Real-Time Auto-Sync Watcher
 echo   Repository: webmaster0-maker/typingmaster-pro (main)
 echo ==========================================================
 echo.

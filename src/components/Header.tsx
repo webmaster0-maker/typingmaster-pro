@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Keyboard className="w-4 h-4" />
           </span>
           <span className="text-base font-bold text-white tracking-tight whitespace-nowrap">
-            TypingMaster
+            TypeCrest
           </span>
         </button>
 

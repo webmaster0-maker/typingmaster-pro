@@ -132,7 +132,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 
                 {/* Top Issuer Line */}
                 <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.24em] text-[#9E7630]">
-                  TypingMaster Pro · Official Certification
+                  TypeCrest · Official Certification
                 </p>
                 <div className="w-32 sm:w-44 h-px bg-[#B48A3E]/80 mt-2.5 mb-5" />
 
@@ -267,7 +267,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                   {/* Right: Signatory */}
                   <div className="flex flex-col items-center">
                     <div className="font-serif italic font-bold text-lg sm:text-xl text-[#0F172A]">
-                      TypingMaster Pro
+                      TypeCrest
                     </div>
                     <div className="w-44 h-px bg-slate-400 my-1.5" />
                     <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
