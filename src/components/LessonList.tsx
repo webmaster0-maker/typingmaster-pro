@@ -3,7 +3,7 @@ import { Lesson, SkillLevel, SessionResult, UserStats } from '../types';
 import { LessonGrowthCard } from './LessonGrowthCard';
 import { GrowthPlantAvatar } from './GrowthPlantAvatar';
 import { calculateGrowthProfile } from '../utils/growthEngine';
-import { Sprout, Award, ArrowRight, Zap, Compass, Target } from 'lucide-react';
+import { Sprout, Award, ArrowRight, Zap, Compass, Target, ChevronDown } from 'lucide-react';
 
 interface LessonListProps {
   lessons: Lesson[];
@@ -24,6 +24,11 @@ export const LessonList: React.FC<LessonListProps> = ({
 }) => {
   const [selectedLevel, setSelectedLevel] = useState<SkillLevel | 'all'>(initialLevel);
   const [growthFilter, setGrowthFilter] = useState<'all' | 'bloomed' | 'unbloomed'>('all');
+  const [expandedModules, setExpandedModules] = useState<Record<number, boolean>>({ 1: true });
+
+  const toggleModule = (modNum: number) => {
+    setExpandedModules((prev) => ({ ...prev, [modNum]: !prev[modNum] }));
+  };
 
   useEffect(() => {
     setSelectedLevel(initialLevel);
@@ -107,9 +112,15 @@ export const LessonList: React.FC<LessonListProps> = ({
         };
       case 4:
         return {
-          title: 'Module 4: Full Fluency & Milestones',
+          title: 'Module 4: Sentences, Shift & Endurance',
           desc: 'Combine all rows into fluid sentences, paragraphs, and graduation tests.',
           badge: 'Biome 4 · Fluency',
+        };
+      case 5:
+        return {
+          title: 'Module 5: Numbers, Mastery & Graduation',
+          desc: 'Master numbers, symbols, themed paragraphs, and final certification exams.',
+          badge: 'Biome 5 · Mastery',
         };
       default:
         return {
@@ -289,33 +300,52 @@ export const LessonList: React.FC<LessonListProps> = ({
           modules.map((modNum) => {
             const modLessons = filteredLessons.filter((l) => l.module === modNum);
             const biome = getBiomeMeta(modNum);
+            const modCompleted = modLessons.filter(isLessonCompleted).length;
+            const isExpanded = expandedModules[modNum] ?? false;
 
             return (
-              <div key={modNum} className="space-y-5">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 sm:p-5 rounded-2xl">
+              <div key={modNum} className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => toggleModule(modNum)}
+                  aria-expanded={isExpanded}
+                  className="w-full text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 p-4 sm:p-5 rounded-2xl transition-colors"
+                >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-base font-mono">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-base font-mono shrink-0">
                       {modNum}
                     </div>
                     <div>
                       <h3 className="text-base sm:text-lg font-bold text-white">{biome.title}</h3>
+                      <p className="text-xs text-slate-400 mt-0.5 tabular-nums">
+                        {modCompleted}/{modLessons.length} completed
+                      </p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono text-emerald-400 shrink-0">{biome.badge}</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {modLessons.map((lesson, idx) => (
-                    <LessonGrowthCard
-                      key={lesson.id}
-                      lesson={lesson}
-                      index={idx}
-                      sessionHistory={sessionHistory}
-                      onStartLesson={onStartLesson}
-                      isNextToGrow={lesson.id === nextLessonId}
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                    <span className="text-xs font-mono text-emerald-400">{biome.badge}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
                     />
-                  ))}
-                </div>
+                  </div>
+                </button>
+
+                {isExpanded && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {modLessons.map((lesson, idx) => (
+                      <LessonGrowthCard
+                        key={lesson.id}
+                        lesson={lesson}
+                        index={idx}
+                        sessionHistory={sessionHistory}
+                        onStartLesson={onStartLesson}
+                        isNextToGrow={lesson.id === nextLessonId}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })

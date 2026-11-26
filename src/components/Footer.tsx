@@ -53,7 +53,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('lessons'))}
                   className="hover:text-emerald-400 transition-colors"
                 >
-                  28 Touch Typing Lessons
+                  120 Touch Typing Lessons
                 </a>
               </li>
               <li>

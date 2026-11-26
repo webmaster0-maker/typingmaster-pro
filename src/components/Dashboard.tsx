@@ -53,7 +53,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="lg:col-span-7 relative overflow-hidden bg-gradient-to-r from-indigo-950/70 via-slate-900 to-slate-900 border border-indigo-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col justify-between gap-6">
           <div className="space-y-3">
             <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight text-balance max-w-xl">
-              28 lessons. 3D hand guidance. Free.
+              {lessons.length} lessons. 3D hand guidance. Free.
             </h1>
           </div>
 
@@ -320,7 +320,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="space-y-1">
               <h3 className="font-semibold text-slate-100">Is TypeCrest free to use?</h3>
               <p className="text-slate-400">
-                Yes. TypeCrest is 100% free ($0 USD) with no paid tiers. All 28 touch typing lessons, adaptive drills, speed tests, certificates, and 5 arcade games run online in your browser.
+                Yes. TypeCrest is 100% free ($0 USD) with no paid tiers. All {lessons.length} touch typing lessons, adaptive drills, speed tests, certificates, and 5 arcade games run online in your browser.
               </p>
             </div>
             <div className="space-y-1">

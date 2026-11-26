@@ -39,13 +39,13 @@ export const ROUTE_SEO_META: Record<AppRouteView, RouteSeoMeta> = {
   dashboard: {
     title: 'Touch Typing Tutor with 3D Hands & Speed Tests | TypeCrest',
     description:
-      'Master touch typing on TypeCrest with 3D articulated hands, 28 guided lessons, adaptive weak-key drills, timed WPM speed tests, and retro arcade games.',
+      'Master touch typing on TypeCrest with 3D articulated hands, 120 guided lessons, adaptive weak-key drills, timed WPM speed tests, and retro arcade games.',
     breadcrumbLabel: 'Home',
   },
   lessons: {
     title: 'Touch Typing Lessons & 3D Hand Courses | TypeCrest',
     description:
-      'Practice 28 structured touch typing lessons from home row to coding syntax. Real-time 3D hand kinematics guide every finger on your QWERTY keyboard.',
+      'Practice 120 structured touch typing lessons from home row to coding syntax and themed paragraphs. Real-time 3D hand kinematics guide every finger on your QWERTY keyboard.',
     breadcrumbLabel: 'Touch Typing Lessons',
   },
   practice: {

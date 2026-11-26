@@ -1,7 +1,7 @@
 import React from 'react';
 import { TestItem, TypingCertificate, UserAccount } from '../types';
 import { formatCertificateDate } from '../utils/certificateEngine';
-import { ArrowLeft, ArrowRight, Award, Download, Eye, FileText, Timer, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Award, Download, Eye, FileText, Shuffle, Timer, User } from 'lucide-react';
 
 interface TestExamHubProps {
   testItems: TestItem[];
@@ -45,20 +45,35 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
           <h1 className="text-3xl font-extrabold text-white">Speed tests</h1>
         </div>
 
-        <button
-          type="button"
-          onClick={onOpenAccount}
-          className="inline-flex items-center gap-2 self-start sm:self-auto px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
-        >
-          <User className="w-4 h-4 text-indigo-400 shrink-0" />
-          {userAccount ? (
-            <span>
-              Certificates auto-issued to <strong className="text-white">{userAccount.fullName}</strong>
-            </span>
-          ) : (
-            <span>Set Account Name for Auto-Certificates</span>
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+          {testItems.length > 1 && (
+            <button
+              type="button"
+              onClick={() => {
+                const pick = testItems[Math.floor(Math.random() * testItems.length)];
+                if (pick) onStartTest(pick);
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-xs font-semibold text-emerald-300 transition-colors whitespace-nowrap"
+            >
+              <Shuffle className="w-3.5 h-3.5 shrink-0" />
+              <span>Random test</span>
+            </button>
           )}
-        </button>
+          <button
+            type="button"
+            onClick={onOpenAccount}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
+          >
+            <User className="w-4 h-4 text-indigo-400 shrink-0" />
+            {userAccount ? (
+              <span>
+                Certificates auto-issued to <strong className="text-white">{userAccount.fullName}</strong>
+              </span>
+            ) : (
+              <span>Set Account Name for Auto-Certificates</span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Tests Grid */}

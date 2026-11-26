@@ -9,6 +9,7 @@ import {
   Info,
   CheckCircle2,
   Layers,
+  Shuffle,
 } from 'lucide-react';
 
 interface PracticeHubProps {
@@ -112,7 +113,22 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
 
       {/* Standard Practice Drills */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold text-white">Standard Practice Drills</h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-bold text-white">Standard Practice Drills</h2>
+          {practiceItems.length > 1 && (
+            <button
+              type="button"
+              onClick={() => {
+                const pick = practiceItems[Math.floor(Math.random() * practiceItems.length)];
+                if (pick) onStartPractice(pick);
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-xs font-semibold text-purple-300 transition-colors whitespace-nowrap"
+            >
+              <Shuffle className="w-3.5 h-3.5 shrink-0" />
+              <span>Random drill</span>
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {practiceItems.map((prac) => (
             <div
