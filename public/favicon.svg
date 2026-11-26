@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="tcGrad" x1="0" y1="64" x2="64" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#tcGrad)" />
+  <rect x="12" y="20" width="40" height="24" rx="5" fill="#0F172A" fill-opacity="0.92" stroke="#E0E7FF" stroke-width="2" />
+  <rect x="17" y="25" width="6" height="5" rx="1.2" fill="#818CF8" />
+  <rect x="25" y="25" width="6" height="5" rx="1.2" fill="#38BDF8" />
+  <rect x="33" y="25" width="6" height="5" rx="1.2" fill="#38BDF8" />
+  <rect x="41" y="25" width="6" height="5" rx="1.2" fill="#818CF8" />
+  <rect x="20" y="34" width="24" height="5" rx="1.5" fill="#E0E7FF" />
+</svg>

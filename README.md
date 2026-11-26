@@ -1,5 +1,7 @@
 # TypeCrest — Guided Touch Typing Instructor
 
+> **Live Website:** [https://typecrest.pages.dev](https://typecrest.pages.dev)
+>
 > A modern, gamified, local-first touch typing platform featuring 3D articulated hands, biomechanical kinematics, adaptive remediation drills, official certificates, and a retro synthwave typing arcade.
 
 ---
