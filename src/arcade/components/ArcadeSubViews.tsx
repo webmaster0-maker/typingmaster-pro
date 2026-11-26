@@ -478,7 +478,7 @@ export const ArcadeCosmeticsView: React.FC<ArcadeCosmeticsViewProps> = ({
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-white">{item.name}</h3>
+                <h2 className="text-base font-bold text-white">{item.name}</h2>
               </div>
 
               <div className="pt-3 border-t border-[#232C40] flex items-center justify-between gap-2">

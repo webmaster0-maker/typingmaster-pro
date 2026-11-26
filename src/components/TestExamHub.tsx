@@ -25,7 +25,12 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <h1 className="text-3xl font-extrabold text-white">Tests & Certification Exams</h1>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-extrabold text-white">Tests &amp; Certification Exams</h1>
+          <p className="text-sm text-slate-300 max-w-2xl">
+            Benchmark your net WPM speed and accuracy under standard or strict exam rules. Score 35+ WPM with 95%+ accuracy to earn an official downloadable PNG certificate.
+          </p>
+        </div>
 
         <button
           type="button"
@@ -44,7 +49,11 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
       </div>
 
       {/* Tests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section aria-labelledby="speed-tests-heading" className="space-y-4">
+        <h2 id="speed-tests-heading" className="text-xl font-bold text-white">
+          Timed Speed Tests &amp; Certification Exams
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {testItems.map((test) => (
           <div
             key={test.id}
@@ -82,7 +91,8 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      </section>
 
       {/* Earned Certificates Gallery */}
       <section id="earned-certificates" className="space-y-4 pt-2 border-t border-slate-800/80">

@@ -1368,7 +1368,7 @@ export const FightingArena: React.FC<FightingArenaProps> = ({
           {/* PAUSED OVERLAY (Stays fullscreen with Resume, Restart, and Exit to Menu) */}
           {gameState === 'paused' && (
             <div className="absolute inset-0 z-30 bg-[#090C12]/84 backdrop-blur-sm flex flex-col items-center justify-center gap-4 p-6">
-              <h3 className="text-2xl font-bold text-white">Fight Paused</h3>
+              <h2 className="text-2xl font-bold text-white">Fight Paused</h2>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"

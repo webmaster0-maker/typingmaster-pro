@@ -137,9 +137,13 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                 <div className="w-32 sm:w-44 h-px bg-[#B48A3E]/80 mt-2.5 mb-5" />
 
                 {/* Formal Serif Title */}
-                <h1 className="font-serif text-2xl sm:text-4xl md:text-[42px] font-bold tracking-tight text-[#0F172A] leading-tight">
+                <p
+                  role="heading"
+                  aria-level={3}
+                  className="font-serif text-2xl sm:text-4xl md:text-[42px] font-bold tracking-tight text-[#0F172A] leading-tight"
+                >
                   Certificate of Typing Proficiency
-                </h1>
+                </p>
 
                 <p className="mt-4 sm:mt-5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
                   This credential is proudly presented to

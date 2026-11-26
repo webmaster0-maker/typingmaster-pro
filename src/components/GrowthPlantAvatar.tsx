@@ -461,10 +461,10 @@ export const GrowthPlantAvatar: React.FC<GrowthPlantAvatarProps> = ({
             )}
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white mt-1 flex items-center gap-2 truncate">
+          <div className="text-xl sm:text-2xl font-extrabold text-white mt-1 flex items-center gap-2 truncate">
             <span>{displayedStageMeta.icon}</span>
             <span className="truncate">{displayedStageMeta.name}</span>
-          </h3>
+          </div>
         </div>
 
         <div className="flex flex-col items-end gap-0.5 shrink-0 font-mono tabular-nums">

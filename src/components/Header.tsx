@@ -19,23 +19,38 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenArcade,
 }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Keyboard },
-    { id: 'lessons', label: 'Lessons', icon: BookOpen },
-    { id: 'practice', label: 'Practice', icon: Dumbbell },
-    { id: 'tests', label: 'Tests', icon: Award },
-    { id: 'games', label: 'Games', icon: Gamepad2 },
-    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'dashboard', href: '/', label: 'Dashboard', icon: Keyboard },
+    { id: 'lessons', href: '/lessons', label: 'Lessons', icon: BookOpen },
+    { id: 'practice', href: '/practice', label: 'Practice', icon: Dumbbell },
+    { id: 'tests', href: '/tests', label: 'Tests', icon: Award },
+    { id: 'games', href: '/arcade', label: 'Games', icon: Gamepad2 },
+    { id: 'analytics', href: '/analytics', label: 'Analytics', icon: BarChart2 },
   ];
 
   const firstName = userAccount ? userAccount.fullName.split(' ')[0] : '';
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    itemId: string
+  ) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    if (itemId === 'games') {
+      onOpenArcade();
+    } else {
+      setActiveTab(itemId);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
         {/* Zone 1: Compact Single-Line Brand Mark */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('dashboard')}
+        <a
+          href="/"
+          onClick={(e) => handleNavClick(e, 'dashboard')}
           className="flex items-center gap-2.5 text-left shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white shadow-sm shadow-indigo-500/30 shrink-0">
@@ -44,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="text-base font-bold text-white tracking-tight whitespace-nowrap">
             TypeCrest
           </span>
-        </button>
+        </a>
 
         {/* Zone 2: Clean Single-Line Navigation Links */}
         <nav
@@ -55,10 +70,10 @@ export const Header: React.FC<HeaderProps> = ({
             const isGames = item.id === 'games';
             const isActive = !isGames && activeTab === item.id;
             return (
-              <button
+              <a
                 key={item.id}
-                type="button"
-                onClick={() => (isGames ? onOpenArcade() : setActiveTab(item.id))}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.id)}
                 className={`
                   relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap shrink-0
                   transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
@@ -79,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
                     className="absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-indigo-400"
                   />
                 )}
-              </button>
+              </a>
             );
           })}
         </nav>
@@ -129,10 +144,10 @@ export const Header: React.FC<HeaderProps> = ({
           const isGames = item.id === 'games';
           const isActive = !isGames && activeTab === item.id;
           return (
-            <button
+            <a
               key={item.id}
-              type="button"
-              onClick={() => (isGames ? onOpenArcade() : setActiveTab(item.id))}
+              href={item.href}
+              onClick={(e) => handleNavClick(e, item.id)}
               className={`
                 flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg text-[11px] whitespace-nowrap transition-colors
                 ${
@@ -146,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Icon className="w-4 h-4" />
               <span>{item.label}</span>
-            </button>
+            </a>
           );
         })}
       </nav>

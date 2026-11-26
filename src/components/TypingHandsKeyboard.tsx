@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, Suspense } from 'react';
 import { GuidanceState, FingerType } from '../types';
 import {
   KEYBOARD_ROWS,
@@ -7,7 +7,9 @@ import {
   keyPose,
   FINGER_NAMES_MAP,
 } from './hands/keyflowHands';
-import { ThreeHandsCanvas } from './hands/ThreeHandsCanvas';
+const ThreeHandsCanvas = React.lazy(() =>
+  import('./hands/ThreeHandsCanvas').then((m) => ({ default: m.ThreeHandsCanvas }))
+);
 import { TypingComRenderer } from './hands/renderers/TypingComRenderer';
 import { useHandMotion, KeyDef } from './hands/HandMotionEngine';
 import { HandDefs } from './hands/HandDefs';
@@ -317,12 +319,14 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
 
         {/* 3D ARTICULATED HANDS (Three.js WebGL + glTF with finger highlights and pulse) */}
         {engineMode === '3d' && (
-          <ThreeHandsCanvas
-            activeKey={expectedChar}
-            pressedKey={pressedKey}
-            keyCenters={KEY_CENTERS}
-            visible={handsEnabled}
-          />
+          <Suspense fallback={null}>
+            <ThreeHandsCanvas
+              activeKey={expectedChar}
+              pressedKey={pressedKey}
+              keyCenters={KEY_CENTERS}
+              visible={handsEnabled}
+            />
+          </Suspense>
         )}
 
         {/* ALTERNATIVE VECTOR SVG HANDS (If user switches to Vector mode) */}

@@ -64,7 +64,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
-      <h1 className="text-3xl font-extrabold text-white">Performance Analytics & History</h1>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-extrabold text-white">Performance Analytics &amp; History</h1>
+        <p className="text-sm text-slate-300 max-w-3xl">
+          Review your average net WPM, typing accuracy, daily practice streak, tricky-key mistake hotspots, and completed lesson or arcade history stored locally in your browser.
+        </p>
+      </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

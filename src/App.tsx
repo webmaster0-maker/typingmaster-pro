@@ -1,16 +1,38 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, Suspense } from 'react';
 import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import { Dashboard } from './components/Dashboard';
-import { LessonList } from './components/LessonList';
-import { PracticeHub } from './components/PracticeHub';
-import { NourishmentDrillsPage } from './components/NourishmentDrillsPage';
-import { TestExamHub } from './components/TestExamHub';
-import { AnalyticsDashboard } from './components/AnalyticsDashboard';
-import { TypingWorkspace } from './components/TypingWorkspace';
-import { AssessmentModal } from './components/AssessmentModal';
 import { AccountModal, AccountModalContext } from './components/AccountModal';
-import { CertificateModal } from './components/CertificateModal';
-import { TypingArcadeApp } from './arcade/TypingArcadeApp';
+const LessonList = React.lazy(() =>
+  import('./components/LessonList').then((m) => ({ default: m.LessonList }))
+);
+const PracticeHub = React.lazy(() =>
+  import('./components/PracticeHub').then((m) => ({ default: m.PracticeHub }))
+);
+const NourishmentDrillsPage = React.lazy(() =>
+  import('./components/NourishmentDrillsPage').then((m) => ({ default: m.NourishmentDrillsPage }))
+);
+const TestExamHub = React.lazy(() =>
+  import('./components/TestExamHub').then((m) => ({ default: m.TestExamHub }))
+);
+const AnalyticsDashboard = React.lazy(() =>
+  import('./components/AnalyticsDashboard').then((m) => ({ default: m.AnalyticsDashboard }))
+);
+const TypingWorkspace = React.lazy(() =>
+  import('./components/TypingWorkspace').then((m) => ({ default: m.TypingWorkspace }))
+);
+const AssessmentModal = React.lazy(() =>
+  import('./components/AssessmentModal').then((m) => ({ default: m.AssessmentModal }))
+);
+const CertificateModal = React.lazy(() =>
+  import('./components/CertificateModal').then((m) => ({ default: m.CertificateModal }))
+);
+const TypingArcadeApp = React.lazy(() =>
+  import('./arcade/TypingArcadeApp').then((m) => ({ default: m.TypingArcadeApp }))
+);
+const AdminPortal = React.lazy(() =>
+  import('./components/admin/AdminPortal').then((m) => ({ default: m.AdminPortal }))
+);
 import { COURSES_DATA, PRACTICE_ITEMS, TEST_ITEMS } from './data/courses';
 import {
   Lesson,
@@ -54,8 +76,13 @@ import {
   signCertificate,
   verifyCertificate,
 } from './utils/integrityEngine';
-import { AdminPortal } from './components/admin/AdminPortal';
 import { recordTelemetryVisit, recordTelemetryCompletion } from './utils/adminTelemetry';
+import {
+  AppRouteView,
+  VIEW_TO_PATH,
+  resolveRouteFromLocation,
+  syncHeadCanonicalAndUrl,
+} from './utils/seoRouting';
 
 function getTodayIsoDate(): string {
   const d = new Date();
@@ -99,9 +126,19 @@ function isDirectAdminUrl(): boolean {
 
 export default function App() {
   const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(() => isDirectAdminUrl());
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [isArcadeOpen, setIsArcadeOpen] = useState<boolean>(false);
-  const [showAssessment, setShowAssessment] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (isDirectAdminUrl()) return 'dashboard';
+    const { view } = resolveRouteFromLocation();
+    return view === 'arcade' || view === 'assessment' ? 'dashboard' : view;
+  });
+  const [isArcadeOpen, setIsArcadeOpen] = useState<boolean>(() => {
+    if (isDirectAdminUrl()) return false;
+    return resolveRouteFromLocation().view === 'arcade';
+  });
+  const [showAssessment, setShowAssessment] = useState<boolean>(() => {
+    if (isDirectAdminUrl()) return false;
+    return resolveRouteFromLocation().view === 'assessment';
+  });
   const [userLevel, setUserLevel] = useState<SkillLevel>(() => {
     const saved = safeStorage.getItem('typing_master_user_level');
     if (saved === 'beginner' || saved === 'intermediate' || saved === 'advanced') {
@@ -128,57 +165,61 @@ export default function App() {
     initialWeakKeys?: Record<string, number>;
   } | null>(null);
 
-  // Sync dedicated Lesson/Practice/Test page state with URL hash & browser Back button
+  // Sync clean URL slugs, self-referencing canonicals, & browser Back/Forward history
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isAdminPortalOpen) return;
+
     if (activeWorkspace) {
+      const parentView: AppRouteView =
+        activeWorkspace.mode === 'practice'
+          ? 'practice'
+          : activeWorkspace.mode === 'test' || activeWorkspace.mode === 'exam'
+          ? 'tests'
+          : 'lessons';
+      const parentPath = VIEW_TO_PATH[parentView];
       const slug = encodeURIComponent(activeWorkspace.itemId || activeWorkspace.title);
-      const targetHash = `#${activeWorkspace.mode}/${slug}`;
-      if (window.location.hash !== targetHash) {
+      const targetUrl = `${parentPath}#${activeWorkspace.mode}/${slug}`;
+      if (window.location.pathname + window.location.hash !== targetUrl) {
         try {
-          window.history.pushState({ workspace: true }, '', targetHash);
+          window.history.pushState({ workspace: true }, '', targetUrl);
         } catch {
           // Ignore restricted iframe history pushState errors
         }
       }
+      syncHeadCanonicalAndUrl(parentPath, parentView);
       window.scrollTo(0, 0);
-    } else if (showAssessment) {
-      if (window.location.hash !== '#assessment') {
-        try {
-          window.history.pushState({ assessment: true }, '', '#assessment');
-        } catch {
-          // Ignore restricted iframe history pushState errors
-        }
-      }
-      window.scrollTo(0, 0);
-    } else if (activeTab === 'drills') {
-      if (window.location.hash !== '#drills') {
-        try {
-          window.history.pushState({ tab: 'drills' }, '', '#drills');
-        } catch {
-          // Ignore restricted iframe history pushState errors
-        }
-      }
-      window.scrollTo(0, 0);
-    } else if (
-      window.location.hash === '#drills' ||
-      window.location.hash === '#assessment' ||
-      window.location.hash.startsWith('#lesson/') ||
-      window.location.hash.startsWith('#practice/') ||
-      window.location.hash.startsWith('#test/') ||
-      window.location.hash.startsWith('#exam/')
-    ) {
+      return;
+    }
+
+    const currentView: AppRouteView = isArcadeOpen
+      ? 'arcade'
+      : showAssessment
+      ? 'assessment'
+      : (activeTab as AppRouteView) in VIEW_TO_PATH
+      ? (activeTab as AppRouteView)
+      : 'dashboard';
+
+    const targetPath = VIEW_TO_PATH[currentView];
+    if (window.location.pathname !== targetPath || window.location.hash) {
       try {
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.history.pushState({ view: currentView }, '', targetPath);
       } catch {
-        // Ignore restricted iframe history errors
+        // Ignore restricted iframe history pushState errors
       }
     }
-  }, [activeWorkspace, activeTab, showAssessment]);
+    syncHeadCanonicalAndUrl(targetPath, currentView);
+    if (currentView !== 'dashboard') {
+      window.scrollTo(0, 0);
+    }
+  }, [activeWorkspace, activeTab, isArcadeOpen, showAssessment, isAdminPortalOpen]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handlePopState = () => {
+      if (isDirectAdminUrl()) {
+        setIsAdminPortalOpen(true);
+        return;
+      }
       if (
         !window.location.hash.startsWith('#lesson/') &&
         !window.location.hash.startsWith('#practice/') &&
@@ -188,14 +229,13 @@ export default function App() {
         setWorkspaceIssuedCertificate(null);
         setActiveWorkspace(null);
       }
-      if (window.location.hash !== '#assessment') {
-        setShowAssessment(false);
+      const { view, canonicalPath } = resolveRouteFromLocation();
+      setShowAssessment(view === 'assessment');
+      setIsArcadeOpen(view === 'arcade');
+      if (view !== 'arcade' && view !== 'assessment') {
+        setActiveTab(view);
       }
-      if (window.location.hash === '#drills') {
-        setActiveTab('drills');
-      } else if (!window.location.hash) {
-        setActiveTab((prev) => (prev === 'drills' ? 'dashboard' : prev));
-      }
+      syncHeadCanonicalAndUrl(canonicalPath, view);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -629,10 +669,16 @@ export default function App() {
     />
   ) : null;
 
+  const routeFallback = (
+    <div className="min-h-[60vh] flex items-center justify-center bg-slate-950 text-slate-400 text-sm">
+      Loading TypeCrest workspace...
+    </div>
+  );
+
   if (activeWorkspace) {
     const isRemediation = Boolean(activeWorkspace.remediationTargetKeys?.length);
     return (
-      <>
+      <Suspense fallback={routeFallback}>
         <TypingWorkspace
           key={`${activeWorkspace.mode}-${activeWorkspace.itemId || activeWorkspace.title}`}
           mode={activeWorkspace.mode}
@@ -671,26 +717,32 @@ export default function App() {
             onClose={() => setActiveCertificateModal(null)}
           />
         )}
-      </>
+      </Suspense>
     );
   }
 
   if (isAdminPortalOpen) {
-    return <AdminPortal onExit={handleExitAdminPortal} />;
+    return (
+      <Suspense fallback={routeFallback}>
+        <AdminPortal onExit={handleExitAdminPortal} />
+      </Suspense>
+    );
   }
 
   if (showAssessment) {
     return (
-      <AssessmentModal
-        onAssignLevel={handleAssignLevel}
-        onClose={() => setShowAssessment(false)}
-      />
+      <Suspense fallback={routeFallback}>
+        <AssessmentModal
+          onAssignLevel={handleAssignLevel}
+          onClose={() => setShowAssessment(false)}
+        />
+      </Suspense>
     );
   }
 
   if (isArcadeOpen) {
     return (
-      <>
+      <Suspense fallback={routeFallback}>
         <TypingArcadeApp
           userAccount={userAccount}
           userStats={userStats}
@@ -704,7 +756,7 @@ export default function App() {
         />
 
         {accountModalNode}
-      </>
+      </Suspense>
     );
   }
 
@@ -724,65 +776,67 @@ export default function App() {
           <AdSlot slot={SITE_ADS_CONFIG.slots.topLeaderboard} />
         </div>
 
-        {activeTab === 'dashboard' && (
-          <Dashboard
-            lessons={COURSES_DATA}
-            practiceItems={PRACTICE_ITEMS}
-            userStats={userStats}
-            sessionHistory={sessionHistory}
-            onStartLesson={handleStartLesson}
-            onStartPractice={handleStartPractice}
-            onOpenNourishmentDrills={() => setActiveTab('drills')}
-            setActiveTab={setActiveTab}
-          />
-        )}
-        {activeTab === 'drills' && (
-          <NourishmentDrillsPage
-            practiceItems={PRACTICE_ITEMS}
-            testItems={TEST_ITEMS}
-            weakKeys={userStats.weakKeys}
-            onStartPractice={handleStartPractice}
-            onStartTest={handleStartTest}
-            onStartRemediationLesson={handleStartRemediationLesson}
-            onBack={() => setActiveTab('dashboard')}
-          />
-        )}
-        {activeTab === 'lessons' && (
-          <LessonList
-            lessons={COURSES_DATA}
-            sessionHistory={sessionHistory}
-            userStats={userStats}
-            initialLevel={userLevel}
-            onStartLesson={handleStartLesson}
-            onOpenAssessment={() => setShowAssessment(true)}
-          />
-        )}
-        {activeTab === 'practice' && (
-          <PracticeHub
-            practiceItems={PRACTICE_ITEMS}
-            weakKeys={userStats.weakKeys}
-            onStartPractice={handleStartPractice}
-            onStartRemediationLesson={handleStartRemediationLesson}
-          />
-        )}
-        {activeTab === 'tests' && (
-          <TestExamHub
-            testItems={TEST_ITEMS}
-            onStartTest={handleStartTest}
-            certificates={certificates}
-            userAccount={userAccount}
-            onViewCertificate={(cert) => setActiveCertificateModal(cert)}
-            onDownloadCertificate={downloadCertificatePng}
-            onOpenAccount={() => openAccountModal('certificate')}
-          />
-        )}
-        {activeTab === 'analytics' && (
-          <AnalyticsDashboard
-            userStats={userStats}
-            sessionHistory={sessionHistory}
-            onStartRemediationLesson={handleStartRemediationLesson}
-          />
-        )}
+        <Suspense fallback={routeFallback}>
+          {activeTab === 'dashboard' && (
+            <Dashboard
+              lessons={COURSES_DATA}
+              practiceItems={PRACTICE_ITEMS}
+              userStats={userStats}
+              sessionHistory={sessionHistory}
+              onStartLesson={handleStartLesson}
+              onStartPractice={handleStartPractice}
+              onOpenNourishmentDrills={() => setActiveTab('drills')}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {activeTab === 'drills' && (
+            <NourishmentDrillsPage
+              practiceItems={PRACTICE_ITEMS}
+              testItems={TEST_ITEMS}
+              weakKeys={userStats.weakKeys}
+              onStartPractice={handleStartPractice}
+              onStartTest={handleStartTest}
+              onStartRemediationLesson={handleStartRemediationLesson}
+              onBack={() => setActiveTab('dashboard')}
+            />
+          )}
+          {activeTab === 'lessons' && (
+            <LessonList
+              lessons={COURSES_DATA}
+              sessionHistory={sessionHistory}
+              userStats={userStats}
+              initialLevel={userLevel}
+              onStartLesson={handleStartLesson}
+              onOpenAssessment={() => setShowAssessment(true)}
+            />
+          )}
+          {activeTab === 'practice' && (
+            <PracticeHub
+              practiceItems={PRACTICE_ITEMS}
+              weakKeys={userStats.weakKeys}
+              onStartPractice={handleStartPractice}
+              onStartRemediationLesson={handleStartRemediationLesson}
+            />
+          )}
+          {activeTab === 'tests' && (
+            <TestExamHub
+              testItems={TEST_ITEMS}
+              onStartTest={handleStartTest}
+              certificates={certificates}
+              userAccount={userAccount}
+              onViewCertificate={(cert) => setActiveCertificateModal(cert)}
+              onDownloadCertificate={downloadCertificatePng}
+              onOpenAccount={() => openAccountModal('certificate')}
+            />
+          )}
+          {activeTab === 'analytics' && (
+            <AnalyticsDashboard
+              userStats={userStats}
+              sessionHistory={sessionHistory}
+              onStartRemediationLesson={handleStartRemediationLesson}
+            />
+          )}
+        </Suspense>
 
         {/* Bottom Banner Ad Slot */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
@@ -790,13 +844,21 @@ export default function App() {
         </div>
       </main>
 
+      <Footer
+        onNavigateTab={setActiveTab}
+        onOpenArcade={() => setIsArcadeOpen(true)}
+        onOpenAssessment={() => setShowAssessment(true)}
+      />
+
       {accountModalNode}
 
       {activeCertificateModal && (
-        <CertificateModal
-          certificate={activeCertificateModal}
-          onClose={() => setActiveCertificateModal(null)}
-        />
+        <Suspense fallback={null}>
+          <CertificateModal
+            certificate={activeCertificateModal}
+            onClose={() => setActiveCertificateModal(null)}
+          />
+        </Suspense>
       )}
     </div>
   );

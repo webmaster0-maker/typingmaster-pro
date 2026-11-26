@@ -143,6 +143,9 @@ export const LessonList: React.FC<LessonListProps> = ({
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white text-balance">
               Every Lesson Grows Your Typing Tree
             </h1>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+              Follow 28 structured QWERTY touch typing lessons across Beginner, Intermediate, and Advanced tracks with 3D finger placement guidance and 90%+ mastery goals.
+            </p>
           </div>
 
           <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -163,7 +166,11 @@ export const LessonList: React.FC<LessonListProps> = ({
       </div>
 
       {/* Level Selector Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section aria-labelledby="curriculum-tracks-heading">
+        <h2 id="curriculum-tracks-heading" className="sr-only">
+          Touch Typing Curriculum Tracks
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {levels.map((lvl) => {
           const Icon = lvl.icon;
           const isSelected = selectedLevel === lvl.id;
@@ -217,7 +224,8 @@ export const LessonList: React.FC<LessonListProps> = ({
             </button>
           );
         })}
-      </div>
+        </div>
+      </section>
 
       {/* Curriculum Filter & Section Header */}
       <div className="space-y-8">

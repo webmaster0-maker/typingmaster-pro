@@ -1272,7 +1272,7 @@ export const ArcadeArena: React.FC<ArcadeArenaProps> = ({
           {/* IDLE OVERLAY OVER LIVE ATTRACT-MODE CANVAS */}
           {gameState === 'idle' && (
             <div className="absolute inset-0 z-30 rounded-xl bg-[#090C12]/65 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center gap-5">
-              <h3 className="text-2xl font-extrabold text-white">{worldMeta.gameTitle}</h3>
+              <h2 className="text-2xl font-extrabold text-white">{worldMeta.gameTitle}</h2>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"
@@ -1309,7 +1309,7 @@ export const ArcadeArena: React.FC<ArcadeArenaProps> = ({
           {/* PAUSED OVERLAY (Stays fullscreen with Resume, Restart, Exit to Menu) */}
           {gameState === 'paused' && (
             <div className="absolute inset-0 z-30 bg-[#090C12]/84 backdrop-blur-sm flex flex-col items-center justify-center gap-4 p-6">
-              <h3 className="text-2xl font-bold text-white">{worldMeta.gameTitle} Paused</h3>
+              <h2 className="text-2xl font-bold text-white">{worldMeta.gameTitle} Paused</h2>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"
