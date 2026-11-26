@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Lesson, PracticeItem, UserStats, SessionResult } from '../types';
 import { GrowthPlantAvatar } from './GrowthPlantAvatar';
 import { calculateGrowthProfile, getLessonCompletionMeta } from '../utils/growthEngine';
@@ -8,6 +8,7 @@ import {
   TrendingUp,
   Target,
   Sprout,
+  ChevronDown,
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -32,6 +33,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
   setActiveTab,
 }) => {
   const growthProfile = calculateGrowthProfile(userStats, sessionHistory);
+  const [openFaq, setOpenFaq] = useState<number>(0);
+
+  const faqItems = [
+    {
+      q: 'How does TypeCrest teach touch typing with 3D hands?',
+      a: 'TypeCrest renders interactive 3D articulated hands and a synchronized QWERTY keyboard that highlight the exact key and finger needed for every character, including opposite-hand Shift coordination.',
+    },
+    {
+      q: 'Is TypeCrest really free to use?',
+      a: `Yes. TypeCrest is 100% free ($0 USD) with no paid tiers. All ${lessons.length} touch typing lessons, 24 themed practice and test paragraphs, weak-key drills, PDF/PNG certificates, and arcade games run in your browser.`,
+    },
+    {
+      q: 'How do I earn a typing speed certificate?',
+      a: 'Pass any timed speed test or certification exam on the Speed tests page with at least 35 WPM net speed and 95% accuracy to download an official PDF or PNG certificate with a unique verification code.',
+    },
+    {
+      q: 'How do weak-key drills work?',
+      a: 'TypeCrest automatically tracks missed keys during lessons and tests, identifies hotspot patterns, and generates 3-stage recovery drills (isolated taps, transitions, and real words) to eliminate mistakes.',
+    },
+    {
+      q: 'Do I need an account, and where is my data stored?',
+      a: 'No sign-up is required. TypeCrest is local-first: your WPM stats, lesson progress, weak-key history, and earned certificates stay privately in your browser.',
+    },
+    {
+      q: 'What devices and keyboards are supported?',
+      a: 'TypeCrest is designed for desktop and laptop computers with a physical QWERTY keyboard. You can toggle between 3D Articulated Hands, 2D Vector Hands, and light or dark keyboard themes.',
+    },
+  ];
 
   // Find first unbloomed lesson as the next recommended lesson to nourish
   const nextLesson =
@@ -298,7 +327,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </tr>
                 <tr>
                   <td className="py-2.5 pr-3 font-semibold text-sky-400">Certification</td>
-                  <td className="py-2.5 px-3">Timed speed tests &amp; verified PNG awards</td>
+                  <td className="py-2.5 px-3">Timed speed tests &amp; PDF/PNG awards</td>
                   <td className="py-2.5 pl-3 font-mono">35+ WPM · 95%</td>
                 </tr>
               </tbody>
@@ -307,38 +336,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         <div className="lg:col-span-6 bg-slate-900/75 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white">FAQ</h2>
-          <div className="space-y-3 text-xs leading-relaxed">
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100">
-                How does TypeCrest teach touch typing with 3D hands?
-              </h3>
-              <p className="text-slate-400">
-                TypeCrest renders interactive 3D articulated hands and a synchronized QWERTY keyboard that highlight the exact key and finger needed for every character, including opposite-hand Shift coordination.
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100">Is TypeCrest free to use?</h3>
-              <p className="text-slate-400">
-                Yes. TypeCrest is 100% free ($0 USD) with no paid tiers. All {lessons.length} touch typing lessons, adaptive drills, speed tests, certificates, and 5 arcade games run online in your browser.
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100">
-                How do I earn a typing speed certificate on TypeCrest?
-              </h3>
-              <p className="text-slate-400">
-                Pass any timed speed test or certification exam on the Tests page with at least 35 WPM net speed and 95% accuracy to generate a downloadable PNG certificate with a unique verification code.
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100">
-                How do weak-key drills work?
-              </h3>
-              <p className="text-slate-400">
-                TypeCrest automatically tracks missed keys and generates targeted practice drills to fix them.
-              </p>
-            </div>
+          <h2 className="text-lg font-bold text-white">Frequently Asked Questions</h2>
+          <div className="divide-y divide-slate-800/80">
+            {faqItems.map((item, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div key={item.q} className="py-2.5 first:pt-0 last:pb-0">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? -1 : idx)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center justify-between gap-3 text-left text-xs font-semibold text-slate-100 hover:text-emerald-300 transition-colors py-1"
+                  >
+                    <span>{item.q}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180 text-emerald-400' : ''
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <p className="text-xs text-slate-400 leading-relaxed pt-1.5 pr-6">
+                      {item.a}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
