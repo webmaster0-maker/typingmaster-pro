@@ -15,6 +15,10 @@ import { soundManager } from '../utils/audio';
 import { ArrowLeft, RotateCcw, ChevronRight, AlertCircle, CheckCircle2, Award } from 'lucide-react';
 import { AdSlot } from './ads/AdSlot';
 import { SITE_ADS_CONFIG } from '../config/adsConfig';
+import {
+  isSiteAdSlotVisible,
+  useAdVisibilitySettings,
+} from '../utils/adSettings';
 
 interface TypingWorkspaceProps {
   mode: WorkspaceMode;
@@ -73,6 +77,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
   onViewCertificate,
   onRequestCertificateAuth,
 }) => {
+  const adSettings = useAdVisibilitySettings();
   const isTestMode = mode === 'test' || mode === 'exam' || Boolean(lessonData?.isTest);
   const isCertificateEligibleMode = mode === 'test' || mode === 'exam';
   const exerciseList = exercises && exercises.length > 0 ? exercises : [initialTargetContent];
@@ -895,9 +900,11 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
             )}
 
             {/* Results Screen AdSlot */}
-            <div className="w-full flex justify-center py-1">
-              <AdSlot slot={SITE_ADS_CONFIG.slots.resultsCard} />
-            </div>
+            {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.resultsCard.id, adSettings) && (
+              <div className="w-full flex justify-center py-1">
+                <AdSlot slot={SITE_ADS_CONFIG.slots.resultsCard} />
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
               <button
@@ -945,9 +952,11 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
       ) : (
         <div className="flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden">
           {/* Left Skyscraper Rail (Visible on wide screens) */}
-          <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
-            <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceLeftRail} />
-          </div>
+          {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.workspaceLeftRail.id, adSettings) && (
+            <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
+              <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceLeftRail} />
+            </div>
+          )}
 
           {showKeyboardStage ? (
             /* LESSONS & PRACTICE: SINGLE DIRECT-TYPING TEXT BOX + ENLARGED KEYBOARD & HANDS */
@@ -993,9 +1002,11 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
           )}
 
           {/* Right Skyscraper Rail (Visible on wide screens) */}
-          <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
-            <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceRightRail} />
-          </div>
+          {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.workspaceRightRail.id, adSettings) && (
+            <div className="hidden xl:flex flex-none items-center justify-center px-2 py-4 z-10">
+              <AdSlot slot={SITE_ADS_CONFIG.slots.workspaceRightRail} />
+            </div>
+          )}
         </div>
       )}
     </div>

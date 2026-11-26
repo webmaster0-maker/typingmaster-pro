@@ -18,6 +18,7 @@ import {
   Lock,
   Users,
   Eye,
+  EyeOff,
   Activity,
   Award,
   TrendingUp,
@@ -33,7 +34,17 @@ import {
   Flame,
   KeyRound,
   ExternalLink,
+  SlidersHorizontal,
+  LayoutGrid,
+  RotateCcw,
 } from 'lucide-react';
+import {
+  AdPlacementKey,
+  setAllAdLayoutsVisible,
+  setAdPlacementVisible,
+  resetAdVisibilitySettings,
+  useAdVisibilitySettings,
+} from '../../utils/adSettings';
 
 interface AdminPortalProps {
   onExit: () => void;
@@ -60,6 +71,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
   // Telemetry data
   const [telemetry, setTelemetry] = useState<AdminTelemetryData>(() => getAdminTelemetrySummary());
   const [registeredAccounts, setRegisteredAccounts] = useState<LocalAccountRecord[]>(() => loadLocalAccounts());
+  const adSettings = useAdVisibilitySettings();
+  const visiblePlacementsCount = Object.values(adSettings.placements).filter(Boolean).length;
+  const activePlacementsCount = adSettings.adsEnabled ? visiblePlacementsCount : 0;
 
   const certificatesList: TypingCertificate[] = useMemo(() => {
     try {
@@ -354,6 +368,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
           >
             <Award className="w-3.5 h-3.5" />
             <span>Certificates</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('system')}
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
+              activeTab === 'system'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>AdSense Settings</span>
           </button>
         </div>
 
@@ -874,6 +900,210 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                 <span>Certificate integrity verification is active on all generated PNG downloads.</span>
               </div>
               <span className="text-[11px] text-emerald-400 font-mono">HMAC Checksum Active</span>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: ADSENSE LAYOUT VISIBILITY & SITE SETTINGS */}
+        {activeTab === 'system' && (
+          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl animate-fadeIn space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <LayoutGrid className="w-5 h-5 text-indigo-400" />
+                  <span>AdSense Layout Visibility Controls</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Hide or unhide AdSense ad containers across hub pages, typing workspace, results screen, and fullscreen arcade modes. Changes apply immediately.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                <span
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold border ${
+                    adSettings.adsEnabled
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                      : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                  }`}
+                >
+                  {adSettings.adsEnabled
+                    ? `${activePlacementsCount}/5 Layout Zones Visible`
+                    : 'All AdSense Layouts Hidden'}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => resetAdVisibilitySettings()}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  title="Restore all AdSense layouts to visible"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset Default</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Master Global Switch Card */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-950/90 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                <div
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${
+                    adSettings.adsEnabled
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                      : 'bg-slate-800 border-slate-700 text-slate-400'
+                  }`}
+                >
+                  {adSettings.adsEnabled ? (
+                    <Eye className="w-5 h-5" />
+                  ) : (
+                    <EyeOff className="w-5 h-5" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">
+                    Master AdSense Layouts Toggle
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {adSettings.adsEnabled
+                      ? 'AdSense containers are currently active on the public site according to the zone switches below.'
+                      : 'All AdSense banners, skyscrapers, rectangles, and arcade side rails are completely hidden from visitors.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                role="switch"
+                aria-checked={adSettings.adsEnabled}
+                onClick={() => setAllAdLayoutsVisible(!adSettings.adsEnabled)}
+                className={`px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 shrink-0 border ${
+                  adSettings.adsEnabled
+                    ? 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border-rose-500/40'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-600/20'
+                }`}
+              >
+                {adSettings.adsEnabled ? (
+                  <>
+                    <EyeOff className="w-4 h-4" />
+                    <span>Hide All AdSense Layouts</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4" />
+                    <span>Unhide All AdSense Layouts</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Individual Placement Controls */}
+            <div className="space-y-3">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Individual AdSense Placement Zones
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {(
+                  [
+                    {
+                      key: 'topLeaderboard',
+                      title: 'Hub Top Leaderboard',
+                      size: '728 × 90',
+                      description: 'Horizontal banner above Dashboard, Courses, Practice, Tests & Analytics.',
+                    },
+                    {
+                      key: 'bottomBanner',
+                      title: 'Hub Bottom Banner',
+                      size: '728 × 90',
+                      description: 'Horizontal banner displayed above the main site footer.',
+                    },
+                    {
+                      key: 'workspaceRails',
+                      title: 'Typing Workspace Side Rails',
+                      size: '160 × 600 (L & R)',
+                      description: 'Left and right skyscrapers flanking desktop typing lessons & exams.',
+                    },
+                    {
+                      key: 'resultsCard',
+                      title: 'Session Results Rectangle',
+                      size: '300 × 250',
+                      description: 'Medium rectangle shown on lesson and certification results screens.',
+                    },
+                    {
+                      key: 'arcadeRails',
+                      title: 'Arcade Fullscreen Side Rails',
+                      size: '160 × 600 (L & R)',
+                      description: 'Sidebars flanking all 5 fullscreen TypeCrest Arcade games.',
+                    },
+                  ] as Array<{
+                    key: AdPlacementKey;
+                    title: string;
+                    size: string;
+                    description: string;
+                  }>
+                ).map((item) => {
+                  const zoneEnabled = adSettings.placements[item.key];
+                  const effectiveVisible = adSettings.adsEnabled && zoneEnabled;
+                  return (
+                    <div
+                      key={item.key}
+                      className={`p-4 rounded-2xl border transition-colors flex items-center justify-between gap-4 ${
+                        effectiveVisible
+                          ? 'bg-slate-950/80 border-slate-800'
+                          : 'bg-slate-950/40 border-slate-800/60 opacity-80'
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-white">{item.title}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono">
+                            {item.size}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-1">{item.description}</p>
+                      </div>
+
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={zoneEnabled}
+                        disabled={!adSettings.adsEnabled}
+                        onClick={() => setAdPlacementVisible(item.key, !zoneEnabled)}
+                        className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all shrink-0 flex items-center gap-1.5 ${
+                          !adSettings.adsEnabled
+                            ? 'bg-slate-800/60 border-slate-700 text-slate-500 cursor-not-allowed'
+                            : zoneEnabled
+                            ? 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/40 text-emerald-300'
+                            : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                        }`}
+                      >
+                        {effectiveVisible ? (
+                          <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Visible</span>
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Hidden</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span>
+                Note: Preference persists locally in this browser across reloads and tabs. Re-open{' '}
+                <strong className="text-slate-200">Public Site</strong> to preview the updated layout immediately.
+              </span>
+              {adSettings.updatedAt && (
+                <span className="font-mono text-slate-500">
+                  Updated: {adSettings.updatedAt.replace('T', ' ').slice(0, 19)} UTC
+                </span>
+              )}
             </div>
           </div>
         )}

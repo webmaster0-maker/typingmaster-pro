@@ -5,6 +5,10 @@ import {
   SiteAdsConfig,
 } from '../../config/adsConfig';
 import { LayoutGrid, Sparkles } from 'lucide-react';
+import {
+  isSiteAdSlotVisible,
+  useAdVisibilitySettings,
+} from '../../utils/adSettings';
 
 declare global {
   interface Window {
@@ -24,9 +28,15 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   config = SITE_ADS_CONFIG,
 }) => {
   const isPushedRef = useRef(false);
+  const adSettings = useAdVisibilitySettings();
 
-  const isEnabled = config.enabled && slot.enabled;
-  const isAdSense = config.provider === 'adsense' && Boolean(config.clientId) && Boolean(slot.slotId);
+  const isVisibleByAdmin = isSiteAdSlotVisible(slot.id, adSettings);
+  const isEnabled = config.enabled && slot.enabled && isVisibleByAdmin;
+  const isAdSense =
+    isEnabled &&
+    config.provider === 'adsense' &&
+    Boolean(config.clientId) &&
+    Boolean(slot.slotId);
   const isPreview = config.provider === 'preview';
 
   useEffect(() => {

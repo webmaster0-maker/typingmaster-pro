@@ -72,6 +72,10 @@ import {
 import { AdSlot } from './components/ads/AdSlot';
 import { SITE_ADS_CONFIG } from './config/adsConfig';
 import {
+  isSiteAdSlotVisible,
+  useAdVisibilitySettings,
+} from './utils/adSettings';
+import {
   signUserStats,
   verifyUserStats,
   signCertificate,
@@ -116,6 +120,7 @@ function computeNextStreak(prevStreak: number, lastPracticeDate?: string): { str
 }
 
 export default function App() {
+  const adSettings = useAdVisibilitySettings();
   const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(
     () => getAdminSession().authenticated
   );
@@ -785,9 +790,11 @@ export default function App() {
 
       <main className="flex-1 pb-16">
         {/* Top Leaderboard Ad Slot */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-          <AdSlot slot={SITE_ADS_CONFIG.slots.topLeaderboard} />
-        </div>
+        {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.topLeaderboard.id, adSettings) && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+            <AdSlot slot={SITE_ADS_CONFIG.slots.topLeaderboard} />
+          </div>
+        )}
 
         <Suspense fallback={routeFallback}>
           {activeTab === 'dashboard' && (
@@ -854,9 +861,11 @@ export default function App() {
         </Suspense>
 
         {/* Bottom Banner Ad Slot */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-          <AdSlot slot={SITE_ADS_CONFIG.slots.bottomBanner} />
-        </div>
+        {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.bottomBanner.id, adSettings) && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+            <AdSlot slot={SITE_ADS_CONFIG.slots.bottomBanner} />
+          </div>
+        )}
       </main>
 
       <Footer

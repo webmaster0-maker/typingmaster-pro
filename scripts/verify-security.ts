@@ -25,6 +25,14 @@ import {
   verifyAdminGateToken,
 } from '../src/utils/adminAuth';
 import {
+  getAdVisibilitySettings,
+  isArcadeAdRailVisible,
+  isSiteAdSlotVisible,
+  resetAdVisibilitySettings,
+  setAdPlacementVisible,
+  setAllAdLayoutsVisible,
+} from '../src/utils/adSettings';
+import {
   getAdminTelemetrySummary,
   recordTelemetryVisit,
   recordTelemetryCompletion,
@@ -282,6 +290,32 @@ async function runSecurityAuditSuite() {
 
   logoutAdmin();
   assert(!getAdminSession().authenticated, 'Admin logout cleanly invalidates admin session');
+
+  // Admin AdSense Layout Visibility Settings Verification
+  resetAdVisibilitySettings();
+  const defaultAds = getAdVisibilitySettings();
+  assert(defaultAds.adsEnabled === true, 'AdSense layouts start visible by default');
+  assert(
+    isSiteAdSlotVisible('ad-hub-top-leaderboard') && isArcadeAdRailVisible(),
+    'Hub and Arcade AdSense layouts report visible by default'
+  );
+
+  setAllAdLayoutsVisible(false);
+  assert(
+    !isSiteAdSlotVisible('ad-hub-top-leaderboard') &&
+      !isSiteAdSlotVisible('ad-workspace-left-rail') &&
+      !isSiteAdSlotVisible('ad-results-card') &&
+      !isArcadeAdRailVisible(),
+    'Admin master hide toggle hides all site and arcade AdSense layouts'
+  );
+
+  setAllAdLayoutsVisible(true);
+  setAdPlacementVisible('arcadeRails', false);
+  assert(
+    isSiteAdSlotVisible('ad-hub-top-leaderboard') && !isArcadeAdRailVisible(),
+    'Admin per-placement toggle hides specific AdSense layout independently'
+  );
+  resetAdVisibilitySettings();
 
   console.log('\n======================================================');
   console.log(`🎉 ALL ${passedTests}/${totalTests} SECURITY TESTS PASSED GREEN 100%!`);

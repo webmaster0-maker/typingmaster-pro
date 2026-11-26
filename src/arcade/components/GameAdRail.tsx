@@ -7,6 +7,10 @@ import {
   getAdSlotConfig,
   hasValidAdSenseConfig,
 } from '../arcadeAdConfig';
+import {
+  isArcadeAdRailVisible,
+  useAdVisibilitySettings,
+} from '../../utils/adSettings';
 
 declare global {
   interface Window {
@@ -30,7 +34,9 @@ export const GameAdRail: React.FC<GameAdRailProps> = ({
   gameMode,
   config = ARCADE_ADS_CONFIG,
 }) => {
-  const slot = getAdSlotConfig(placement, config);
+  const adSettings = useAdVisibilitySettings();
+  const isVisibleByAdmin = isArcadeAdRailVisible(adSettings);
+  const slot = isVisibleByAdmin ? getAdSlotConfig(placement, config) : null;
   const pushedRef = useRef<boolean>(false);
 
   const shouldRenderAdSense = slot ? hasValidAdSenseConfig(slot, config) : false;
