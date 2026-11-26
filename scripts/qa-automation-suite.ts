@@ -46,6 +46,7 @@ import {
   normalizeRecipientName,
   getUserInitials,
   sanitizeCertificateFilename,
+  buildCertificatePdfBytes,
 } from '../src/utils/certificateEngine';
 import {
   ARCADE_CORPUS_V1,
@@ -771,6 +772,16 @@ console.log('\n>>> [11/11] AUDITING POST-TEST CERTIFICATE ENGINE & VALIDATION');
     sanitizeCertificateFilename('Jordan Rivera', '1-Minute Speed Assessment').endsWith('.png'),
     'Sanitized certificate filename ends with .png'
   );
+  assert(
+    sanitizeCertificateFilename('Jordan Rivera', '1-Minute Speed Assessment', 'pdf').endsWith('.pdf'),
+    'Sanitized certificate PDF filename ends with .pdf'
+  );
+
+  const samplePdfBytes = buildCertificatePdfBytes(new Uint8Array([0xff, 0xd8, 0xff, 0xd9]), 1600, 1120);
+  const samplePdfStr = Buffer.from(samplePdfBytes).toString('latin1');
+  assert(samplePdfStr.startsWith('%PDF-1.4'), 'PDF generator writes valid %PDF-1.4 header');
+  assert(samplePdfStr.includes('/Filter /DCTDecode'), 'PDF generator embeds JPEG image stream');
+  assert(samplePdfStr.includes('xref') && samplePdfStr.trimEnd().endsWith('%%EOF'), 'PDF generator writes valid xref table and %%EOF trailer');
 }
 
 // ----------------------------------------------------

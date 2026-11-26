@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { TypingCertificate } from '../types';
 import {
+  downloadCertificatePdf,
   downloadCertificatePng,
   formatCertificateDate,
   formatCertificateDuration,
 } from '../utils/certificateEngine';
-import { Download, Printer, X, Check } from 'lucide-react';
+import { Download, FileText, Home, Printer, X, Check } from 'lucide-react';
 
 interface CertificateModalProps {
   certificate: TypingCertificate;
   onClose: () => void;
+  onBackHome?: () => void;
 }
 
 export const CertificateModal: React.FC<CertificateModalProps> = ({
   certificate,
   onClose,
+  onBackHome,
 }) => {
-  const [downloaded, setDownloaded] = useState(false);
+  const [downloadedFormat, setDownloadedFormat] = useState<'png' | 'pdf' | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -30,14 +33,28 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [onClose]);
 
-  const handleDownload = () => {
+  const handleDownloadPdf = () => {
+    downloadCertificatePdf(certificate);
+    setDownloadedFormat('pdf');
+    setTimeout(() => setDownloadedFormat(null), 2200);
+  };
+
+  const handleDownloadPng = () => {
     downloadCertificatePng(certificate);
-    setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 2200);
+    setDownloadedFormat('png');
+    setTimeout(() => setDownloadedFormat(null), 2200);
   };
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleBackHome = () => {
+    if (onBackHome) {
+      onBackHome();
+    } else {
+      onClose();
+    }
   };
 
   const scoringLabel =
@@ -57,24 +74,58 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
       >
         {/* Top Action Bar (Hidden on Print) */}
         <div className="print-hidden flex flex-wrap items-center justify-between gap-3 bg-slate-900/95 border border-slate-800 rounded-2xl px-4 py-3 shadow-xl">
-          <div className="min-w-0">
-            <h2 className="text-sm sm:text-base font-bold text-white truncate">
-              Certificate of Typing Proficiency
-            </h2>
-            <p className="text-xs text-slate-400 font-mono tabular-nums truncate">
-              ID: {certificate.certificateCode} · Issued {formatCertificateDate(certificate.issuedAt)}
-            </p>
+          <div className="flex items-center gap-3 min-w-0">
+            <a
+              href="/"
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                handleBackHome();
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+              title="Back to Home Page"
+            >
+              <Home className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <span>Back to Home</span>
+            </a>
+
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-bold text-white truncate">
+                Certificate of Typing Proficiency
+              </h2>
+              <p className="text-xs text-slate-400 font-mono tabular-nums truncate">
+                ID: {certificate.certificateCode} · Issued {formatCertificateDate(certificate.issuedAt)}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               type="button"
-              onClick={handleDownload}
+              onClick={handleDownloadPdf}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap shadow-lg shadow-emerald-950/40"
             >
-              {downloaded ? (
+              {downloadedFormat === 'pdf' ? (
                 <>
                   <Check className="w-4 h-4 shrink-0" />
+                  <span>PDF Saved</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span>Download PDF</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadPng}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold transition-colors whitespace-nowrap"
+            >
+              {downloadedFormat === 'png' ? (
+                <>
+                  <Check className="w-4 h-4 shrink-0 text-emerald-400" />
                   <span>PNG Saved</span>
                 </>
               ) : (
@@ -88,10 +139,10 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors whitespace-nowrap"
             >
               <Printer className="w-4 h-4 shrink-0" />
-              <span>Print / Save PDF</span>
+              <span>Print</span>
             </button>
 
             <button

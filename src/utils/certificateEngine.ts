@@ -113,7 +113,11 @@ export function getUserInitials(fullName: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function sanitizeCertificateFilename(recipientName: string, testTitle: string): string {
+export function sanitizeCertificateFilename(
+  recipientName: string,
+  testTitle: string,
+  ext: 'png' | 'pdf' = 'png'
+): string {
   const slugify = (str: string) =>
     str
       .toLowerCase()
@@ -122,7 +126,7 @@ export function sanitizeCertificateFilename(recipientName: string, testTitle: st
       .slice(0, 36);
   const nameSlug = slugify(recipientName) || 'recipient';
   const testSlug = slugify(testTitle) || 'typing-test';
-  return `TypeCrest-Certificate-${nameSlug}-${testSlug}.png`;
+  return `TypeCrest-Certificate-${nameSlug}-${testSlug}.${ext}`;
 }
 
 function drawCornerFlourish(
@@ -464,8 +468,120 @@ export function downloadCertificatePng(cert: TypingCertificate): void {
   const dataUrl = canvas.toDataURL('image/png');
   const link = document.createElement('a');
   link.href = dataUrl;
-  link.download = sanitizeCertificateFilename(cert.recipientName, cert.testTitle);
+  link.download = sanitizeCertificateFilename(cert.recipientName, cert.testTitle, 'png');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+/**
+ * Pure zero-dependency PDF 1.4 single-page landscape generator embedding JPEG image bytes.
+ */
+export function buildCertificatePdfBytes(
+  jpegBytes: Uint8Array,
+  imgWidth: number,
+  imgHeight: number
+): Uint8Array {
+  const pageW = 841.89; // A4 Landscape width in pt
+  const pageH = 595.28; // A4 Landscape height in pt
+  const margin = 14;
+  const scale = Math.min((pageW - margin * 2) / imgWidth, (pageH - margin * 2) / imgHeight);
+  const drawW = imgWidth * scale;
+  const drawH = imgHeight * scale;
+  const offsetX = (pageW - drawW) / 2;
+  const offsetY = (pageH - drawH) / 2;
+
+  const encoder = new TextEncoder();
+  const chunks: Uint8Array[] = [];
+  let byteOffset = 0;
+
+  const pushBytes = (bytes: Uint8Array) => {
+    chunks.push(bytes);
+    byteOffset += bytes.length;
+  };
+  const pushStr = (str: string) => pushBytes(encoder.encode(str));
+
+  const offsets: number[] = [0]; // index 0 unused (free entry)
+
+  pushStr('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
+
+  // 1: Catalog
+  offsets.push(byteOffset);
+  pushStr('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+  // 2: Pages
+  offsets.push(byteOffset);
+  pushStr('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+
+  // 3: Page
+  offsets.push(byteOffset);
+  pushStr(
+    `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(
+      2
+    )}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>\nendobj\n`
+  );
+
+  // 4: Image XObject (JPEG /DCTDecode)
+  offsets.push(byteOffset);
+  pushStr(
+    `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgWidth} /Height ${imgHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`
+  );
+  pushBytes(jpegBytes);
+  pushStr('\nendstream\nendobj\n');
+
+  // 5: Content Stream
+  const contentStream = `q\n${drawW.toFixed(2)} 0 0 ${drawH.toFixed(2)} ${offsetX.toFixed(
+    2
+  )} ${offsetY.toFixed(2)} cm\n/Im0 Do\nQ\n`;
+  const contentBytes = encoder.encode(contentStream);
+  offsets.push(byteOffset);
+  pushStr(`5 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
+  pushBytes(contentBytes);
+  pushStr('endstream\nendobj\n');
+
+  // xref table
+  const xrefStart = byteOffset;
+  pushStr(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`);
+  for (let i = 1; i < offsets.length; i += 1) {
+    pushStr(`${String(offsets[i]).padStart(10, '0')} 00000 n \n`);
+  }
+
+  pushStr(
+    `trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF\n`
+  );
+
+  const output = new Uint8Array(byteOffset);
+  let pos = 0;
+  for (const chunk of chunks) {
+    output.set(chunk, pos);
+    pos += chunk.length;
+  }
+  return output;
+}
+
+export function downloadCertificatePdf(cert: TypingCertificate): void {
+  const canvas = renderCertificateToCanvas(cert);
+  const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.96);
+  const base64 = jpegDataUrl.split(',')[1] || '';
+  const binaryStr = atob(base64);
+  const jpegBytes = new Uint8Array(binaryStr.length);
+  for (let i = 0; i < binaryStr.length; i += 1) {
+    jpegBytes[i] = binaryStr.charCodeAt(i);
+  }
+
+  const pdfBytes = buildCertificatePdfBytes(jpegBytes, canvas.width, canvas.height);
+  const pdfBuffer = pdfBytes.buffer.slice(
+    pdfBytes.byteOffset,
+    pdfBytes.byteOffset + pdfBytes.byteLength
+  ) as ArrayBuffer;
+  const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = blobUrl;
+  link.download = sanitizeCertificateFilename(cert.recipientName, cert.testTitle, 'pdf');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1500);
 }

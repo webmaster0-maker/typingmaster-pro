@@ -1,7 +1,7 @@
 import React from 'react';
 import { TestItem, TypingCertificate, UserAccount } from '../types';
 import { formatCertificateDate } from '../utils/certificateEngine';
-import { ArrowRight, Award, Download, Eye, Timer, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Award, Download, Eye, FileText, Timer, User } from 'lucide-react';
 
 interface TestExamHubProps {
   testItems: TestItem[];
@@ -10,7 +10,9 @@ interface TestExamHubProps {
   userAccount: UserAccount | null;
   onViewCertificate: (cert: TypingCertificate) => void;
   onDownloadCertificate: (cert: TypingCertificate) => void;
+  onDownloadCertificatePdf: (cert: TypingCertificate) => void;
   onOpenAccount: () => void;
+  onBackHome: () => void;
 }
 
 export const TestExamHub: React.FC<TestExamHubProps> = ({
@@ -20,15 +22,29 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
   userAccount,
   onViewCertificate,
   onDownloadCertificate,
+  onDownloadCertificatePdf,
   onOpenAccount,
+  onBackHome,
 }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-2">
+          <a
+            href="/"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+              e.preventDefault();
+              onBackHome();
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors whitespace-nowrap"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Home</span>
+          </a>
           <h1 className="text-3xl font-extrabold text-white">Tests &amp; Certification Exams</h1>
           <p className="text-sm text-slate-300 max-w-2xl">
-            Benchmark your net WPM speed and accuracy under standard or strict exam rules. Score 35+ WPM with 95%+ accuracy to earn an official downloadable PNG certificate.
+            Benchmark your net WPM speed and accuracy under standard or strict exam rules. Score 35+ WPM with 95%+ accuracy to earn an official downloadable PDF or PNG certificate.
           </p>
         </div>
 
@@ -150,14 +166,23 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-end gap-2.5">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onDownloadCertificatePdf(cert)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Download PDF</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => onDownloadCertificate(cert)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold transition-colors whitespace-nowrap"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download PNG</span>
+                    <span>PNG</span>
                   </button>
 
                   <button

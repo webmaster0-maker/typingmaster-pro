@@ -50,6 +50,7 @@ import {
 import { applyRemediationHealing, generateRuleBasedLessons } from './engines/remediationEngine';
 import {
   createCertificateFromSession,
+  downloadCertificatePdf,
   downloadCertificatePng,
   isEligibleForCertificate,
   upsertCertificate,
@@ -715,6 +716,14 @@ export default function App() {
           <CertificateModal
             certificate={activeCertificateModal}
             onClose={() => setActiveCertificateModal(null)}
+            onBackHome={() => {
+              setActiveCertificateModal(null);
+              setWorkspaceIssuedCertificate(null);
+              setActiveWorkspace(null);
+              setIsArcadeOpen(false);
+              setShowAssessment(false);
+              setActiveTab('dashboard');
+            }}
           />
         )}
       </Suspense>
@@ -826,7 +835,9 @@ export default function App() {
               userAccount={userAccount}
               onViewCertificate={(cert) => setActiveCertificateModal(cert)}
               onDownloadCertificate={downloadCertificatePng}
+              onDownloadCertificatePdf={downloadCertificatePdf}
               onOpenAccount={() => openAccountModal('certificate')}
+              onBackHome={() => setActiveTab('dashboard')}
             />
           )}
           {activeTab === 'analytics' && (
@@ -857,6 +868,14 @@ export default function App() {
           <CertificateModal
             certificate={activeCertificateModal}
             onClose={() => setActiveCertificateModal(null)}
+            onBackHome={() => {
+              setActiveCertificateModal(null);
+              setWorkspaceIssuedCertificate(null);
+              setActiveWorkspace(null);
+              setIsArcadeOpen(false);
+              setShowAssessment(false);
+              setActiveTab('dashboard');
+            }}
           />
         </Suspense>
       )}
