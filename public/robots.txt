@@ -1,10 +1,6 @@
 # TypeCrest Robots & AI Search (GEO/AEO) Crawl Policy
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /#admin
-Disallow: /?portal=admin
-Disallow: /?admin=true
 
 # Major Search Engines
 User-agent: Googlebot

@@ -79,6 +79,11 @@ import {
 } from './utils/integrityEngine';
 import { recordTelemetryVisit, recordTelemetryCompletion } from './utils/adminTelemetry';
 import {
+  extractGateTokenFromLocation,
+  verifyAdminGateToken,
+  getAdminSession,
+} from './utils/adminAuth';
+import {
   AppRouteView,
   VIEW_TO_PATH,
   resolveRouteFromLocation,
@@ -110,34 +115,21 @@ function computeNextStreak(prevStreak: number, lastPracticeDate?: string): { str
   return { streak: 1, today };
 }
 
-function isDirectAdminUrl(): boolean {
-  if (typeof window === 'undefined') return false;
-  const hash = window.location.hash.toLowerCase();
-  const search = window.location.search.toLowerCase();
-  const path = window.location.pathname.toLowerCase();
-  return (
-    hash === '#admin' ||
-    hash === '#/admin' ||
-    search.includes('portal=admin') ||
-    search.includes('admin=true') ||
-    path === '/admin' ||
-    path.endsWith('/admin')
-  );
-}
-
 export default function App() {
-  const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(() => isDirectAdminUrl());
+  const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(
+    () => getAdminSession().authenticated
+  );
   const [activeTab, setActiveTab] = useState<string>(() => {
-    if (isDirectAdminUrl()) return 'dashboard';
+    if (getAdminSession().authenticated) return 'dashboard';
     const { view } = resolveRouteFromLocation();
     return view === 'arcade' || view === 'assessment' ? 'dashboard' : view;
   });
   const [isArcadeOpen, setIsArcadeOpen] = useState<boolean>(() => {
-    if (isDirectAdminUrl()) return false;
+    if (getAdminSession().authenticated) return false;
     return resolveRouteFromLocation().view === 'arcade';
   });
   const [showAssessment, setShowAssessment] = useState<boolean>(() => {
-    if (isDirectAdminUrl()) return false;
+    if (getAdminSession().authenticated) return false;
     return resolveRouteFromLocation().view === 'assessment';
   });
   const [userLevel, setUserLevel] = useState<SkillLevel>(() => {
@@ -217,10 +209,6 @@ export default function App() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handlePopState = () => {
-      if (isDirectAdminUrl()) {
-        setIsAdminPortalOpen(true);
-        return;
-      }
       if (
         !window.location.hash.startsWith('#lesson/') &&
         !window.location.hash.startsWith('#practice/') &&
@@ -365,8 +353,24 @@ export default function App() {
 
   useEffect(() => {
     recordTelemetryVisit();
+    const checkGate = async () => {
+      const token = extractGateTokenFromLocation();
+      if (!token) return;
+      const valid = await verifyAdminGateToken(token);
+      if (valid) {
+        setIsAdminPortalOpen(true);
+        // Strip the secret gate token from the browser URL bar immediately
+        try {
+          window.history.replaceState(null, '', '/');
+        } catch {
+          // Ignore restricted history API errors
+        }
+      }
+    };
+    void checkGate();
+
     const handleUrlChange = () => {
-      setIsAdminPortalOpen(isDirectAdminUrl());
+      void checkGate();
     };
     window.addEventListener('hashchange', handleUrlChange);
     window.addEventListener('popstate', handleUrlChange);

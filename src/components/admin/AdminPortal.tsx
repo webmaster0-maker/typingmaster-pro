@@ -45,8 +45,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
     return auth.authenticated && auth.session ? auth.session : null;
   });
 
-  // Login form state
-  const [emailInput, setEmailInput] = useState('admin@typecrest.pro');
+  // Login form state (never pre-fill or expose admin email in client UI)
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -89,6 +89,21 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
             certificatesList.length
         )
       : 0;
+
+  // Ensure search engines never index the gated portal
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const robotsEl = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    const prevContent = robotsEl?.content || '';
+    if (robotsEl) {
+      robotsEl.content = 'noindex, nofollow';
+    }
+    return () => {
+      if (robotsEl && prevContent) {
+        robotsEl.content = prevContent;
+      }
+    };
+  }, []);
 
   // Check lockout on mount and periodically
   useEffect(() => {
@@ -200,7 +215,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                   onChange={(e) => setEmailInput(e.target.value)}
                   disabled={lockoutSecs > 0 || isSubmitting}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-                  placeholder="admin@typecrest.pro"
+                  placeholder="Enter administrator email"
                   required
                 />
               </div>

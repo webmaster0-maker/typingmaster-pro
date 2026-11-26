@@ -22,6 +22,7 @@ import {
   getAdminSession,
   logoutAdmin,
   checkAdminLockout,
+  verifyAdminGateToken,
 } from '../src/utils/adminAuth';
 import {
   getAdminTelemetrySummary,
@@ -70,6 +71,13 @@ async function runSecurityAuditSuite() {
   assert(headersContent.includes('fonts.googleapis.com'), 'CSP whitelists Google Fonts stylesheets');
   assert(headersContent.includes('fonts.gstatic.com'), 'CSP whitelists Google Fonts font binaries');
   assert(headersContent.includes("frame-ancestors 'none'"), "CSP specifies frame-ancestors 'none'");
+
+  // Ensure robots.txt does NOT advertise admin endpoints
+  const robotsContent = fs.readFileSync(path.join(ROOT, 'public', 'robots.txt'), 'utf8');
+  assert(
+    !robotsContent.includes('/admin') && !robotsContent.includes('portal=admin'),
+    'robots.txt does not disclose admin routes to attackers'
+  );
 
   // ------------------------------------------------------------------
   // 2. DEPENDENCY SUPPLY CHAIN PRUNING
@@ -235,6 +243,11 @@ async function runSecurityAuditSuite() {
   // 5. MASTER ADMIN PORTAL SECURITY & TELEMETRY
   // ------------------------------------------------------------------
   console.log('\n>>> [5/5] AUDITING MASTER ADMIN PORTAL SECURITY & TELEMETRY...');
+  assert(!(await verifyAdminGateToken(null)), 'Admin gate rejects missing token');
+  assert(!(await verifyAdminGateToken('admin')), 'Admin gate rejects guessable "admin" route');
+  assert(!(await verifyAdminGateToken('portal=admin')), 'Admin gate rejects legacy query hint');
+  assert(await verifyAdminGateToken('tc-8f3k-92xm-vault'), 'Admin gate accepts verified secret token');
+
   logoutAdmin();
   assert(!getAdminSession().authenticated, 'Admin session starts unauthenticated');
 
