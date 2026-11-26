@@ -647,12 +647,21 @@ function renderSkylineRunner(
 ) {
   const groundY = h * 0.74;
 
-  // Atmospheric city twilight glow
-  const glow = ctx.createRadialGradient(w * 0.78, h * 0.24, 10, w * 0.78, h * 0.24, 150);
-  glow.addColorStop(0, 'rgba(245, 158, 11, 0.24)');
+  // Atmospheric city twilight glow & moon rim
+  const glow = ctx.createRadialGradient(w * 0.78, h * 0.22, 6, w * 0.78, h * 0.22, 190);
+  glow.addColorStop(0, 'rgba(254, 243, 199, 0.28)');
+  glow.addColorStop(0.25, 'rgba(245, 158, 11, 0.18)');
   glow.addColorStop(1, 'rgba(245, 158, 11, 0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
+
+  // Subtle crescent moon disc
+  ctx.save();
+  ctx.fillStyle = 'rgba(254, 243, 199, 0.55)';
+  ctx.beginPath();
+  ctx.arc(w * 0.78, h * 0.22, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 
   // Sweeping atmospheric skyline searchlights
   for (let s = 0; s < 2; s++) {
@@ -662,63 +671,92 @@ function renderSkylineRunner(
     ctx.translate(baseX, groundY);
     ctx.rotate(sweep);
     const beam = ctx.createLinearGradient(0, 0, 0, -groundY);
-    beam.addColorStop(0, 'rgba(245, 158, 11, 0.08)');
+    beam.addColorStop(0, 'rgba(245, 158, 11, 0.11)');
+    beam.addColorStop(0.6, 'rgba(245, 158, 11, 0.03)');
     beam.addColorStop(1, 'rgba(245, 158, 11, 0)');
     ctx.fillStyle = beam;
     ctx.beginPath();
-    ctx.moveTo(-6, 0);
-    ctx.lineTo(-42, -groundY);
-    ctx.lineTo(42, -groundY);
-    ctx.lineTo(6, 0);
+    ctx.moveTo(-5, 0);
+    ctx.lineTo(-48, -groundY);
+    ctx.lineTo(48, -groundY);
+    ctx.lineTo(5, 0);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
   }
 
-  // Multi-layer parallax skyline with antennas & warm window grids
+  // Multi-layer parallax skyline with facade shading, antennas & realistic lit windows
   const drawLayer = (
     speedMult: number,
     color: string,
+    edgeColor: string,
     baseH: number,
     widthStep: number,
     winColor?: string
   ) => {
-    ctx.fillStyle = color;
     const offset = (sim.scroll * speedMult) % widthStep;
     const cols = Math.ceil(w / widthStep) + 3;
     for (let i = -1; i < cols; i++) {
       const worldIdx = Math.floor((sim.scroll * speedMult) / widthStep) + i;
-      const bh = baseH + Math.abs(Math.sin(worldIdx * 1.7) * 62);
+      const bh = baseH + Math.abs(Math.sin(worldIdx * 1.7) * 68);
       const bx = i * widthStep - offset;
       const by = groundY - bh;
-      ctx.fillRect(bx, by, widthStep - 6, bh + (h - groundY));
+      const bw = widthStep - 6;
+
+      // Building body with side-lit architectural depth
+      const bGrad = ctx.createLinearGradient(bx, by, bx + bw, by);
+      bGrad.addColorStop(0, edgeColor);
+      bGrad.addColorStop(0.2, color);
+      bGrad.addColorStop(1, '#070B14');
+      ctx.fillStyle = bGrad;
+      ctx.fillRect(bx, by, bw, bh + (h - groundY));
+
+      // Rooftop ledge highlight
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.12)';
+      ctx.fillRect(bx, by, bw, 2);
 
       // Subtle rooftop antenna & blinking red beacon on taller towers
       if (worldIdx % 3 === 0) {
         ctx.fillStyle = '#334155';
-        ctx.fillRect(bx + (widthStep - 6) * 0.5, by - 16, 2, 16);
+        ctx.fillRect(bx + bw * 0.5, by - 18, 2, 18);
         const blink = Math.sin(sim.time * 4 + worldIdx) > 0.2;
         if (blink) {
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.35)';
+          ctx.beginPath();
+          ctx.arc(bx + bw * 0.5 + 1, by - 19, 5, 0, Math.PI * 2);
+          ctx.fill();
           ctx.fillStyle = '#F43F5E';
           ctx.beginPath();
-          ctx.arc(bx + (widthStep - 6) * 0.5 + 1, by - 17, 2, 0, Math.PI * 2);
+          ctx.arc(bx + bw * 0.5 + 1, by - 19, 2, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.fillStyle = color;
       }
 
-      if (winColor && worldIdx % 2 === 0) {
-        ctx.fillStyle = winColor;
-        for (let wy = by + 12; wy < groundY - 18; wy += 14) {
-          ctx.fillRect(bx + 8, wy, widthStep - 24, 3);
+      // Deterministic lit/unlit office windows for natural city depth
+      if (winColor) {
+        for (let wy = by + 10; wy < groundY - 16; wy += 11) {
+          for (let wx = bx + 7; wx < bx + bw - 10; wx += 9) {
+            const hash = Math.abs(Math.sin(worldIdx * 13.7 + wy * 0.31 + wx * 0.17));
+            if (hash > 0.42) {
+              ctx.fillStyle = hash > 0.85 ? 'rgba(254, 243, 199, 0.38)' : winColor;
+              ctx.fillRect(wx, wy, 5, 4);
+            }
+          }
         }
-        ctx.fillStyle = color;
       }
     }
   };
 
-  drawLayer(0.16, '#0C1322', 68, 76);
-  drawLayer(0.38, '#131D31', 46, 60, 'rgba(245, 158, 11, 0.16)');
+  drawLayer(0.16, '#0C1322', '#17223B', 74, 76, 'rgba(148, 163, 184, 0.10)');
+
+  // Atmospheric horizon haze between distant and mid skyline
+  const hazeGrad = ctx.createLinearGradient(0, groundY - 90, 0, groundY);
+  hazeGrad.addColorStop(0, 'rgba(15, 23, 42, 0)');
+  hazeGrad.addColorStop(1, 'rgba(30, 41, 59, 0.38)');
+  ctx.fillStyle = hazeGrad;
+  ctx.fillRect(0, groundY - 90, w, 90);
+
+  drawLayer(0.38, '#131D31', '#1E2D4A', 48, 60, 'rgba(245, 158, 11, 0.20)');
 
   // Segmented foreground rooftop buildings with real glowing chasm gaps
   const deckPeriod = 260;
@@ -733,26 +771,37 @@ function renderSkylineRunner(
     // Glowing chasm abyss mist between roofs
     const abyssX = sx + roofW;
     const abyssGrad = ctx.createLinearGradient(abyssX, groundY, abyssX, h);
-    abyssGrad.addColorStop(0, 'rgba(16, 185, 129, 0.16)');
-    abyssGrad.addColorStop(1, 'rgba(7, 10, 18, 0.95)');
+    abyssGrad.addColorStop(0, 'rgba(16, 185, 129, 0.22)');
+    abyssGrad.addColorStop(0.5, 'rgba(15, 23, 42, 0.78)');
+    abyssGrad.addColorStop(1, 'rgba(7, 10, 18, 0.98)');
     ctx.fillStyle = abyssGrad;
     ctx.fillRect(abyssX, groundY, gapWidth, h - groundY);
 
-    // Concrete rooftop slab
-    ctx.fillStyle = '#1B253A';
+    // Concrete rooftop slab with vertical gradient depth
+    const slabGrad = ctx.createLinearGradient(0, groundY, 0, h);
+    slabGrad.addColorStop(0, '#22304A');
+    slabGrad.addColorStop(0.18, '#172136');
+    slabGrad.addColorStop(1, '#090D16');
+    ctx.fillStyle = slabGrad;
     ctx.fillRect(sx, groundY, roofW, h - groundY);
 
-    // Architectural side bevel & warm amber safety trim
-    ctx.fillStyle = '#0F172A';
-    ctx.fillRect(sx, groundY + 12, roofW, 4);
+    // Architectural concrete trim, wet-deck specular sheen & safety strip
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+    ctx.fillRect(sx, groundY + 3, roofW, 4);
+    ctx.fillStyle = '#0B1120';
+    ctx.fillRect(sx, groundY + 13, roofW, 4);
     ctx.fillStyle = '#F59E0B';
-    ctx.fillRect(sx, groundY, roofW, 3);
+    ctx.fillRect(sx, groundY, roofW, 2.5);
 
-    // Rooftop skylight / HVAC detail
-    ctx.fillStyle = '#25334F';
-    ctx.fillRect(sx + 28, groundY - 9, 26, 9);
-    ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
-    ctx.fillRect(sx + 32, groundY - 6, 18, 3);
+    // Rooftop HVAC unit with vent slats & warning beacon
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(sx + 28, groundY - 12, 30, 12);
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(sx + 28, groundY - 12, 30, 2);
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.45)';
+    ctx.fillRect(sx + 32, groundY - 8, 22, 3);
+    ctx.fillStyle = '#0F172A';
+    ctx.fillRect(sx + 136, groundY - 7, 18, 7);
   }
 
   // Holographic Word Checkpoint Gate ahead
@@ -786,71 +835,118 @@ function renderSkylineRunner(
   const ry = groundY - jumpHeight;
   const isAirborne = jumpHeight > 4;
 
-  // Dynamic ground shadow scaling with vault height
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  // Dynamic soft ambient occlusion shadow scaling with vault height
+  const shadowGrad = ctx.createRadialGradient(
+    runnerX,
+    groundY + 4,
+    2,
+    runnerX,
+    groundY + 4,
+    Math.max(10, 24 - jumpHeight * 0.16)
+  );
+  shadowGrad.addColorStop(0, 'rgba(0, 0, 0, 0.65)');
+  shadowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = shadowGrad;
   ctx.beginPath();
-  ctx.ellipse(runnerX, groundY + 4, Math.max(7, 19 - jumpHeight * 0.16), 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(runnerX, groundY + 4, Math.max(10, 24 - jumpHeight * 0.16), 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Flowing amber kinetic scarf
+  // Flowing amber kinetic scarf with tapered dual-tone ribbon
+  ctx.save();
   ctx.strokeStyle = sim.runnerStumbleTimer > 0 ? '#F43F5E' : '#F59E0B';
-  ctx.lineWidth = 3.5;
+  ctx.lineWidth = 4.2;
   ctx.lineCap = 'round';
   ctx.beginPath();
-  ctx.moveTo(runnerX - 2, ry - 33);
+  ctx.moveTo(runnerX - 2, ry - 34);
   ctx.quadraticCurveTo(
-    runnerX - 24,
-    ry - 35 + Math.sin(sim.time * 18) * 5,
-    runnerX - 46,
+    runnerX - 25,
+    ry - 36 + Math.sin(sim.time * 18) * 5,
+    runnerX - 48,
     ry - 26 + Math.cos(sim.time * 15) * 4
   );
   ctx.stroke();
+  ctx.strokeStyle = sim.runnerStumbleTimer > 0 ? '#FDA4AF' : '#FDE68A';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(runnerX - 3, ry - 35);
+  ctx.quadraticCurveTo(
+    runnerX - 24,
+    ry - 37 + Math.sin(sim.time * 18) * 5,
+    runnerX - 44,
+    ry - 27 + Math.cos(sim.time * 15) * 4
+  );
+  ctx.stroke();
+  ctx.restore();
 
-  // Articulated 2-segment legs (hip -> knee -> foot)
-  const drawLeg = (phase: number, color: string) => {
+  // Articulated 2-segment shaded legs + tactical boots (hip -> knee -> foot)
+  const drawLeg = (phase: number, thighColor: string, shinColor: string) => {
     const hipX = runnerX;
     const hipY = ry - 21;
     const kneeAngle = isAirborne ? -0.55 : Math.sin(phase) * 0.72;
     const shinAngle = isAirborne ? 0.85 : kneeAngle + Math.max(0, -Math.cos(phase)) * 0.9;
-    const thighLen = 11;
-    const shinLen = 11;
+    const thighLen = 11.5;
+    const shinLen = 11.5;
     const kneeX = hipX + Math.sin(kneeAngle) * thighLen;
     const kneeY = hipY + Math.cos(kneeAngle) * thighLen;
     const footX = kneeX + Math.sin(shinAngle) * shinLen;
     const footY = Math.min(ry, kneeY + Math.cos(shinAngle) * shinLen);
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 3.8;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    ctx.strokeStyle = thighColor;
+    ctx.lineWidth = 4.8;
     ctx.beginPath();
     ctx.moveTo(hipX, hipY);
     ctx.lineTo(kneeX, kneeY);
+    ctx.stroke();
+
+    ctx.strokeStyle = shinColor;
+    ctx.lineWidth = 3.8;
+    ctx.beginPath();
+    ctx.moveTo(kneeX, kneeY);
     ctx.lineTo(footX, footY);
     ctx.stroke();
+
+    // Boot sole
+    ctx.fillStyle = '#0F172A';
+    ctx.beginPath();
+    ctx.ellipse(footX + 2, footY, 3.8, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
   };
 
-  drawLeg(sim.runnerLegPhase + Math.PI, '#94A3B8'); // back leg
-  drawLeg(sim.runnerLegPhase, '#F1F5F9'); // front leg
+  drawLeg(sim.runnerLegPhase + Math.PI, '#475569', '#64748B'); // back leg
+  drawLeg(sim.runnerLegPhase, '#CBD5E1', '#F8FAFC'); // front leg
 
-  // Torso, pumping arm & helmeted visor head
+  // Torso, courier pack, pumping arms & shaded helmet with visor reflection
   ctx.save();
   ctx.translate(runnerX, ry - 21);
   ctx.rotate(sim.runnerLean);
 
   // Back pumping arm
   const armSwing = Math.sin(sim.runnerLegPhase + Math.PI) * 9;
-  ctx.strokeStyle = '#94A3B8';
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#64748B';
+  ctx.lineWidth = 3.2;
+  ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(0, -14);
   ctx.lineTo(armSwing, -4);
   ctx.stroke();
 
-  // Torso jacket
-  ctx.strokeStyle = '#FFFFFF';
-  ctx.lineWidth = 5.5;
-  ctx.lineCap = 'round';
+  // Courier thruster pack
+  ctx.fillStyle = '#1E293B';
+  ctx.beginPath();
+  ctx.roundRect(-7.5, -16, 5.5, 11, 2);
+  ctx.fill();
+  ctx.fillStyle = isAirborne ? '#34D399' : '#F59E0B';
+  ctx.fillRect(-7, -7, 3, 2.5);
+
+  // Shaded torso jacket
+  const torsoGrad = ctx.createLinearGradient(-4, -18, 5, 0);
+  torsoGrad.addColorStop(0, '#94A3B8');
+  torsoGrad.addColorStop(0.5, '#F8FAFC');
+  torsoGrad.addColorStop(1, '#E2E8F0');
+  ctx.strokeStyle = torsoGrad;
+  ctx.lineWidth = 6.5;
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.lineTo(0, -17);
@@ -858,19 +954,28 @@ function renderSkylineRunner(
 
   // Front pumping arm
   ctx.strokeStyle = '#E2E8F0';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3.4;
   ctx.beginPath();
   ctx.moveTo(0, -14);
   ctx.lineTo(-armSwing, -5);
   ctx.stroke();
 
-  // Helmet + glowing emerald visor
-  ctx.fillStyle = '#F8FAFC';
+  // Shaded aero helmet + glowing emerald visor
+  const helmGrad = ctx.createRadialGradient(2, -26, 1, 1, -24, 7.5);
+  helmGrad.addColorStop(0, '#FFFFFF');
+  helmGrad.addColorStop(0.7, '#CBD5E1');
+  helmGrad.addColorStop(1, '#475569');
+  ctx.fillStyle = helmGrad;
   ctx.beginPath();
-  ctx.arc(1, -24, 6.8, 0, Math.PI * 2);
+  ctx.arc(1, -24, 7.2, 0, Math.PI * 2);
   ctx.fill();
+
   ctx.fillStyle = '#10B981';
-  ctx.fillRect(3, -26, 6, 3);
+  ctx.beginPath();
+  ctx.roundRect(2.5, -26.5, 6.2, 3.2, 1.5);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+  ctx.fillRect(3.5, -26, 3, 1);
   ctx.restore();
 
   drawWorldCornerTelemetry(
@@ -897,18 +1002,39 @@ function renderNitroHighway(
   const roadLeft = (w - roadW) / 2;
   const laneW = roadW / 3;
 
-  // Textured highway shoulders
-  ctx.fillStyle = '#090D16';
+  // Textured highway shoulders with subtle guardrail shadow
+  ctx.fillStyle = '#070A12';
   ctx.fillRect(0, 0, roadLeft - 10, h);
   ctx.fillRect(roadLeft + roadW + 10, 0, w - (roadLeft + roadW + 10), h);
 
-  // Asphalt deck with subtle center tire-wear shading
+  // Asphalt deck with tire-wear tracks & subtle wet-road sheen
   const asphaltGrad = ctx.createLinearGradient(roadLeft, 0, roadLeft + roadW, 0);
-  asphaltGrad.addColorStop(0, '#0C111C');
-  asphaltGrad.addColorStop(0.5, '#121929');
-  asphaltGrad.addColorStop(1, '#0C111C');
+  asphaltGrad.addColorStop(0, '#0B101B');
+  asphaltGrad.addColorStop(0.18, '#121A2B');
+  asphaltGrad.addColorStop(0.5, '#162034');
+  asphaltGrad.addColorStop(0.82, '#121A2B');
+  asphaltGrad.addColorStop(1, '#0B101B');
   ctx.fillStyle = asphaltGrad;
   ctx.fillRect(roadLeft, 0, roadW, h);
+
+  // Subtle longitudinal tire-wear grooves per lane
+  ctx.fillStyle = 'rgba(7, 10, 18, 0.28)';
+  for (let l = 0; l < 3; l++) {
+    const laneCenter = roadLeft + laneW * l + laneW / 2;
+    ctx.fillRect(laneCenter - 15, 0, 7, h);
+    ctx.fillRect(laneCenter + 8, 0, 7, h);
+  }
+
+  // Scrolling asphalt surface grain / speed streaks
+  const grainSpacing = 68;
+  const grainOff = (sim.scroll * 2.8) % grainSpacing;
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.055)';
+  for (let gy = -grainOff; gy < h + grainSpacing; gy += grainSpacing) {
+    for (let s = 0; s < 5; s++) {
+      const gx = roadLeft + ((s * 73 + 19) % Math.max(40, roadW - 12));
+      ctx.fillRect(gx, gy + (s % 2) * 24, 1.5, speedKmh > 120 ? 16 : 7);
+    }
+  }
 
   // Scrolling roadside streetlamp poles casting warm amber pools onto the asphalt
   const poleSpacing = 150;
@@ -1077,37 +1203,51 @@ function drawRealisticCarSprite(ctx: CanvasRenderingContext2D, p: CarSpriteParam
   ctx.translate(p.x, p.y);
   ctx.rotate(p.tiltRad);
 
-  // Soft ground drop shadow (offsets subtly with steering tilt for grounded depth)
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  // Soft feathered ground drop shadow (offsets subtly with steering tilt for grounded depth)
+  const carShadow = ctx.createRadialGradient(p.tiltRad * 14, 2, 4, p.tiltRad * 14, 2, 34);
+  carShadow.addColorStop(0, 'rgba(0, 0, 0, 0.72)');
+  carShadow.addColorStop(0.65, 'rgba(0, 0, 0, 0.42)');
+  carShadow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = carShadow;
   ctx.beginPath();
-  ctx.roundRect(-20 + p.tiltRad * 14, -27, 40, 62, 12);
+  ctx.ellipse(p.tiltRad * 14, 2, 26, 36, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Headlight beams
+  // Dual volumetric headlight beams with bright inner core
   if (p.isPlayer) {
-    const cone = ctx.createLinearGradient(0, -30, 0, -118);
-    cone.addColorStop(0, 'rgba(254, 243, 199, 0.30)');
-    cone.addColorStop(1, 'rgba(254, 243, 199, 0)');
-    ctx.fillStyle = cone;
-    ctx.beginPath();
-    ctx.moveTo(-14, -28);
-    ctx.lineTo(-36, -116);
-    ctx.lineTo(36, -116);
-    ctx.lineTo(14, -28);
-    ctx.closePath();
-    ctx.fill();
+    for (const hx of [-10, 10]) {
+      const cone = ctx.createLinearGradient(hx, -30, hx, -135);
+      cone.addColorStop(0, 'rgba(254, 249, 195, 0.34)');
+      cone.addColorStop(0.5, 'rgba(254, 243, 199, 0.10)');
+      cone.addColorStop(1, 'rgba(254, 243, 199, 0)');
+      ctx.fillStyle = cone;
+      ctx.beginPath();
+      ctx.moveTo(hx - 4, -29);
+      ctx.lineTo(hx - 24, -135);
+      ctx.lineTo(hx + 24, -135);
+      ctx.lineTo(hx + 4, -29);
+      ctx.closePath();
+      ctx.fill();
+    }
   } else {
-    const rivalGlow = ctx.createLinearGradient(0, -28, 0, -64);
-    rivalGlow.addColorStop(0, 'rgba(226, 232, 240, 0.14)');
+    const rivalGlow = ctx.createLinearGradient(0, -28, 0, -68);
+    rivalGlow.addColorStop(0, 'rgba(226, 232, 240, 0.16)');
     rivalGlow.addColorStop(1, 'rgba(226, 232, 240, 0)');
     ctx.fillStyle = rivalGlow;
     ctx.beginPath();
     ctx.moveTo(-12, -26);
-    ctx.lineTo(-22, -62);
-    ctx.lineTo(22, -62);
+    ctx.lineTo(-24, -66);
+    ctx.lineTo(24, -66);
     ctx.lineTo(12, -26);
     ctx.closePath();
     ctx.fill();
+
+    // Subtle red taillight ambient road glow behind rival traffic
+    const tailGlow = ctx.createRadialGradient(0, 32, 2, 0, 32, 22);
+    tailGlow.addColorStop(0, 'rgba(244, 63, 94, 0.22)');
+    tailGlow.addColorStop(1, 'rgba(244, 63, 94, 0)');
+    ctx.fillStyle = tailGlow;
+    ctx.fillRect(-22, 18, 44, 26);
   }
 
   // Twin afterburner exhaust plumes for player coupe
@@ -1143,10 +1283,12 @@ function drawRealisticCarSprite(ctx: CanvasRenderingContext2D, p: CarSpriteParam
   ctx.fillRect(-19, 10, 4, 13);
   ctx.fillRect(15, 10, 4, 13);
 
-  // Sculpted sports-coupe body with subtle metallic shading
-  const bodyGrad = ctx.createLinearGradient(-18, 0, 18, 0);
+  // Sculpted sports-coupe body with multi-stop metallic clearcoat shading
+  const bodyGrad = ctx.createLinearGradient(-18, -10, 18, 10);
   bodyGrad.addColorStop(0, p.bodyColor);
-  bodyGrad.addColorStop(0.5, p.accentColor);
+  bodyGrad.addColorStop(0.28, p.accentColor);
+  bodyGrad.addColorStop(0.5, '#FFFFFF');
+  bodyGrad.addColorStop(0.68, p.accentColor);
   bodyGrad.addColorStop(1, p.bodyColor);
   ctx.fillStyle = bodyGrad;
   ctx.beginPath();
@@ -1161,20 +1303,41 @@ function drawRealisticCarSprite(ctx: CanvasRenderingContext2D, p: CarSpriteParam
   ctx.closePath();
   ctx.fill();
 
-  // Center racing stripe & hood aero vents
+  // Hood aero crease lines & center racing stripe
   ctx.fillStyle = 'rgba(15, 23, 42, 0.34)';
   ctx.fillRect(-3.5, -31, 7, 61);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(-9, -28);
+  ctx.lineTo(-11, -15);
+  ctx.moveTo(9, -28);
+  ctx.lineTo(11, -15);
+  ctx.stroke();
 
-  // Tinted panoramic windshield + rear glass
-  ctx.fillStyle = '#0B1120';
+  // Tinted panoramic windshield + diagonal glass reflection
+  const glassGrad = ctx.createLinearGradient(-12, -14, 12, 12);
+  glassGrad.addColorStop(0, '#1E293B');
+  glassGrad.addColorStop(0.45, '#090D16');
+  glassGrad.addColorStop(1, '#0F172A');
+  ctx.fillStyle = glassGrad;
   ctx.beginPath();
   ctx.roundRect(-12, -14, 24, 26, 6);
   ctx.fill();
 
-  // Subtle roof reflection highlight
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.20)';
   ctx.beginPath();
-  ctx.roundRect(-9, -6, 18, 11, 3);
+  ctx.moveTo(-10, -13);
+  ctx.lineTo(2, -13);
+  ctx.lineTo(-6, -3);
+  ctx.lineTo(-11, -3);
+  ctx.closePath();
+  ctx.fill();
+
+  // Subtle roof reflection highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+  ctx.beginPath();
+  ctx.roundRect(-9, -4, 18, 10, 3);
   ctx.fill();
 
   // Side mirrors
@@ -1225,33 +1388,51 @@ function renderOrbitalAegis(
   w: number,
   h: number
 ) {
-  // Multi-layer starfield
-  for (const s of sim.stars) {
-    ctx.fillStyle = s.r > 1.5 ? 'rgba(226, 232, 240, 0.78)' : 'rgba(148, 163, 184, 0.44)';
+  // Soft deep-space cosmic nebula clouds
+  const neb1 = ctx.createRadialGradient(w * 0.22, h * 0.28, 10, w * 0.22, h * 0.28, w * 0.35);
+  neb1.addColorStop(0, 'rgba(56, 189, 248, 0.08)');
+  neb1.addColorStop(0.5, 'rgba(16, 185, 129, 0.04)');
+  neb1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = neb1;
+  ctx.fillRect(0, 0, w, h);
+
+  // Multi-layer twinkling starfield
+  for (let i = 0; i < sim.stars.length; i++) {
+    const s = sim.stars[i];
+    const twinkle = 0.72 + 0.28 * Math.sin(sim.time * 2.4 + i);
+    ctx.fillStyle =
+      s.r > 1.5
+        ? `rgba(226, 232, 240, ${(0.82 * twinkle).toFixed(2)})`
+        : `rgba(148, 163, 184, ${(0.48 * twinkle).toFixed(2)})`;
     ctx.beginPath();
     ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Curved planetary atmosphere arc along bottom
+  // Curved planetary body & atmospheric Fresnel limb glow along bottom
   const planetGrad = ctx.createRadialGradient(
     w * 0.5,
     h * 1.48,
     h * 0.52,
     w * 0.5,
     h * 1.48,
-    h * 0.72
+    h * 0.78
   );
-  planetGrad.addColorStop(0, 'rgba(16, 185, 129, 0.24)');
+  planetGrad.addColorStop(0, 'rgba(16, 185, 129, 0.32)');
+  planetGrad.addColorStop(0.45, 'rgba(14, 116, 144, 0.14)');
   planetGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
   ctx.fillStyle = planetGrad;
-  ctx.fillRect(0, h * 0.55, w, h * 0.45);
+  ctx.fillRect(0, h * 0.52, w, h * 0.48);
 
-  ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
-  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.shadowColor = 'rgba(52, 211, 153, 0.5)';
+  ctx.shadowBlur = 12;
+  ctx.strokeStyle = 'rgba(52, 211, 153, 0.58)';
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.arc(w * 0.5, h * 1.65, h * 0.85, Math.PI * 1.25, Math.PI * 1.75);
   ctx.stroke();
+  ctx.restore();
 
   const turretX = w * 0.5;
   const turretY = h * 0.82;
@@ -1288,38 +1469,63 @@ function renderOrbitalAegis(
   ctx.setLineDash([]);
   ctx.restore();
 
-  // Banking swept-wing Orbital Interceptor
+  // Banking swept-wing Orbital Interceptor with metallic hull gradient & panel lines
   const bankAngle = Math.max(-0.28, Math.min(0.28, sim.droneVx * 0.65));
   ctx.save();
   ctx.translate(droneX, droneY);
   ctx.rotate(bankAngle);
 
-  ctx.fillStyle = sim.droneHitFlash > 0 ? '#FFFFFF' : '#1E293B';
+  // Twin rear thruster plasma bloom
+  const thrustGlow = ctx.createRadialGradient(0, -18, 1, 0, -18, 16);
+  thrustGlow.addColorStop(0, 'rgba(56, 189, 248, 0.55)');
+  thrustGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
+  ctx.fillStyle = thrustGlow;
+  ctx.fillRect(-16, -34, 32, 24);
+
+  const hullGrad = ctx.createLinearGradient(-28, -18, 28, 18);
+  hullGrad.addColorStop(0, sim.droneHitFlash > 0 ? '#FFFFFF' : '#0F172A');
+  hullGrad.addColorStop(0.45, sim.droneHitFlash > 0 ? '#FFFFFF' : '#334155');
+  hullGrad.addColorStop(1, sim.droneHitFlash > 0 ? '#E2E8F0' : '#0F172A');
+  ctx.fillStyle = hullGrad;
   ctx.strokeStyle = sim.droneHitFlash > 0 ? '#34D399' : '#F43F5E';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(0, 18); // nose pointing downward toward turret
+  ctx.moveTo(0, 19); // nose pointing downward toward turret
   ctx.lineTo(10, 4);
-  ctx.lineTo(28, -8); // right swept wing
-  ctx.lineTo(22, -16);
+  ctx.lineTo(29, -8); // right swept wing
+  ctx.lineTo(23, -17);
   ctx.lineTo(8, -10);
-  ctx.lineTo(0, -18);
+  ctx.lineTo(0, -19);
   ctx.lineTo(-8, -10);
-  ctx.lineTo(-22, -16);
-  ctx.lineTo(-28, -8); // left swept wing
+  ctx.lineTo(-23, -17);
+  ctx.lineTo(-29, -8); // left swept wing
   ctx.lineTo(-10, 4);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
 
-  // Glowing reactor eye + twin rear thruster ports
-  ctx.fillStyle = '#F43F5E';
+  // Wing seam ribs & specular cockpit canopy
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(0, 2, 5, 0, Math.PI * 2);
+  ctx.moveTo(-18, -10);
+  ctx.lineTo(-6, -2);
+  ctx.moveTo(18, -10);
+  ctx.lineTo(6, -2);
+  ctx.stroke();
+
+  // Glowing reactor eye + twin rear thruster ports
+  const eyeGrad = ctx.createRadialGradient(-1, 1, 1, 0, 2, 6);
+  eyeGrad.addColorStop(0, '#FECDD3');
+  eyeGrad.addColorStop(0.5, '#F43F5E');
+  eyeGrad.addColorStop(1, '#881337');
+  ctx.fillStyle = eyeGrad;
+  ctx.beginPath();
+  ctx.arc(0, 2, 5.2, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#38BDF8';
-  ctx.fillRect(-7, -16, 4, 3);
-  ctx.fillRect(3, -16, 4, 3);
+  ctx.fillStyle = '#7DD3FC';
+  ctx.fillRect(-7, -17, 4, 3.5);
+  ctx.fillRect(3, -17, 4, 3.5);
 
   ctx.restore();
 
@@ -1529,12 +1735,25 @@ function renderSynthwavePulse(
 
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = n.accent ? '#F59E0B' : '#10B981';
+    const noteGrad = ctx.createLinearGradient(nx, ny - noteH / 2, nx, ny + noteH / 2);
+    if (n.accent) {
+      noteGrad.addColorStop(0, '#FDE68A');
+      noteGrad.addColorStop(0.5, '#F59E0B');
+      noteGrad.addColorStop(1, '#92400E');
+    } else {
+      noteGrad.addColorStop(0, '#6EE7B7');
+      noteGrad.addColorStop(0.5, '#10B981');
+      noteGrad.addColorStop(1, '#065F46');
+    }
+    ctx.shadowColor = n.accent ? 'rgba(245, 158, 11, 0.55)' : 'rgba(16, 185, 129, 0.55)';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = noteGrad;
     ctx.beginPath();
-    ctx.roundRect(nx, ny - noteH / 2, noteW, noteH, 3);
+    ctx.roundRect(nx, ny - noteH / 2, noteW, noteH, 3.5);
     ctx.fill();
-    ctx.fillStyle = '#FEF9C3';
-    ctx.fillRect(nx + 4, ny - 1, noteW - 8, 2);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+    ctx.fillRect(nx + 4, ny - noteH / 2 + 1, noteW - 8, 1.5);
     ctx.restore();
   }
 
@@ -1556,12 +1775,25 @@ function renderSynthwavePulse(
     const press = sim.padDepression[i];
     const flash = sim.padFlash[i];
     const py = strikeY + press * 4.5;
+    const rx = padStep * 0.30;
+    const ry = Math.max(4, 8.5 - press * 2);
 
-    ctx.fillStyle = flash > 0.1 ? '#10B981' : '#182234';
-    ctx.strokeStyle = flash > 0.1 ? '#FDE68A' : '#334155';
+    if (flash > 0.08) {
+      const padGlow = ctx.createRadialGradient(px, py, 2, px, py, rx * 1.5);
+      padGlow.addColorStop(0, `rgba(16, 185, 129, ${(flash * 0.45).toFixed(2)})`);
+      padGlow.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.fillStyle = padGlow;
+      ctx.fillRect(px - rx * 1.5, py - rx * 1.5, rx * 3, rx * 3);
+    }
+
+    const padGrad = ctx.createRadialGradient(px, py - 2, 1, px, py, rx);
+    padGrad.addColorStop(0, flash > 0.1 ? '#34D399' : '#334155');
+    padGrad.addColorStop(1, flash > 0.1 ? '#065F46' : '#0F172A');
+    ctx.fillStyle = padGrad;
+    ctx.strokeStyle = flash > 0.1 ? '#FDE68A' : '#475569';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.ellipse(px, py, padStep * 0.28, 8 - press * 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(px, py, rx, ry, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   }
@@ -1649,14 +1881,18 @@ function renderTitanSiege(
   ctx.textAlign = 'center';
   ctx.fillText(`TITAN DREADNOUGHT HULL: ${hpPct}%`, w * 0.5, barY + 24);
 
-  // Render Armored Boss Dreadnought with progressive physical damage states
+  // Render Armored Boss Dreadnought with metallic hull shading & progressive physical damage states
   if (!sim.bossDestroyed) {
     ctx.save();
     ctx.translate(bossX, bossY);
 
-    // Outer armored wings
-    ctx.fillStyle = sim.bossHitFlash > 0 ? '#FEF3C7' : '#1E293B';
-    ctx.strokeStyle = sim.bossHitFlash > 0 ? '#F59E0B' : '#475569';
+    // Outer armored wings with metallic gradient shading
+    const bossHullGrad = ctx.createLinearGradient(-114, -28, 114, 34);
+    bossHullGrad.addColorStop(0, sim.bossHitFlash > 0 ? '#FEF3C7' : '#0F172A');
+    bossHullGrad.addColorStop(0.5, sim.bossHitFlash > 0 ? '#FFFFFF' : '#334155');
+    bossHullGrad.addColorStop(1, sim.bossHitFlash > 0 ? '#FEF3C7' : '#0F172A');
+    ctx.fillStyle = bossHullGrad;
+    ctx.strokeStyle = sim.bossHitFlash > 0 ? '#F59E0B' : '#64748B';
     ctx.lineWidth = 2;
 
     ctx.beginPath();
@@ -1670,6 +1906,23 @@ function renderTitanSiege(
     ctx.lineTo(-96, -8);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
+
+    // Recessed armor panel seams & bevel ribs
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.72)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-48, -16);
+    ctx.lineTo(-36, 26);
+    ctx.moveTo(48, -16);
+    ctx.lineTo(36, 26);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(226, 232, 240, 0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-90, -5);
+    ctx.lineTo(0, -24);
+    ctx.lineTo(90, -5);
     ctx.stroke();
 
     // Progressive hull damage fractures & glowing molten vents (<75%, <50%, <25%)
@@ -1716,15 +1969,24 @@ function renderTitanSiege(
       ctx.fill();
     }
 
-    // Inner Reactor Core
+    // Inner Reactor Core with volumetric bloom
     const corePulse = 0.65 + 0.35 * Math.sin(sim.time * (hpPct <= 25 ? 14 : 6));
+    const coreBloom = ctx.createRadialGradient(0, 6, 2, 0, 6, 26);
+    coreBloom.addColorStop(0, `rgba(254, 243, 199, ${(corePulse * 0.9).toFixed(2)})`);
+    coreBloom.addColorStop(0.45, `rgba(244, 63, 94, ${(corePulse * 0.65).toFixed(2)})`);
+    coreBloom.addColorStop(1, 'rgba(244, 63, 94, 0)');
+    ctx.fillStyle = coreBloom;
+    ctx.beginPath();
+    ctx.arc(0, 6, 26, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.fillStyle = `rgba(244, 63, 94, ${corePulse})`;
     ctx.beginPath();
-    ctx.arc(0, 6, 14, 0, Math.PI * 2);
+    ctx.arc(0, 6, 13, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#FDE68A';
+    ctx.fillStyle = '#FEF9C3';
     ctx.beginPath();
-    ctx.arc(0, 6, 6, 0, Math.PI * 2);
+    ctx.arc(0, 6, 5.5, 0, Math.PI * 2);
     ctx.fill();
 
     // Twin side weapon pods with charging crimson plasma glow on counter-fire

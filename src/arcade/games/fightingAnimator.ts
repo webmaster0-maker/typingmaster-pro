@@ -516,14 +516,33 @@ export function renderFightingStage(
   drawDojoLantern(ctx, w * 0.10, panelTop - 4, sim.lanternSway, '#10B981');
   drawDojoLantern(ctx, w * 0.90, panelTop - 4, -sim.lanternSway, snapshot.opponent.palette.secondary);
 
-  // 3. Perspective Cyber-Dojo Floor Deck
+  // 3. Polished Reflective Cyber-Dojo Floor Deck
   const floorGrad = ctx.createLinearGradient(0, floorY, 0, h);
-  floorGrad.addColorStop(0, '#141C2E');
-  floorGrad.addColorStop(1, '#090D16');
+  floorGrad.addColorStop(0, '#182238');
+  floorGrad.addColorStop(0.35, '#101726');
+  floorGrad.addColorStop(1, '#070A12');
   ctx.fillStyle = floorGrad;
   ctx.fillRect(0, floorY, w, h - floorY);
 
-  // Perspective floor lines radiating from center vanish point
+  // Subtle floor reflections of lantern glow & arena moon
+  const centerReflect = ctx.createRadialGradient(w * 0.5, floorY + 12, 8, w * 0.5, floorY + 12, w * 0.34);
+  centerReflect.addColorStop(0, 'rgba(245, 158, 11, 0.08)');
+  centerReflect.addColorStop(1, 'rgba(245, 158, 11, 0)');
+  ctx.fillStyle = centerReflect;
+  ctx.fillRect(0, floorY, w, h - floorY);
+
+  for (const [lx, col] of [
+    [w * 0.12, 'rgba(16, 185, 129, 0.10)'],
+    [w * 0.88, 'rgba(244, 63, 94, 0.08)'],
+  ] as [number, string][]) {
+    const lRef = ctx.createRadialGradient(lx, floorY + 8, 2, lx, floorY + 8, 84);
+    lRef.addColorStop(0, col);
+    lRef.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = lRef;
+    ctx.fillRect(lx - 84, floorY, 168, h - floorY);
+  }
+
+  // Perspective floor planks radiating from center vanish point
   ctx.strokeStyle = 'rgba(148, 163, 184, 0.14)';
   ctx.lineWidth = 1;
   for (let i = -5; i <= 5; i++) {
@@ -535,6 +554,16 @@ export function renderFightingStage(
   // Horizontal floor horizon line & combat ring accent strip
   ctx.fillStyle = 'rgba(245, 158, 11, 0.45)';
   ctx.fillRect(w * 0.12, floorY, w * 0.76, 2);
+
+  // Floating ambient dojo dust motes in the moonlight
+  ctx.fillStyle = 'rgba(254, 243, 199, 0.22)';
+  for (let m = 0; m < 12; m++) {
+    const mx = ((m * 137 + sim.time * (10 + (m % 3) * 4)) % (w * 0.8)) + w * 0.1;
+    const my = panelTop + 20 + ((m * 53 + Math.sin(sim.time * 0.9 + m) * 14) % Math.max(40, panelH - 30));
+    ctx.beginPath();
+    ctx.arc(mx, my, 1.1 + (m % 2) * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   // 4. Render Fighters (Player Left, Opponent Right)
   const playerX = sim.player.xNorm * w;
