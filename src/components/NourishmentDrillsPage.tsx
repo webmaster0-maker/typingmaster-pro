@@ -102,11 +102,8 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Nourishment Drills
+                Practice drills
               </h1>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Focused speed practice, endurance exams, and 3-stage tricky-key recovery drills to clear weak-key hotspots.
-              </p>
             </div>
           </div>
         </div>

@@ -42,10 +42,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
           </a>
-          <h1 className="text-3xl font-extrabold text-white">Tests &amp; Certification Exams</h1>
-          <p className="text-sm text-slate-300 max-w-2xl">
-            Benchmark your net WPM speed and accuracy under standard or strict exam rules. Score 35+ WPM with 95%+ accuracy to earn an official downloadable PDF or PNG certificate.
-          </p>
+          <h1 className="text-3xl font-extrabold text-white">Speed tests</h1>
         </div>
 
         <button
@@ -65,10 +62,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
       </div>
 
       {/* Tests Grid */}
-      <section aria-labelledby="speed-tests-heading" className="space-y-4">
-        <h2 id="speed-tests-heading" className="text-xl font-bold text-white">
-          Timed Speed Tests &amp; Certification Exams
-        </h2>
+      <section className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {testItems.map((test) => (
           <div

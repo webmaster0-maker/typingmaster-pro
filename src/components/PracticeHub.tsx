@@ -39,17 +39,14 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
       <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-white">Practice Hub &amp; Drills</h1>
-        <p className="text-sm text-slate-300 max-w-3xl">
-          Practice targeted keyboard reaches and auto-generated 3-stage recovery lessons built directly from your tricky-key mistake patterns.
-        </p>
+        <h1 className="text-3xl font-extrabold text-white">Practice</h1>
       </div>
 
       {/* Featured Section: Rule-Based Tricky Key Lessons */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-sky-400" />
-          <h2 className="text-xl font-bold text-white">Auto-Generated Tricky Key Lessons</h2>
+          <h2 className="text-xl font-bold text-white">Weak-key recovery</h2>
         </div>
 
         {ruleLessons.length === 0 ? (

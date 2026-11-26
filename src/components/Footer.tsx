@@ -39,9 +39,7 @@ export const Footer: React.FC<FooterProps> = ({
               </span>
               <span>TypeCrest</span>
             </a>
-            <p className="text-xs leading-relaxed text-slate-400 max-w-sm">
-              Guided touch typing instructor with real-time 3D articulated hands, 28 progressive lessons, adaptive weak-key remediation, WPM speed tests, and retro typing arcade games.
-            </p>
+
           </div>
 
           <nav aria-label="Touch typing curriculum links" className="space-y-2.5">
@@ -64,8 +62,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('practice'))}
                   className="hover:text-sky-400 transition-colors"
                 >
-                  Adaptive Weak-Key Practice Hub
-                </a>
+                  Weak-key practice                </a>
               </li>
               <li>
                 <a
@@ -73,7 +70,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('drills'))}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Nourishment &amp; Accuracy Drills
+                  Practice drills
                 </a>
               </li>
               <li>
@@ -99,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('tests'))}
                   className="hover:text-emerald-400 transition-colors"
                 >
-                  WPM Speed Tests &amp; Certificates
+                  Speed tests
                 </a>
               </li>
               <li>
@@ -117,7 +114,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('analytics'))}
                   className="hover:text-sky-400 transition-colors"
                 >
-                  WPM Speed Analytics &amp; Hotspots
+                  Analytics
                 </a>
               </li>
             </ul>
@@ -125,8 +122,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         <div className="mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
-          <span>TypeCrest · Guided Touch Typing Instructor</span>
-          <span>Local-First Privacy · 3D Hand Kinematics · Verified WPM Certificates</span>
+          <span>© 2026 TypeCrest</span>
         </div>
       </div>
     </footer>

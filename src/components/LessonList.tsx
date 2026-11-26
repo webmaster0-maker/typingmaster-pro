@@ -3,7 +3,7 @@ import { Lesson, SkillLevel, SessionResult, UserStats } from '../types';
 import { LessonGrowthCard } from './LessonGrowthCard';
 import { GrowthPlantAvatar } from './GrowthPlantAvatar';
 import { calculateGrowthProfile } from '../utils/growthEngine';
-import { Sprout, Award, ArrowRight, Zap, Compass, Target, Droplets } from 'lucide-react';
+import { Sprout, Award, ArrowRight, Zap, Compass, Target } from 'lucide-react';
 
 interface LessonListProps {
   lessons: Lesson[];
@@ -37,31 +37,27 @@ export const LessonList: React.FC<LessonListProps> = ({
     color: 'emerald' | 'amber' | 'rose';
     desc: string;
     icon: React.ComponentType<{ className?: string }>;
-    botanicalStage: string;
   }[] = [
     {
       id: 'beginner',
       title: 'Beginner Level',
       color: 'emerald',
-      desc: 'Build foundational posture, anchor F & J, master the home row, and branch to top and bottom rows.',
+      desc: 'Home row, top & bottom rows.',
       icon: Compass,
-      botanicalStage: 'Rooting & Sprouting',
     },
     {
       id: 'intermediate',
       title: 'Intermediate Level',
       color: 'amber',
-      desc: 'Practice common digraphs, rhythm, Shift capitalization, punctuation, and sustained paragraph fluency.',
+      desc: 'Rhythm, Shift, punctuation, fluency.',
       icon: Target,
-      botanicalStage: 'Branching Foliage',
     },
     {
       id: 'advanced',
       title: 'Advanced Level',
       color: 'rose',
-      desc: 'High-speed bursts, technical code syntax, long endurance passages, and master certification exams.',
+      desc: 'Code, speed bursts, endurance.',
       icon: Award,
-      botanicalStage: 'Master Canopy',
     },
   ];
 
@@ -140,12 +136,6 @@ export const LessonList: React.FC<LessonListProps> = ({
               <span aria-hidden="true">·</span>
               <span className="font-mono">QWERTY Layout</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white text-balance">
-              Every Lesson Grows Your Typing Tree
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-              Follow 28 structured QWERTY touch typing lessons across Beginner, Intermediate, and Advanced tracks with 3D finger placement guidance and 90%+ mastery goals.
-            </p>
           </div>
 
           <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -157,10 +147,6 @@ export const LessonList: React.FC<LessonListProps> = ({
               <Zap className="w-4 h-4" />
               <span>Take Placement Test</span>
             </button>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
-              <Droplets className="w-3.5 h-3.5 text-sky-400" />
-              <span>100+ XP per passed lesson</span>
-            </div>
           </div>
         </div>
       </div>
