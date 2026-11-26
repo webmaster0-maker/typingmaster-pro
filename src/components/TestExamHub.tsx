@@ -27,8 +27,8 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
   onBackHome,
 }) => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div className="space-y-2">
           <a
             href="/"
@@ -37,12 +37,12 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
               e.preventDefault();
               onBackHome();
             }}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-100 transition-colors whitespace-nowrap"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
           </a>
-          <h1 className="text-3xl font-extrabold text-white">Speed tests</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">Speed tests</h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">

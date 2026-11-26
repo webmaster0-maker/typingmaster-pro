@@ -45,18 +45,18 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+    <header className="sticky top-0 z-50 bg-[#09090B]/90 backdrop-blur-md border-b border-white/[0.08]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-6">
         {/* Zone 1: Compact Single-Line Brand Mark */}
         <a
           href="/"
           onClick={(e) => handleNavClick(e, 'dashboard')}
-          className="flex items-center gap-2.5 text-left shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          className="flex items-center gap-2.5 text-left shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
         >
-          <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white shadow-sm shadow-indigo-500/30 shrink-0">
+          <span className="w-7 h-7 rounded-md bg-zinc-100 flex items-center justify-center text-zinc-950 shrink-0">
             <Keyboard className="w-4 h-4" />
           </span>
-          <span className="text-base font-bold text-white tracking-tight whitespace-nowrap">
+          <span className="text-sm font-semibold text-zinc-100 tracking-tight whitespace-nowrap">
             TypeCrest
           </span>
         </a>
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Zone 2: Clean Single-Line Navigation Links */}
         <nav
           aria-label="Primary navigation"
-          className="hidden md:flex items-center gap-1 lg:gap-2 min-w-0"
+          className="hidden md:flex items-center gap-1 min-w-0"
         >
           {navItems.map((item) => {
             const isGames = item.id === 'games';
@@ -75,23 +75,21 @@ export const Header: React.FC<HeaderProps> = ({
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.id)}
                 className={`
-                  relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap shrink-0
-                  transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
+                  relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap shrink-0
+                  transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400
                   ${
                     isActive
-                      ? 'text-white font-semibold bg-slate-800/70'
-                      : isGames
-                      ? 'text-amber-300 hover:text-amber-200 hover:bg-amber-500/10'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+                      ? 'text-zinc-50 bg-white/[0.07]'
+                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
                   }
                 `}
               >
-                {isGames && <Gamepad2 className="w-4 h-4 shrink-0" />}
+                {isGames && <Gamepad2 className="w-3.5 h-3.5 shrink-0 text-zinc-400" />}
                 <span>{item.label}</span>
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-indigo-400"
+                    className="absolute inset-x-3 -bottom-[11px] h-px bg-emerald-400"
                   />
                 )}
               </a>
@@ -104,10 +102,10 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenAccount}
-            className={`inline-flex items-center gap-2 h-10 px-4 rounded-lg border text-sm font-semibold whitespace-nowrap shrink-0 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
+            className={`inline-flex items-center gap-2 h-8 px-3.5 rounded-lg border text-xs font-medium whitespace-nowrap shrink-0 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
               userAccount
-                ? 'bg-slate-900 hover:bg-slate-800 border-slate-700 hover:border-indigo-400/60 text-white'
-                : 'bg-indigo-600 hover:bg-indigo-500 border-indigo-500 text-white shadow-sm shadow-indigo-600/25'
+                ? 'bg-zinc-900 hover:bg-zinc-800 border-white/[0.1] text-zinc-100'
+                : 'bg-zinc-100 hover:bg-white border-transparent text-zinc-950 font-semibold'
             }`}
             title={
               userAccount
@@ -119,14 +117,14 @@ export const Header: React.FC<HeaderProps> = ({
           >
             {userAccount ? (
               <>
-                <span className="w-5 h-5 rounded-md bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                <span className="w-4 h-4 rounded bg-emerald-500 text-zinc-950 text-[9px] font-bold flex items-center justify-center shrink-0">
                   {getUserInitials(userAccount.fullName)}
                 </span>
                 <span className="max-w-[96px] truncate">{firstName}</span>
               </>
             ) : (
               <>
-                <User className="w-4 h-4 shrink-0" />
+                <User className="w-3.5 h-3.5 shrink-0" />
                 <span>Sign In</span>
               </>
             )}
@@ -137,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Compact Mobile Navigation Bar */}
       <nav
         aria-label="Mobile navigation"
-        className="flex md:hidden items-center justify-around bg-slate-950/95 border-t border-slate-800/80 py-1.5 px-1"
+        className="flex md:hidden items-center justify-around bg-[#09090B]/95 border-t border-white/[0.08] py-1.5 px-1"
       >
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -149,13 +147,11 @@ export const Header: React.FC<HeaderProps> = ({
               href={item.href}
               onClick={(e) => handleNavClick(e, item.id)}
               className={`
-                flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg text-[11px] whitespace-nowrap transition-colors
+                flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-md text-[11px] whitespace-nowrap transition-colors
                 ${
                   isActive
-                    ? 'text-indigo-400 font-semibold bg-indigo-950/50'
-                    : isGames
-                    ? 'text-amber-400 font-medium'
-                    : 'text-slate-400'
+                    ? 'text-emerald-400 font-medium bg-white/[0.06]'
+                    : 'text-zinc-400'
                 }
               `}
             >

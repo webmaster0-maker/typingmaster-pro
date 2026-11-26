@@ -680,7 +680,7 @@ export default function App() {
   ) : null;
 
   const routeFallback = (
-    <div className="min-h-[60vh] flex items-center justify-center bg-slate-950 text-slate-400 text-sm">
+    <div className="min-h-[60vh] flex items-center justify-center bg-[#09090B] text-zinc-400 text-sm">
       Loading TypeCrest workspace...
     </div>
   );
@@ -779,7 +779,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}

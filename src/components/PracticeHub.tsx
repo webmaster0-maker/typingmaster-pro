@@ -38,9 +38,12 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
   const ruleLessons = useMemo(() => generateRuleBasedLessons(weakKeys), [weakKeys]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-white">Practice</h1>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
+      <div className="pb-6 border-b border-white/[0.08]">
+        <p className="text-xs font-mono uppercase tracking-widest text-emerald-400 mb-1.5">
+          Targeted Drills
+        </p>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">Practice</h1>
       </div>
 
       {/* Featured Section: Rule-Based Tricky Key Lessons */}

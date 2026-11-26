@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lesson, SkillLevel, SessionResult, UserStats } from '../types';
 import { LessonGrowthCard } from './LessonGrowthCard';
-import { GrowthPlantAvatar } from './GrowthPlantAvatar';
-import { calculateGrowthProfile } from '../utils/growthEngine';
-import { Sprout, Award, ArrowRight, Zap, Compass, Target, ChevronDown } from 'lucide-react';
+import { Award, ArrowRight, Zap, Compass, Target, ChevronDown } from 'lucide-react';
 
 interface LessonListProps {
   lessons: Lesson[];
@@ -33,8 +31,6 @@ export const LessonList: React.FC<LessonListProps> = ({
   useEffect(() => {
     setSelectedLevel(initialLevel);
   }, [initialLevel]);
-
-  const growthProfile = calculateGrowthProfile(userStats, sessionHistory);
 
   const levels: {
     id: SkillLevel;
@@ -133,33 +129,25 @@ export const LessonList: React.FC<LessonListProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
-      {/* Top Banner */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        <div className="lg:col-span-5 flex">
-          <GrowthPlantAvatar growthProfile={growthProfile} />
+      {/* Compact Studio Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div className="space-y-1.5">
+          <p className="text-xs font-mono uppercase tracking-widest text-emerald-400">
+            QWERTY Curriculum
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">
+            All {lessons.length} Lessons
+          </h1>
         </div>
 
-        <div className="lg:col-span-7 flex flex-col justify-between bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Sprout className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400 font-semibold">Typing Curriculum</span>
-              <span aria-hidden="true">·</span>
-              <span className="font-mono">QWERTY Layout</span>
-            </div>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              onClick={onOpenAssessment}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm transition-colors whitespace-nowrap"
-            >
-              <Zap className="w-4 h-4" />
-              <span>Take Placement Test</span>
-            </button>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={onOpenAssessment}
+          className="inline-flex items-center gap-2 self-start sm:self-auto px-4 py-2 rounded-lg bg-[#111113] hover:bg-zinc-900 border border-white/[0.1] text-zinc-200 font-medium text-xs transition-colors whitespace-nowrap"
+        >
+          <Zap className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Take Placement Test</span>
+        </button>
       </div>
 
       {/* Level Selector Cards */}

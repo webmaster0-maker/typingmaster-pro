@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { Lesson, PracticeItem, UserStats, SessionResult } from '../types';
-import { GrowthPlantAvatar } from './GrowthPlantAvatar';
 import { calculateGrowthProfile, getLessonCompletionMeta } from '../utils/growthEngine';
-import {
-  Dumbbell,
-  ArrowRight,
-  TrendingUp,
-  Target,
-  Sprout,
-  ChevronDown,
-} from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 
 interface DashboardProps {
   lessons: Lesson[];
@@ -62,7 +54,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     },
   ];
 
-  // Find first unbloomed lesson as the next recommended lesson to nourish
   const nextLesson =
     lessons.find((l) => {
       const meta = getLessonCompletionMeta(l.id, l.title, sessionHistory);
@@ -70,94 +61,91 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }) || lessons[0];
 
   const featuredDrills = practiceItems.slice(0, 2);
+  const completionPct = Math.round((growthProfile.totalBlooms / Math.max(1, lessons.length)) * 100);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
-      {/* Top Banner with Growth Avatar */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        <div className="lg:col-span-5 flex">
-          <GrowthPlantAvatar growthProfile={growthProfile} />
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-14 animate-fadeIn">
+      {/* Open Editorial Hero */}
+      <section className="space-y-6 max-w-2xl">
+        <div className="space-y-3">
+          <p className="text-xs font-mono uppercase tracking-widest text-emerald-400">
+            Touch Typing Studio
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-semibold text-zinc-50 tracking-[-0.03em] leading-[1.1] text-balance">
+            Master touch typing with 3D hand guidance.
+          </h1>
+          <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
+            {lessons.length} structured lessons, themed speed tests, and adaptive weak-key drills. Free and local-first.
+          </p>
         </div>
 
-        <div className="lg:col-span-7 relative overflow-hidden bg-gradient-to-r from-indigo-950/70 via-slate-900 to-slate-900 border border-indigo-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col justify-between gap-6">
-          <div className="space-y-3">
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight text-balance max-w-xl">
-              {lessons.length} lessons. 3D hand guidance. Free.
-            </h1>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {nextLesson && (
-              <button
-                type="button"
-                onClick={() => onStartLesson(nextLesson)}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all whitespace-nowrap"
-              >
-                <span>Start typing</span>
-              </button>
-            )}
-            <a
-              href="/lessons"
-              onClick={(e) => {
-                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                e.preventDefault();
-                setActiveTab('lessons');
-              }}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 transition-colors whitespace-nowrap"
+        <div className="flex flex-wrap items-center gap-4 pt-1">
+          {nextLesson && (
+            <button
+              type="button"
+              onClick={() => onStartLesson(nextLesson)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm transition-colors whitespace-nowrap"
             >
-              <span>All lessons →</span>
-            </a>
+              <span>Start typing</span>
+            </button>
+          )}
+          <a
+            href="/lessons"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+              e.preventDefault();
+              setActiveTab('lessons');
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-zinc-300 hover:text-white border border-white/[0.1] hover:border-white/[0.2] font-medium text-sm transition-colors whitespace-nowrap"
+          >
+            <span>All lessons</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </section>
+
+      {/* Flat Hairline Telemetry Strip */}
+      <section aria-label="Your typing progress" className="border-y border-white/[0.08] py-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+          <div>
+            <p className="text-2xl sm:text-3xl font-semibold text-zinc-50 font-mono tabular-nums tracking-tight">
+              {userStats.avgWpm}
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">Average WPM</p>
+          </div>
+
+          <div>
+            <p className="text-2xl sm:text-3xl font-semibold text-zinc-50 font-mono tabular-nums tracking-tight">
+              {userStats.avgAccuracy}%
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">Accuracy</p>
+          </div>
+
+          <div>
+            <p className="text-2xl sm:text-3xl font-semibold text-zinc-50 font-mono tabular-nums tracking-tight">
+              {growthProfile.totalBlooms}
+              <span className="text-sm font-normal text-zinc-500">/{lessons.length}</span>
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">Lessons done ({completionPct}%)</p>
+          </div>
+
+          <div>
+            <p className="text-2xl sm:text-3xl font-semibold text-zinc-50 font-mono tabular-nums tracking-tight">
+              {userStats.xp}
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">XP earned</p>
           </div>
         </div>
-      </div>
-
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-2xl font-black text-white font-mono tabular-nums">
-            {userStats.avgWpm}
-          </span>
-          <span className="text-xs text-slate-400 font-medium mt-1">
-            Average WPM
-          </span>
-        </div>
-
-        <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-2xl font-black text-white font-mono tabular-nums">
-            {userStats.avgAccuracy}%
-          </span>
-          <span className="text-xs text-slate-400 font-medium mt-1">
-            Accuracy
-          </span>
-        </div>
-
-        <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-2xl font-black text-white font-mono tabular-nums">
-            {growthProfile.totalBlooms}
-          </span>
-          <span className="text-xs text-slate-400 font-medium mt-1">
-            Lessons done
-          </span>
-        </div>
-
-        <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-2xl font-black text-white font-mono tabular-nums">
-            {userStats.xp}
-          </span>
-          <span className="text-xs text-slate-400 font-medium mt-1 tabular-nums">
-            XP
-          </span>
-        </div>
-      </div>
+      </section>
 
       {/* Main Two-Column Launch Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* Left 2 Cols: Recommended Lessons */}
         <div className="lg:col-span-2 space-y-5">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-white">Recommended Lessons</h2>
-            </div>
+            <h2 className="text-base font-semibold text-zinc-100 tracking-tight">
+              Recommended Lessons
+            </h2>
 
             <a
               href="/lessons"
@@ -166,14 +154,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 e.preventDefault();
                 setActiveTab('lessons');
               }}
-              className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 whitespace-nowrap transition-colors"
+              className="text-xs font-medium text-zinc-400 hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap transition-colors"
             >
               <span>All lessons</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {lessons.slice(0, 4).map((lesson) => {
               const meta = getLessonCompletionMeta(
                 lesson.id,
@@ -187,35 +175,35 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   key={lesson.id}
                   type="button"
                   onClick={() => onStartLesson(lesson)}
-                  className={`group text-left p-5 rounded-2xl border transition-all duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                  className={`group text-left p-5 rounded-xl border transition-colors duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                     isCompleted
-                      ? 'bg-slate-900/90 border-emerald-500/40 hover:border-emerald-400'
-                      : 'bg-slate-900/80 hover:bg-slate-800/80 border-slate-800 hover:border-indigo-500/50'
+                      ? 'bg-[#111113] border-emerald-500/30 hover:border-emerald-500/50'
+                      : 'bg-[#111113] hover:bg-zinc-900 border-white/[0.08] hover:border-white/[0.16]'
                   }`}
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2 text-xs">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2 text-[11px]">
                       <span
-                        className={`font-semibold ${
-                          isCompleted ? 'text-emerald-400' : 'text-indigo-400'
+                        className={`font-medium ${
+                          isCompleted ? 'text-emerald-400' : 'text-zinc-500'
                         }`}
                       >
-                        {isCompleted ? 'Bloomed' : `Module ${lesson.module}`}
+                        {isCompleted ? 'Completed' : `Module ${lesson.module}`}
                       </span>
-                      <span className="font-mono text-slate-400">
-                        {lesson.targetKeys.slice(0, 4).join(', ').toUpperCase()}
+                      <span className="font-mono text-zinc-500">
+                        {lesson.targetKeys.slice(0, 4).join(' ').toUpperCase()}
                       </span>
                     </div>
-                    <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                    <h3 className="text-sm font-medium text-zinc-100 group-hover:text-white transition-colors">
                       {lesson.title}
                     </h3>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-emerald-400">
-                    <span className="tabular-nums">
-                      {isCompleted ? `Best: ${meta.bestWpm} WPM` : 'Start Lesson'}
+                  <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400 group-hover:text-zinc-200">
+                    <span className="tabular-nums font-mono">
+                      {isCompleted ? `${meta.bestWpm} WPM` : 'Start'}
                     </span>
-                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               );
@@ -223,26 +211,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Right Col: Nourishment Drills (Preview of 2 Practice Drills + Dedicated Page Trigger) */}
+        {/* Right Col: Weak-Key Practice */}
         <div className="space-y-5">
           <div className="flex items-center justify-between gap-3">
-            <a
-              href="/drills"
-              onClick={(e) => {
-                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                e.preventDefault();
-                onOpenNourishmentDrills();
-              }}
-              aria-label="Open Nourishment Drills page"
-              className="group flex items-center gap-3 text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
-            >
-              <span className="w-9 h-9 rounded-xl bg-purple-600/20 group-hover:bg-purple-600 border border-purple-500/35 flex items-center justify-center text-purple-400 group-hover:text-white transition-colors shrink-0">
-                <Dumbbell className="w-5 h-5" />
-              </span>
-              <h2 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
-                Weak-key practice
-              </h2>
-            </a>
+            <h2 className="text-base font-semibold text-zinc-100 tracking-tight">
+              Weak-key practice
+            </h2>
 
             <a
               href="/drills"
@@ -251,112 +225,106 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 e.preventDefault();
                 onOpenNourishmentDrills();
               }}
-              className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors"
+              className="text-xs font-medium text-zinc-400 hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors"
             >
-              <span>All Drills</span>
+              <span>All drills</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {featuredDrills.map((prac) => (
               <button
                 key={prac.id}
                 type="button"
                 onClick={() => onStartPractice(prac)}
-                className="w-full text-left bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-purple-500/50 p-5 rounded-2xl transition-all duration-150 flex items-center justify-between gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+                className="w-full text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-white/[0.16] p-5 rounded-xl transition-colors duration-150 flex items-center justify-between gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="font-semibold text-purple-400 capitalize">
-                      {prac.type.replace('_', ' ')} Drill
-                    </span>
+                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                    <span className="capitalize">{prac.type.replace('_', ' ')}</span>
                     <span aria-hidden="true">·</span>
-                    <span className="font-mono tabular-nums">
-                      {prac.durationMinutes} min
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span className="font-mono tabular-nums">+35 XP</span>
+                    <span className="font-mono tabular-nums">{prac.durationMinutes} min</span>
                   </div>
-                  <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors truncate">
+                  <h3 className="text-sm font-medium text-zinc-100 group-hover:text-white transition-colors truncate">
                     {prac.title}
                   </h3>
                 </div>
-                <span className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition-colors shrink-0">
-                  <ArrowRight className="w-4 h-4" />
-                </span>
+                <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0" />
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* GEO / AI-Search Ready Structured Overview & FAQ */}
+      {/* Curriculum Overview & Interactive FAQ */}
       <section
         aria-labelledby="typecrest-guide-heading"
-        className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4 border-t border-slate-800/80"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-10 border-t border-white/[0.08]"
       >
-        <div className="lg:col-span-6 bg-slate-900/75 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h2 id="typecrest-guide-heading" className="text-lg font-bold text-white">
+        <div className="lg:col-span-6 space-y-4">
+          <h2 id="typecrest-guide-heading" className="text-base font-semibold text-zinc-100 tracking-tight">
             Curriculum
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
-                  <th className="py-2 pr-3">Track</th>
-                  <th className="py-2 px-3">Focus Areas</th>
-                  <th className="py-2 pl-3">Pass Target</th>
+                <tr className="border-b border-white/[0.08] text-zinc-500 uppercase tracking-wider text-[10px]">
+                  <th className="py-2.5 pr-3 font-medium">Track</th>
+                  <th className="py-2.5 px-3 font-medium">Focus Areas</th>
+                  <th className="py-2.5 pl-3 font-medium text-right">Pass Target</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/70 text-slate-300">
+              <tbody className="divide-y divide-white/[0.06] text-zinc-300">
                 <tr>
-                  <td className="py-2.5 pr-3 font-semibold text-emerald-400">Beginner</td>
-                  <td className="py-2.5 px-3">F &amp; J anchors, home row, top &amp; bottom reaches</td>
-                  <td className="py-2.5 pl-3 font-mono">90%+ Accuracy</td>
+                  <td className="py-3 pr-3 font-medium text-zinc-100">Beginner</td>
+                  <td className="py-3 px-3 text-zinc-400">F &amp; J anchors, home row, top &amp; bottom reaches</td>
+                  <td className="py-3 pl-3 font-mono text-right text-zinc-300">90%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 pr-3 font-semibold text-amber-400">Intermediate</td>
-                  <td className="py-2.5 px-3">Digraph rhythm, Shift capitals, punctuation</td>
-                  <td className="py-2.5 pl-3 font-mono">92%+ Accuracy</td>
+                  <td className="py-3 pr-3 font-medium text-zinc-100">Intermediate</td>
+                  <td className="py-3 px-3 text-zinc-400">Digraph rhythm, Shift capitals, punctuation</td>
+                  <td className="py-3 pl-3 font-mono text-right text-zinc-300">92%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 pr-3 font-semibold text-rose-400">Advanced</td>
-                  <td className="py-2.5 px-3">Code syntax, numbers, endurance passages</td>
-                  <td className="py-2.5 pl-3 font-mono">95%+ Accuracy</td>
+                  <td className="py-3 pr-3 font-medium text-zinc-100">Advanced</td>
+                  <td className="py-3 px-3 text-zinc-400">Code syntax, numbers, endurance passages</td>
+                  <td className="py-3 pl-3 font-mono text-right text-zinc-300">95%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 pr-3 font-semibold text-sky-400">Certification</td>
-                  <td className="py-2.5 px-3">Timed speed tests &amp; PDF/PNG awards</td>
-                  <td className="py-2.5 pl-3 font-mono">35+ WPM · 95%</td>
+                  <td className="py-3 pr-3 font-medium text-emerald-400">Certification</td>
+                  <td className="py-3 px-3 text-zinc-400">Timed speed tests &amp; PDF/PNG awards</td>
+                  <td className="py-3 pl-3 font-mono text-right text-emerald-400">35+ WPM · 95%</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="lg:col-span-6 bg-slate-900/75 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white">Frequently Asked Questions</h2>
-          <div className="divide-y divide-slate-800/80">
+        <div className="lg:col-span-6 space-y-4">
+          <h2 className="text-base font-semibold text-zinc-100 tracking-tight">
+            Frequently Asked Questions
+          </h2>
+          <div className="divide-y divide-white/[0.06] border-t border-white/[0.06]">
             {faqItems.map((item, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div key={item.q} className="py-2.5 first:pt-0 last:pb-0">
+                <div key={item.q} className="py-3">
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? -1 : idx)}
                     aria-expanded={isOpen}
-                    className="w-full flex items-center justify-between gap-3 text-left text-xs font-semibold text-slate-100 hover:text-emerald-300 transition-colors py-1"
+                    className="w-full flex items-center justify-between gap-3 text-left text-xs font-medium text-zinc-200 hover:text-white transition-colors"
                   >
                     <span>{item.q}</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-emerald-400' : ''
+                      className={`w-4 h-4 text-zinc-500 shrink-0 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180 text-zinc-200' : ''
                       }`}
                     />
                   </button>
                   {isOpen && (
-                    <p className="text-xs text-slate-400 leading-relaxed pt-1.5 pr-6">
+                    <p className="text-xs text-zinc-400 leading-relaxed pt-2 pr-6">
                       {item.a}
                     </p>
                   )}
