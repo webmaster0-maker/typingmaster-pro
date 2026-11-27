@@ -43,10 +43,12 @@ import {
 } from 'lucide-react';
 import {
   AdPlacementKey,
+  AdVisibilitySettings,
   setAllAdLayoutsVisible,
   setAdPlacementVisible,
   setAdPlacementCreative,
   resetAdVisibilitySettings,
+  syncAdSettingsToServer,
   useAdVisibilitySettings,
 } from '../../utils/adSettings';
 
@@ -79,8 +81,20 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
   const [draftLinks, setDraftLinks] = useState<Partial<Record<AdPlacementKey, string>>>({});
   const [savedZoneKey, setSavedZoneKey] = useState<string | null>(null);
   const [adSaveError, setAdSaveError] = useState<string | null>(null);
+  const [adSyncMode, setAdSyncMode] = useState<'idle' | 'syncing' | 'global' | 'local'>('idle');
   const visiblePlacementsCount = Object.values(adSettings.placements).filter(Boolean).length;
   const activePlacementsCount = adSettings.adsEnabled ? visiblePlacementsCount : 0;
+
+  const syncAdUpdate = async (updated: AdVisibilitySettings, flashKey?: string) => {
+    if (flashKey) flashSaved(flashKey);
+    if (!session) {
+      setAdSyncMode('local');
+      return;
+    }
+    setAdSyncMode('syncing');
+    const result = await syncAdSettingsToServer(updated, session.adminEmail, session.token);
+    setAdSyncMode(result.synced ? 'global' : 'local');
+  };
 
   const compressAdImageToDataUrl = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -984,7 +998,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
 
                 <button
                   type="button"
-                  onClick={() => resetAdVisibilitySettings()}
+                  onClick={() => {
+                    const next = resetAdVisibilitySettings();
+                    void syncAdUpdate(next, 'all');
+                  }}
                   className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5"
                   title="Restore all AdSense layouts to visible"
                 >
@@ -1026,7 +1043,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                 type="button"
                 role="switch"
                 aria-checked={adSettings.adsEnabled}
-                onClick={() => setAllAdLayoutsVisible(!adSettings.adsEnabled)}
+                onClick={() => {
+                  const next = setAllAdLayoutsVisible(!adSettings.adsEnabled);
+                  void syncAdUpdate(next, 'all');
+                }}
                 className={`px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 shrink-0 border ${
                   adSettings.adsEnabled
                     ? 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border-rose-500/40'
@@ -1106,11 +1126,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                     if (!file) return;
                     try {
                       const dataUrl = await compressAdImageToDataUrl(file);
-                      setAdPlacementCreative(item.key, {
+                      const next = setAdPlacementCreative(item.key, {
                         imageDataUrl: dataUrl,
                         linkUrl: draftLink.trim(),
                       });
-                      flashSaved(item.key);
+                      void syncAdUpdate(next, item.key);
                     } catch {
                       setAdSaveError('Could not save image. Try a smaller PNG/JPG/WebP file.');
                     }
@@ -1119,18 +1139,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                   const handleSaveZone = () => {
                     try {
                       const trimmedUrl = draftLink.trim();
-                      setAdPlacementCreative(item.key, {
+                      const next = setAdPlacementCreative(item.key, {
                         imageDataUrl: creative?.imageDataUrl || '',
                         linkUrl: trimmedUrl,
                       });
                       setDraftLinks((prev) => {
-                        const next = { ...prev };
-                        delete next[item.key];
-                        return next;
+                        const nextDrafts = { ...prev };
+                        delete nextDrafts[item.key];
+                        return nextDrafts;
                       });
-                      flashSaved(item.key);
+                      void syncAdUpdate(next, item.key);
                     } catch {
-                      setAdSaveError('Could not save placement settings in localStorage.');
+                      setAdSaveError('Could not save placement settings.');
                     }
                   };
 
@@ -1160,8 +1180,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                           aria-checked={zoneEnabled}
                           disabled={!adSettings.adsEnabled}
                           onClick={() => {
-                            setAdPlacementVisible(item.key, !zoneEnabled);
-                            flashSaved(item.key);
+                            const next = setAdPlacementVisible(item.key, !zoneEnabled);
+                            void syncAdUpdate(next, item.key);
                           }}
                           className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all shrink-0 flex items-center gap-1.5 ${
                             !adSettings.adsEnabled
@@ -1203,13 +1223,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                             <button
                               type="button"
                               onClick={() => {
-                                setAdPlacementCreative(item.key, null);
+                                const next = setAdPlacementCreative(item.key, null);
                                 setDraftLinks((prev) => {
-                                  const next = { ...prev };
-                                  delete next[item.key];
-                                  return next;
+                                  const nextDrafts = { ...prev };
+                                  delete nextDrafts[item.key];
+                                  return nextDrafts;
                                 });
-                                flashSaved(item.key);
+                                void syncAdUpdate(next, item.key);
                               }}
                               className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-[11px] font-semibold text-rose-300 transition-colors"
                             >
@@ -1294,8 +1314,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
 
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span>
-                Note: Preference persists locally in this browser across reloads and tabs. Re-open{' '}
-                <strong className="text-slate-200">Public Site</strong> to preview the updated layout immediately.
+                {adSyncMode === 'global'
+                  ? 'Saved globally for all website visitors (Cloudflare KV + local cache) until changed by an admin.'
+                  : adSyncMode === 'syncing'
+                  ? 'Syncing ad settings to global website storage...'
+                  : 'Changes persist locally (IndexedDB + localStorage) and sync globally on Cloudflare Pages until changed by an admin.'}
               </span>
               <div className="flex items-center gap-3 shrink-0">
                 {adSettings.updatedAt && (
@@ -1307,13 +1330,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                   type="button"
                   onClick={() => {
                     const keys = Object.keys(draftLinks) as AdPlacementKey[];
+                    let latest = adSettings;
                     for (const k of keys) {
                       const val = (draftLinks[k] ?? '').trim();
                       const existingImg = adSettings.creatives?.[k]?.imageDataUrl || '';
-                      setAdPlacementCreative(k, { imageDataUrl: existingImg, linkUrl: val });
+                      latest = setAdPlacementCreative(k, { imageDataUrl: existingImg, linkUrl: val });
                     }
                     setDraftLinks({});
-                    flashSaved('all');
+                    void syncAdUpdate(latest, 'all');
                   }}
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                     savedZoneKey === 'all'

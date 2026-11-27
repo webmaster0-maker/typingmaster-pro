@@ -1,0 +1,7 @@
+name = "typecrest"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "TYPECREST_AD_SETTINGS"
+id = "f4216c666d6d4ca19af3d35d38479e04"

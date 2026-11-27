@@ -25,6 +25,12 @@ export interface AdVisibilitySettings {
 
 export const AD_SETTINGS_STORAGE_KEY = 'typecrest_ad_settings_v1';
 export const AD_SETTINGS_EVENT = 'typecrest-ad-settings-changed';
+const AD_SETTINGS_API_URL = '/api/ad-settings';
+const IDB_NAME = 'typecrest_ad_db';
+const IDB_STORE = 'settings';
+
+let memoryCachedSettings: AdVisibilitySettings | null = null;
+let hydrationPromise: Promise<AdVisibilitySettings> | null = null;
 
 export const DEFAULT_AD_VISIBILITY_SETTINGS: AdVisibilitySettings = {
   adsEnabled: true,
@@ -149,13 +155,85 @@ function sanitizeSettings(raw: unknown): AdVisibilitySettings {
   };
 }
 
+function openAdDb(): Promise<IDBDatabase | null> {
+  if (typeof window === 'undefined' || !('indexedDB' in window)) {
+    return Promise.resolve(null);
+  }
+  return new Promise((resolve) => {
+    try {
+      const req = window.indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) {
+          db.createObjectStore(IDB_STORE);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    } catch {
+      resolve(null);
+    }
+  });
+}
+
+async function readFromIndexedDb(): Promise<AdVisibilitySettings | null> {
+  const db = await openAdDb();
+  if (!db) return null;
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.get(AD_SETTINGS_STORAGE_KEY);
+      req.onsuccess = () => {
+        db.close();
+        resolve(req.result ? sanitizeSettings(req.result) : null);
+      };
+      req.onerror = () => {
+        db.close();
+        resolve(null);
+      };
+    } catch {
+      db.close();
+      resolve(null);
+    }
+  });
+}
+
+async function writeToIndexedDb(settings: AdVisibilitySettings): Promise<void> {
+  const db = await openAdDb();
+  if (!db) return;
+  await new Promise<void>((resolve) => {
+    try {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      const store = tx.objectStore(IDB_STORE);
+      store.put(settings, AD_SETTINGS_STORAGE_KEY);
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        resolve();
+      };
+    } catch {
+      db.close();
+      resolve();
+    }
+  });
+}
+
 export function getAdVisibilitySettings(): AdVisibilitySettings {
+  if (memoryCachedSettings) {
+    return memoryCachedSettings;
+  }
   try {
     const raw = safeStorage.getItem(AD_SETTINGS_STORAGE_KEY);
     if (!raw) {
       return sanitizeSettings(null);
     }
-    return sanitizeSettings(JSON.parse(raw));
+    const parsed = sanitizeSettings(JSON.parse(raw));
+    memoryCachedSettings = parsed;
+    return parsed;
   } catch {
     return sanitizeSettings(null);
   }
@@ -167,6 +245,13 @@ function notifySettingsChanged(): void {
   }
 }
 
+function persistLocally(sanitized: AdVisibilitySettings): void {
+  memoryCachedSettings = sanitized;
+  safeStorage.setItem(AD_SETTINGS_STORAGE_KEY, JSON.stringify(sanitized));
+  void writeToIndexedDb(sanitized);
+  notifySettingsChanged();
+}
+
 export function saveAdVisibilitySettings(
   next: AdVisibilitySettings
 ): AdVisibilitySettings {
@@ -174,9 +259,81 @@ export function saveAdVisibilitySettings(
     ...sanitizeSettings(next),
     updatedAt: new Date().toISOString(),
   };
-  safeStorage.setItem(AD_SETTINGS_STORAGE_KEY, JSON.stringify(sanitized));
-  notifySettingsChanged();
+  persistLocally(sanitized);
   return sanitized;
+}
+
+export async function syncAdSettingsToServer(
+  settings: AdVisibilitySettings,
+  adminEmail: string,
+  adminToken: string
+): Promise<{ synced: boolean; error?: string }> {
+  if (typeof fetch !== 'function') {
+    return { synced: false, error: 'Fetch unavailable.' };
+  }
+  try {
+    const res = await fetch(AD_SETTINGS_API_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-typecrest-admin-email': adminEmail,
+        'x-typecrest-admin-token': adminToken,
+      },
+      body: JSON.stringify(settings),
+    });
+    if (!res.ok) {
+      const errBody = (await res.json().catch(() => null)) as { error?: string } | null;
+      return { synced: false, error: errBody?.error || `HTTP ${res.status}` };
+    }
+    const data = (await res.json()) as { ok?: boolean; settings?: unknown };
+    if (data?.ok && data.settings) {
+      persistLocally(sanitizeSettings(data.settings));
+    }
+    return { synced: true };
+  } catch {
+    return { synced: false, error: 'Network error while syncing.' };
+  }
+}
+
+export function hydrateAdSettings(): Promise<AdVisibilitySettings> {
+  if (hydrationPromise) return hydrationPromise;
+  hydrationPromise = (async () => {
+    const localCurrent = getAdVisibilitySettings();
+    // 1. Try server-persisted global KV settings first
+    if (typeof fetch === 'function' && typeof window !== 'undefined') {
+      try {
+        const res = await fetch(AD_SETTINGS_API_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = (await res.json()) as { ok?: boolean; settings?: unknown };
+          if (data?.ok && data.settings) {
+            const serverSettings = sanitizeSettings(data.settings);
+            const serverTime = Date.parse(serverSettings.updatedAt || '') || 0;
+            const localTime = Date.parse(localCurrent.updatedAt || '') || 0;
+            if (serverTime >= localTime || !localCurrent.updatedAt) {
+              persistLocally(serverSettings);
+              return serverSettings;
+            }
+          }
+        }
+      } catch {
+        // Ignore network errors (e.g. offline or Vite dev without Pages Functions)
+      }
+    }
+
+    // 2. Fall back to IndexedDB if localStorage was empty/truncated
+    const idbSettings = await readFromIndexedDb();
+    if (idbSettings) {
+      const idbTime = Date.parse(idbSettings.updatedAt || '') || 0;
+      const localTime = Date.parse(localCurrent.updatedAt || '') || 0;
+      if (idbTime > localTime || !localCurrent.updatedAt) {
+        persistLocally(idbSettings);
+        return idbSettings;
+      }
+    }
+
+    return localCurrent;
+  })();
+  return hydrationPromise;
 }
 
 export function setAllAdLayoutsVisible(visible: boolean): AdVisibilitySettings {
@@ -273,12 +430,15 @@ export function useAdVisibilitySettings(): AdVisibilitySettings {
   );
 
   useEffect(() => {
+    void hydrateAdSettings();
+
     const sync = () => {
       setSettings(getAdVisibilitySettings());
     };
 
     const handleStorage = (e: StorageEvent) => {
       if (!e.key || e.key === AD_SETTINGS_STORAGE_KEY) {
+        memoryCachedSettings = null;
         sync();
       }
     };
