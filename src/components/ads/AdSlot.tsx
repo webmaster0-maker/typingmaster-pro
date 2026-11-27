@@ -141,32 +141,16 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   // Standard Leaderboard / Horizontal Banner (728x90)
   return (
     <div
-      className={`w-full max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-slate-700/70 bg-gradient-to-r from-slate-900/60 via-slate-900/80 to-slate-900/60 px-6 py-3 my-4 text-slate-400 select-none shadow-md ${className}`}
-      style={{ minHeight: `${slot.height}px` }}
+      className={`w-full max-w-4xl mx-auto flex items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-[#111113]/60 px-4 py-2 my-2 text-zinc-500 select-none ${className}`}
+      style={{ minHeight: '44px' }}
       aria-label={slot.label}
     >
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-sky-400 shrink-0">
-          <LayoutGrid size={16} />
-        </div>
-        <div className="flex flex-col text-left">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            AdSense Space · {slot.name}
-          </span>
-          <span className="text-xs font-semibold text-slate-300">
-            Horizontal Leaderboard Banner
-          </span>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] px-2.5 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-slate-300 font-mono">
-          {slot.width} × {slot.height}
-        </span>
-        <span className="hidden md:inline text-[10px] text-slate-500">
-          Responsive Desktop & Mobile
-        </span>
-      </div>
+      <span className="text-[11px] font-mono text-zinc-500">
+        Sponsored · {slot.name}
+      </span>
+      <span className="text-[10px] font-mono text-zinc-600">
+        {slot.width} × {slot.height}
+      </span>
     </div>
   );
 };
