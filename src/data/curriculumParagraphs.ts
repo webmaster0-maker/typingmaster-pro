@@ -37,7 +37,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-tech-ai',
-    title: 'AI & Modern Computing Paragraph',
+    title: 'AI & Computing',
     type: 'speed',
     language: 'English',
     layout: 'QWERTY',
@@ -48,7 +48,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-space-science',
-    title: 'Space Exploration & Astronomy',
+    title: 'Space & Astronomy',
     type: 'stamina',
     language: 'English',
     layout: 'QWERTY',
@@ -59,7 +59,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-literature',
-    title: 'Classic Literature & Storytelling',
+    title: 'Classic Literature',
     type: 'rhythm',
     language: 'English',
     layout: 'QWERTY',
@@ -70,7 +70,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-business-email',
-    title: 'Business Communication & Reports',
+    title: 'Business Reports',
     type: 'punctuation',
     language: 'English',
     layout: 'QWERTY',
@@ -81,7 +81,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-code-syntax',
-    title: 'TypeScript & Web API Syntax',
+    title: 'TypeScript & APIs',
     type: 'punctuation',
     language: 'Code',
     layout: 'QWERTY',
@@ -92,7 +92,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-nature',
-    title: 'Forests, Oceans & Ecology',
+    title: 'Forests & Ecology',
     type: 'stamina',
     language: 'English',
     layout: 'QWERTY',
@@ -103,7 +103,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-finance',
-    title: 'Economics & Personal Finance',
+    title: 'Personal Finance',
     type: 'punctuation',
     language: 'English',
     layout: 'QWERTY',
@@ -114,7 +114,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-history',
-    title: 'History of Printing & Keyboards',
+    title: 'Keyboard History',
     type: 'stamina',
     language: 'English',
     layout: 'QWERTY',
@@ -125,7 +125,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
   },
   {
     id: 'prac-mindfulness',
-    title: 'Posture, Ergonomics & Focus',
+    title: 'Ergonomics & Focus',
     type: 'rhythm',
     language: 'English',
     layout: 'QWERTY',
@@ -139,7 +139,7 @@ export const PRACTICE_ITEMS: PracticeItem[] = [
 export const TEST_ITEMS: TestItem[] = [
   {
     id: 'test-standard',
-    title: 'Standard 2-Minute Proficiency Test',
+    title: 'Standard Speed Test',
     durationMinutes: 2,
     content: 'technology transforms how we learn work and connect across the globe touch typing is an essential super power in the modern digital age allowing your thoughts to flow directly onto the screen without friction or hesitation practice daily for maximum fluency',
     scoring: 'standard',
@@ -150,7 +150,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'exam-certification',
-    title: 'Certified Expert Exam Simulation',
+    title: 'Expert Certification',
     durationMinutes: 5,
     content: 'the professional typing certification exam evaluates speed endurance and pristine accuracy under strict conditions without hints or visual aids maintain steady breathing and rhythmic keystrokes from start to finish success rewards deliberate practice and calm focus',
     scoring: 'strict',
@@ -161,7 +161,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-tech-future',
-    title: 'Technology & AI Editorial (2 min)',
+    title: 'Technology & AI',
     durationMinutes: 2,
     content: 'Artificial intelligence tools accelerate research, design, and software delivery, yet clear human judgment remains irreplaceable. Teams that communicate crisply and type without looking at the keyboard turn complex ideas into working products faster.',
     scoring: 'standard',
@@ -172,7 +172,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-space-frontier',
-    title: 'Orbital Mechanics & Space (2 min)',
+    title: 'Orbital Mechanics',
     durationMinutes: 2,
     content: 'Launching a payload into low Earth orbit requires precise velocity, thermal shielding, and real-time telemetry. Ground controllers monitor thousands of sensor readings per second while autonomous thrusters guide the booster safely back to the landing pad.',
     scoring: 'standard',
@@ -183,7 +183,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-literature-prose',
-    title: 'Narrative Fiction Passage (3 min)',
+    title: 'Narrative Fiction',
     durationMinutes: 3,
     content: 'By the time the clock tower struck midnight, every bookshop along the cobbled alley had shuttered its oak doors. Only the baker remained awake, kneading dough beside a warm brick oven while rain tapped softly against the leaded glass window.',
     scoring: 'standard',
@@ -194,7 +194,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-business-ops',
-    title: 'Executive Briefing & Metrics (3 min)',
+    title: 'Executive Briefing',
     durationMinutes: 3,
     content: 'Quarterly operations review: Q4 revenue climbed 18.5% year-over-year, driven by a 94% renewal rate across enterprise accounts. Next month, regional leads will finalize 2027 hiring targets and publish updated service-level agreements.',
     scoring: 'strict',
@@ -205,7 +205,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-code-sprint',
-    title: 'Developer Code & CLI Sprint (2 min)',
+    title: 'Developer Code Sprint',
     durationMinutes: 2,
     content: 'const cache = new Map<string, number>(); function getScore(user: string): number { return cache.get(user) ?? 0; } if (cache.size > 100) { console.log("Pruning cache:", cache.size); }',
     scoring: 'strict',
@@ -216,7 +216,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-world-history',
-    title: 'Maritime Navigation History (3 min)',
+    title: 'Maritime History',
     durationMinutes: 3,
     content: 'For centuries, sailors crossed open oceans using wooden sextants, star charts, and mechanical chronometers. Measuring longitude accurately transformed global trade routes, turning perilous months-long voyages into predictable journeys across continents.',
     scoring: 'standard',
@@ -227,7 +227,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-cybersecurity',
-    title: 'Cybersecurity & Zero Trust (3 min)',
+    title: 'Zero Trust Security',
     durationMinutes: 3,
     content: 'Strong security architecture assumes every network boundary can be tested. Short-lived cryptographic tokens, strict Content Security Policy headers, and hardware-backed passkeys protect user accounts far better than static passwords ever could.',
     scoring: 'strict',
@@ -238,7 +238,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-journalism',
-    title: 'Urban Architecture Feature (3 min)',
+    title: 'Urban Architecture',
     durationMinutes: 3,
     content: 'Modern cities are redesigning concrete avenues into shaded pedestrian corridors lined with solar canopies and bike lanes. Urban planners report that greener blocks cool summer street temperatures by up to 4 degrees while boosting local foot traffic.',
     scoring: 'standard',
@@ -249,7 +249,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-endurance-master',
-    title: 'Grandmaster 5-Minute Endurance (5 min)',
+    title: 'Grandmaster Endurance',
     durationMinutes: 5,
     content: 'True typing mastery is not measured by a five-second burst of speed, but by calm consistency over hundreds of words. When your eyes read two words ahead of your fingers, errors vanish, breathing stays relaxed, and keystrokes merge into a seamless rhythm.',
     scoring: 'strict',
@@ -260,7 +260,7 @@ export const TEST_ITEMS: TestItem[] = [
   },
   {
     id: 'test-quick-sprint',
-    title: '60-Second Rapid Sprint (1 min)',
+    title: '60-Second Sprint',
     durationMinutes: 1,
     content: 'Fast fingers move lightly without tension. Focus on clean transitions between vowels and common consonants, keep your eyes on the upcoming word, and trust your home-row muscle memory to carry you smoothly across every line.',
     scoring: 'standard',

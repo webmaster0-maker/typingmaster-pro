@@ -41,21 +41,21 @@ export const LessonList: React.FC<LessonListProps> = ({
   }[] = [
     {
       id: 'beginner',
-      title: 'Beginner Level',
+      title: 'Beginner',
       color: 'emerald',
       desc: 'Home row, top & bottom rows.',
       icon: Compass,
     },
     {
       id: 'intermediate',
-      title: 'Intermediate Level',
+      title: 'Intermediate',
       color: 'amber',
       desc: 'Rhythm, Shift, punctuation, fluency.',
       icon: Target,
     },
     {
       id: 'advanced',
-      title: 'Advanced Level',
+      title: 'Advanced',
       color: 'rose',
       desc: 'Code, speed bursts, endurance.',
       icon: Award,
@@ -90,28 +90,28 @@ export const LessonList: React.FC<LessonListProps> = ({
     switch (modNum) {
       case 1:
         return {
-          title: 'Module 1: Foundation & Anchors',
-          badge: 'Foundation',
+          title: 'Foundation',
+          badge: 'Module 1',
         };
       case 2:
         return {
-          title: 'Module 2: Home Row Fluency',
-          badge: 'Home Row',
+          title: 'Home Row',
+          badge: 'Module 2',
         };
       case 3:
         return {
-          title: 'Module 3: Top & Bottom Rows',
-          badge: 'Extended Rows',
+          title: 'Top & Bottom Rows',
+          badge: 'Module 3',
         };
       case 4:
         return {
-          title: 'Module 4: Sentences, Shift & Endurance',
-          badge: 'Fluency',
+          title: 'Shift & Punctuation',
+          badge: 'Module 4',
         };
       case 5:
         return {
-          title: 'Module 5: Numbers, Mastery & Graduation',
-          badge: 'Mastery',
+          title: 'Numbers & Mastery',
+          badge: 'Module 5',
         };
       default:
         return {
@@ -130,7 +130,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             QWERTY Curriculum
           </p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">
-            All {lessons.length} Lessons
+            Lessons
           </h1>
         </div>
 
@@ -140,7 +140,7 @@ export const LessonList: React.FC<LessonListProps> = ({
           className="inline-flex items-center gap-2 self-start sm:self-auto px-4 py-2 rounded-lg bg-[#111113] hover:bg-zinc-900 border border-white/[0.1] text-zinc-200 font-medium text-xs transition-colors whitespace-nowrap"
         >
           <Zap className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Take Placement Test</span>
+          <span>Placement test</span>
         </button>
       </div>
 
@@ -208,8 +208,8 @@ export const LessonList: React.FC<LessonListProps> = ({
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
               {selectedLevel === 'all'
-                ? 'All Curriculum Levels'
-                : `${selectedLevel.charAt(0).toUpperCase()}${selectedLevel.slice(1)} Level`}
+                ? 'All Tracks'
+                : `${selectedLevel.charAt(0).toUpperCase()}${selectedLevel.slice(1)}`}
             </h2>
             {selectedLevel !== 'all' && (
               <button
@@ -217,7 +217,7 @@ export const LessonList: React.FC<LessonListProps> = ({
                 onClick={() => setSelectedLevel('all')}
                 className="text-xs text-zinc-400 hover:text-zinc-100 font-medium underline"
               >
-                Show All Levels
+                Show all
               </button>
             )}
           </div>
