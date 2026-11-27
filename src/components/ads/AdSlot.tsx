@@ -6,6 +6,7 @@ import {
 } from '../../config/adsConfig';
 import { LayoutGrid, Sparkles } from 'lucide-react';
 import {
+  getSiteAdCreative,
   isSiteAdSlotVisible,
   useAdVisibilitySettings,
 } from '../../utils/adSettings';
@@ -31,9 +32,11 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   const adSettings = useAdVisibilitySettings();
 
   const isVisibleByAdmin = isSiteAdSlotVisible(slot.id, adSettings);
+  const customCreative = getSiteAdCreative(slot.id, adSettings);
   const isEnabled = config.enabled && slot.enabled && isVisibleByAdmin;
   const isAdSense =
     isEnabled &&
+    !customCreative &&
     config.provider === 'adsense' &&
     Boolean(config.clientId) &&
     Boolean(slot.slotId);
@@ -51,6 +54,48 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   }, [isAdSense]);
 
   if (!isEnabled) return null;
+
+  // 0. CUSTOM ADMIN-UPLOADED BANNER IMAGE + CLICKABLE LINK
+  if (customCreative) {
+    const imgNode = (
+      <img
+        src={customCreative.imageDataUrl}
+        alt={slot.label}
+        className="w-full h-full object-cover block"
+      />
+    );
+
+    const frameClass =
+      slot.format === 'skyscraper'
+        ? `hidden xl:block rounded-xl overflow-hidden border border-white/[0.08] bg-[#111113] ${className}`
+        : slot.format === 'rectangle'
+        ? `rounded-xl overflow-hidden border border-white/[0.08] bg-[#111113] ${className}`
+        : `w-full max-w-4xl mx-auto my-2 rounded-xl overflow-hidden border border-white/[0.08] bg-[#111113] ${className}`;
+
+    const frameStyle =
+      slot.format === 'skyscraper'
+        ? { width: `${slot.width}px`, height: `${slot.height}px` }
+        : slot.format === 'rectangle'
+        ? { width: `${slot.width}px`, height: `${slot.height}px` }
+        : { height: `${slot.height}px` };
+
+    return (
+      <div className={frameClass} style={frameStyle} aria-label={slot.label}>
+        {customCreative.linkUrl ? (
+          <a
+            href={customCreative.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="block w-full h-full cursor-pointer"
+          >
+            {imgNode}
+          </a>
+        ) : (
+          imgNode
+        )}
+      </div>
+    );
+  }
 
   // 1. REAL GOOGLE ADSENSE INJECTION
   if (isAdSense) {

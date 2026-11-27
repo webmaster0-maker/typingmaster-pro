@@ -37,11 +37,15 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   RotateCcw,
+  Upload,
+  Link2,
+  Trash2,
 } from 'lucide-react';
 import {
   AdPlacementKey,
   setAllAdLayoutsVisible,
   setAdPlacementVisible,
+  setAdPlacementCreative,
   resetAdVisibilitySettings,
   useAdVisibilitySettings,
 } from '../../utils/adSettings';
@@ -1043,51 +1047,149 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onExit }) => {
                 ).map((item) => {
                   const zoneEnabled = adSettings.placements[item.key];
                   const effectiveVisible = adSettings.adsEnabled && zoneEnabled;
+                  const creative = adSettings.creatives?.[item.key];
+                  const hasImage = Boolean(creative?.imageDataUrl);
+                  const currentLink = creative?.linkUrl ?? '';
+
+                  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const dataUrl = typeof reader.result === 'string' ? reader.result : '';
+                      if (!dataUrl) return;
+                      setAdPlacementCreative(item.key, {
+                        imageDataUrl: dataUrl,
+                        linkUrl: currentLink,
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                  };
+
                   return (
                     <div
                       key={item.key}
-                      className={`p-4 rounded-2xl border transition-colors flex items-center justify-between gap-4 ${
+                      className={`p-4 rounded-2xl border transition-colors flex flex-col gap-3.5 ${
                         effectiveVisible
                           ? 'bg-slate-950/80 border-slate-800'
                           : 'bg-slate-950/40 border-slate-800/60 opacity-80'
                       }`}
                     >
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-bold text-white">{item.title}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono">
-                            {item.size}
-                          </span>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-white">{item.title}</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono">
+                              {item.size}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-1">{item.description}</p>
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1">{item.description}</p>
+
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={zoneEnabled}
+                          disabled={!adSettings.adsEnabled}
+                          onClick={() => setAdPlacementVisible(item.key, !zoneEnabled)}
+                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all shrink-0 flex items-center gap-1.5 ${
+                            !adSettings.adsEnabled
+                              ? 'bg-slate-800/60 border-slate-700 text-slate-500 cursor-not-allowed'
+                              : zoneEnabled
+                              ? 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/40 text-emerald-300'
+                              : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                          }`}
+                        >
+                          {effectiveVisible ? (
+                            <>
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Visible</span>
+                            </>
+                          ) : (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5" />
+                              <span>Hidden</span>
+                            </>
+                          )}
+                        </button>
                       </div>
 
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={zoneEnabled}
-                        disabled={!adSettings.adsEnabled}
-                        onClick={() => setAdPlacementVisible(item.key, !zoneEnabled)}
-                        className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all shrink-0 flex items-center gap-1.5 ${
-                          !adSettings.adsEnabled
-                            ? 'bg-slate-800/60 border-slate-700 text-slate-500 cursor-not-allowed'
-                            : zoneEnabled
-                            ? 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/40 text-emerald-300'
-                            : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
-                        }`}
-                      >
-                        {effectiveVisible ? (
-                          <>
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>Visible</span>
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-3.5 h-3.5" />
-                            <span>Hidden</span>
-                          </>
+                      {/* Custom Banner Image + Click-Through Link */}
+                      <div className="pt-3 border-t border-slate-800/80 space-y-2.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-slate-200 cursor-pointer transition-colors">
+                            <Upload className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>{hasImage ? 'Replace Image' : 'Import Image'}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="sr-only"
+                            />
+                          </label>
+
+                          {hasImage && (
+                            <button
+                              type="button"
+                              onClick={() => setAdPlacementCreative(item.key, null)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-[11px] font-semibold text-rose-300 transition-colors"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Remove</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {hasImage && creative?.imageDataUrl && (
+                          <div className="rounded-lg overflow-hidden border border-slate-800 bg-slate-900 max-h-24 flex items-center justify-center">
+                            <img
+                              src={creative.imageDataUrl}
+                              alt={`${item.title} preview`}
+                              className="max-h-24 w-auto object-contain"
+                            />
+                          </div>
                         )}
-                      </button>
+
+                        <div className="flex items-center gap-2">
+                          <div className="relative flex-1 min-w-0">
+                            <Link2 className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="url"
+                              defaultValue={currentLink}
+                              key={`${item.key}-${currentLink}`}
+                              placeholder="https://destination-link.com"
+                              onBlur={(e) => {
+                                const nextUrl = e.target.value.trim();
+                                if (nextUrl !== currentLink) {
+                                  setAdPlacementCreative(item.key, {
+                                    imageDataUrl: creative?.imageDataUrl || '',
+                                    linkUrl: nextUrl,
+                                  });
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.currentTarget.blur();
+                                }
+                              }}
+                              aria-label={`${item.title} destination link`}
+                              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 focus:border-emerald-500/60 focus:outline-none text-[11px] text-slate-200 placeholder:text-slate-600 font-mono"
+                            />
+                          </div>
+                          {currentLink && (
+                            <a
+                              href={currentLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open attached link"
+                              className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors shrink-0"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

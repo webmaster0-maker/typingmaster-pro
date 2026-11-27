@@ -8,11 +8,18 @@ export type AdPlacementKey =
   | 'resultsCard'
   | 'arcadeRails';
 
+export interface CustomAdCreative {
+  imageDataUrl: string;
+  linkUrl: string;
+}
+
 export interface AdVisibilitySettings {
   /** Master switch: when false, ALL AdSense layouts across TypeCrest are hidden */
   adsEnabled: boolean;
   /** Individual placement switches (active when adsEnabled === true) */
   placements: Record<AdPlacementKey, boolean>;
+  /** Optional custom uploaded banner image & click-through link per placement */
+  creatives?: Partial<Record<AdPlacementKey, CustomAdCreative>>;
   updatedAt: string;
 }
 
@@ -28,6 +35,7 @@ export const DEFAULT_AD_VISIBILITY_SETTINGS: AdVisibilitySettings = {
     resultsCard: true,
     arcadeRails: true,
   },
+  creatives: {},
   updatedAt: '',
 };
 
@@ -39,12 +47,71 @@ const SLOT_ID_TO_PLACEMENT: Record<string, AdPlacementKey> = {
   'ad-results-card': 'resultsCard',
 };
 
+const VALID_KEYS: AdPlacementKey[] = [
+  'topLeaderboard',
+  'bottomBanner',
+  'workspaceRails',
+  'resultsCard',
+  'arcadeRails',
+];
+
+export function sanitizeAdLinkUrl(rawUrl: string): string {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return '';
+  if (trimmed.startsWith('/')) return trimmed;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+      return parsed.toString();
+    }
+  } catch {
+    if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(trimmed)) {
+      return `https://${trimmed}`;
+    }
+  }
+  return '';
+}
+
+function sanitizeImageDataUrl(rawImg: unknown): string {
+  if (typeof rawImg !== 'string') return '';
+  const trimmed = rawImg.trim();
+  if (!trimmed) return '';
+  if (
+    trimmed.startsWith('data:image/') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('/')
+  ) {
+    return trimmed;
+  }
+  return '';
+}
+
+function sanitizeCreatives(
+  raw: unknown
+): Partial<Record<AdPlacementKey, CustomAdCreative>> {
+  if (!raw || typeof raw !== 'object') return {};
+  const obj = raw as Record<string, unknown>;
+  const out: Partial<Record<AdPlacementKey, CustomAdCreative>> = {};
+  for (const key of VALID_KEYS) {
+    const entry = obj[key];
+    if (!entry || typeof entry !== 'object') continue;
+    const rec = entry as Record<string, unknown>;
+    const imageDataUrl = sanitizeImageDataUrl(rec.imageDataUrl);
+    const linkUrl = typeof rec.linkUrl === 'string' ? sanitizeAdLinkUrl(rec.linkUrl) : '';
+    if (imageDataUrl || linkUrl) {
+      out[key] = { imageDataUrl, linkUrl };
+    }
+  }
+  return out;
+}
+
 function sanitizeSettings(raw: unknown): AdVisibilitySettings {
   const fallback = DEFAULT_AD_VISIBILITY_SETTINGS;
   if (!raw || typeof raw !== 'object') {
     return {
       ...fallback,
       placements: { ...fallback.placements },
+      creatives: {},
     };
   }
   const obj = raw as Record<string, unknown>;
@@ -77,6 +144,7 @@ function sanitizeSettings(raw: unknown): AdVisibilitySettings {
           ? placementsRaw.arcadeRails
           : fallback.placements.arcadeRails,
     },
+    creatives: sanitizeCreatives(obj.creatives),
     updatedAt: typeof obj.updatedAt === 'string' ? obj.updatedAt : '',
   };
 }
@@ -133,10 +201,50 @@ export function setAdPlacementVisible(
   });
 }
 
+export function setAdPlacementCreative(
+  placement: AdPlacementKey,
+  creative: CustomAdCreative | null
+): AdVisibilitySettings {
+  const current = getAdVisibilitySettings();
+  const nextCreatives = { ...(current.creatives || {}) };
+  if (!creative || (!creative.imageDataUrl.trim() && !creative.linkUrl.trim())) {
+    delete nextCreatives[placement];
+  } else {
+    nextCreatives[placement] = {
+      imageDataUrl: sanitizeImageDataUrl(creative.imageDataUrl),
+      linkUrl: sanitizeAdLinkUrl(creative.linkUrl),
+    };
+  }
+  return saveAdVisibilitySettings({
+    ...current,
+    creatives: nextCreatives,
+  });
+}
+
+export function getSiteAdCreative(
+  slotId: string,
+  settings: AdVisibilitySettings = getAdVisibilitySettings()
+): CustomAdCreative | null {
+  const key = SLOT_ID_TO_PLACEMENT[slotId];
+  if (!key) return null;
+  const creative = settings.creatives?.[key];
+  if (!creative || !creative.imageDataUrl) return null;
+  return creative;
+}
+
+export function getArcadeAdCreative(
+  settings: AdVisibilitySettings = getAdVisibilitySettings()
+): CustomAdCreative | null {
+  const creative = settings.creatives?.arcadeRails;
+  if (!creative || !creative.imageDataUrl) return null;
+  return creative;
+}
+
 export function resetAdVisibilitySettings(): AdVisibilitySettings {
   const reset = saveAdVisibilitySettings({
     ...DEFAULT_AD_VISIBILITY_SETTINGS,
     placements: { ...DEFAULT_AD_VISIBILITY_SETTINGS.placements },
+    creatives: {},
     updatedAt: new Date().toISOString(),
   });
   return reset;

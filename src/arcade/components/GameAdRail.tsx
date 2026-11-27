@@ -8,6 +8,7 @@ import {
   hasValidAdSenseConfig,
 } from '../arcadeAdConfig';
 import {
+  getArcadeAdCreative,
   isArcadeAdRailVisible,
   useAdVisibilitySettings,
 } from '../../utils/adSettings';
@@ -36,10 +37,11 @@ export const GameAdRail: React.FC<GameAdRailProps> = ({
 }) => {
   const adSettings = useAdVisibilitySettings();
   const isVisibleByAdmin = isArcadeAdRailVisible(adSettings);
+  const customCreative = getArcadeAdCreative(adSettings);
   const slot = isVisibleByAdmin ? getAdSlotConfig(placement, config) : null;
   const pushedRef = useRef<boolean>(false);
 
-  const shouldRenderAdSense = slot ? hasValidAdSenseConfig(slot, config) : false;
+  const shouldRenderAdSense = slot && !customCreative ? hasValidAdSenseConfig(slot, config) : false;
   const customHtml =
     slot && config.provider === 'custom_html' ? slot.customHtml?.trim() || '' : '';
 
@@ -78,7 +80,28 @@ export const GameAdRail: React.FC<GameAdRailProps> = ({
         data-ad-height={slot.height}
         className="w-[120px] xl:w-[160px] h-[min(600px,calc(100%-8px))] min-h-[320px] rounded-lg bg-[#0C1220] border border-[#1A2438]/70 flex items-center justify-center overflow-hidden"
       >
-        {shouldRenderAdSense ? (
+        {customCreative ? (
+          customCreative.linkUrl ? (
+            <a
+              href={customCreative.linkUrl}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="block w-full h-full cursor-pointer"
+            >
+              <img
+                src={customCreative.imageDataUrl}
+                alt={slot.ariaLabel}
+                className="w-full h-full object-cover block"
+              />
+            </a>
+          ) : (
+            <img
+              src={customCreative.imageDataUrl}
+              alt={slot.ariaLabel}
+              className="w-full h-full object-cover block"
+            />
+          )
+        ) : shouldRenderAdSense ? (
           <ins
             className="adsbygoogle block w-full h-full"
             data-ad-client={config.adsenseClientId}
