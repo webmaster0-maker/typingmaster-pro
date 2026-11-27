@@ -230,7 +230,7 @@ class ArticulatedHand {
             from,
             to,
             elapsed: 0,
-            duration: prefersReducedMotion ? 0 : 0.2,
+            duration: prefersReducedMotion ? 0 : 0.12,
           };
       this.poseName = name;
     }
@@ -340,7 +340,11 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
     const applyKey = () => {
       const e = engine.current;
       if (!e?.hands) return;
-      const { pose, shift } = keyPose(latest.current.activeKey);
+      const target = keyPose(latest.current.activeKey);
+      const pressed = keyPose(latest.current.pressedKey);
+      const activePose = pressed.pose ? pressed : target;
+      const { pose, shift } = activePose;
+
       for (const hand of e.hands) {
         const active = pose?.side === hand.side;
         const oppositeShift = shift && pose?.side !== hand.side;
@@ -471,14 +475,15 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
           if (!latest.current.visible) return;
 
           const age = performance.now() - (engine.current?.pressAt ?? 0);
+          const pressed = keyPose(latest.current.pressedKey).pose;
           for (const hand of hands) {
             hand.update(delta);
-            const pressed = keyPose(latest.current.pressedKey).pose;
-            const pulse =
-              pressed?.side === hand.side && age < 180
-                ? Math.sin((Math.PI * age) / 180) * 0.008
+            const tap =
+              pressed?.side === hand.side && age >= 0 && age < 180
+                ? Math.sin((Math.PI * age) / 180) * 0.055
                 : 0;
-            hand.group.position.z = hand.baseZ + pulse;
+            hand.group.position.y = -tap;
+            hand.group.position.z = hand.baseZ + tap * 0.4;
           }
           renderer.render(scene, camera);
         });
