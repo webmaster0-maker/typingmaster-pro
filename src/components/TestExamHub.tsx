@@ -153,7 +153,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                       <span>{cert.scoring === 'strict' ? 'Strict Exam' : 'Standard Test'}</span>
                     </div>
                     <h3 className="mt-1 text-lg font-bold text-white truncate">{cert.testTitle}</h3>
-                    <p className="text-sm font-serif italic text-slate-200 mt-0.5 truncate">
+                    <p className="text-sm font-medium text-zinc-300 mt-0.5 truncate">
                       Awarded to {cert.recipientName}
                     </p>
                   </div>
