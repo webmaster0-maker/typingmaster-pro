@@ -60,10 +60,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
       <div className="pb-6 border-b border-zinc-200 dark:border-white/[0.08]">
-        <p className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1.5">
+        <p className="text-sm font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1.5">
           Local Telemetry
         </p>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">
           Analytics
         </h1>
       </div>
@@ -72,31 +72,31 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <section aria-label="Performance summary" className="border-b border-zinc-200 dark:border-white/[0.08] pb-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.avgWpm}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Average WPM</p>
+            <p className="text-sm text-zinc-500 mt-1">Average WPM</p>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.avgAccuracy}%
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Accuracy</p>
+            <p className="text-sm text-zinc-500 mt-1">Accuracy</p>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.streak}
-              <span className="text-sm font-normal text-zinc-500">
+              <span className="text-base font-normal text-zinc-500">
                 {' '}{userStats.streak === 1 ? 'day' : 'days'}
               </span>
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Practice streak</p>
+            <p className="text-sm text-zinc-500 mt-1">Practice streak</p>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.xp}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Total XP</p>
+            <p className="text-sm text-zinc-500 mt-1">Total XP</p>
           </div>
         </div>
       </section>

@@ -35,7 +35,7 @@ export const LessonGrowthCard: React.FC<LessonGrowthCardProps> = ({
     >
       <div className="space-y-3 w-full">
         {/* Top Status & Lesson Number */}
-        <div className="flex items-center justify-between gap-2 text-[11px]">
+        <div className="flex items-center justify-between gap-2 text-xs">
           <span
             className={`font-medium ${
               isCompleted || isNextToGrow
@@ -60,7 +60,7 @@ export const LessonGrowthCard: React.FC<LessonGrowthCardProps> = ({
         </div>
 
         {/* Title */}
-        <h4 className="text-sm font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors leading-snug">
+        <h4 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors leading-snug">
           {lesson.title}
         </h4>
 
@@ -69,13 +69,13 @@ export const LessonGrowthCard: React.FC<LessonGrowthCardProps> = ({
           {lesson.targetKeys.slice(0, 6).map((k, i) => (
             <kbd
               key={i}
-              className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-700 dark:bg-zinc-950 dark:border-white/[0.1] text-[10px] font-mono dark:text-zinc-400 uppercase"
+              className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-700 dark:bg-zinc-950 dark:border-white/[0.1] text-[11px] font-mono dark:text-zinc-400 uppercase"
             >
               {k === ' ' ? 'SPC' : k}
             </kbd>
           ))}
           {lesson.targetKeys.length > 6 && (
-            <span className="text-[10px] font-mono text-zinc-500 pl-0.5">
+            <span className="text-[11px] font-mono text-zinc-500 pl-0.5">
               +{lesson.targetKeys.length - 6}
             </span>
           )}
@@ -83,7 +83,7 @@ export const LessonGrowthCard: React.FC<LessonGrowthCardProps> = ({
       </div>
 
       {/* Card Footer */}
-      <div className="w-full pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs">
+      <div className="w-full pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-sm">
         {isCompleted ? (
           <span className="font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
             {meta.bestWpm} WPM · {meta.bestAccuracy}%

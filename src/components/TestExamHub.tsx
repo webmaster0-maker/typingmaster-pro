@@ -42,7 +42,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
           </a>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">Speed tests</h1>
+          <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">Speed tests</h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
@@ -53,16 +53,16 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                 const pick = testItems[Math.floor(Math.random() * testItems.length)];
                 if (pick) onStartTest(pick);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 dark:border-emerald-500/40 text-xs font-semibold dark:text-emerald-300 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 dark:border-emerald-500/40 text-sm font-semibold dark:text-emerald-300 transition-colors whitespace-nowrap"
             >
-              <Shuffle className="w-3.5 h-3.5 shrink-0" />
+              <Shuffle className="w-4 h-4 shrink-0" />
               <span>Random test</span>
             </button>
           )}
           <button
             type="button"
             onClick={onOpenAccount}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] hover:border-indigo-500/40 text-xs font-semibold dark:text-slate-200 transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] hover:border-indigo-500/40 text-sm font-semibold dark:text-slate-200 transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
           >
             <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
             {userAccount ? (
@@ -86,7 +86,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             className="group bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-emerald-500/50 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] p-6 rounded-xl shadow-sm dark:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center justify-between mb-2.5 text-[11px]">
+              <div className="flex items-center justify-between mb-2.5 text-xs">
                 <span className={test.scoring === 'strict' ? 'font-medium text-amber-600 dark:text-amber-400' : 'font-medium text-zinc-500'}>
                   {test.scoring === 'strict' ? 'Strict' : 'Standard'}
                 </span>
@@ -95,21 +95,21 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                   <span>{test.durationMinutes} min</span>
                 </div>
               </div>
-              <h3 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
+              <h3 className="text-lg font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
                 {test.title}
               </h3>
             </div>
 
             <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-3 font-mono tabular-nums">
-                <span className="text-xs font-semibold text-zinc-600 dark:text-slate-300">
+                <span className="text-sm font-semibold text-zinc-600 dark:text-slate-300">
                   Target: <strong className="text-emerald-600 dark:text-emerald-400">{test.passWpm} WPM</strong>
                 </span>
-                <span className="text-xs font-semibold text-zinc-600 dark:text-slate-300">
+                <span className="text-sm font-semibold text-zinc-600 dark:text-slate-300">
                   Accuracy: <strong className="text-emerald-600 dark:text-emerald-400">{test.passAccuracy}%</strong>
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
+              <div className="flex items-center gap-1 text-sm font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
                 <span>Start Test</span>
                 <ArrowRight className="w-4 h-4" />
               </div>

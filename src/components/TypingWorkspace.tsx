@@ -585,7 +585,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
 
   const renderTypingParagraph = () => (
     <div
-      className={`w-full overflow-y-auto pr-1.5 font-mono text-2xl sm:text-[28px] leading-[1.85] tracking-normal select-none ${
+      className={`w-full overflow-y-auto pr-1.5 font-mono text-2xl sm:text-[32px] leading-[1.85] tracking-normal select-none ${
         showKeyboardStage
           ? 'max-h-[19vh] min-h-[64px]'
           : 'max-h-[66vh] min-h-[180px]'
@@ -723,10 +723,10 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               e.stopPropagation();
               onBack();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-sm font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
             title="Back (Esc)"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
 
@@ -737,10 +737,10 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               e.stopPropagation();
               restartSession();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-sm font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
             title="Restart"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4" />
             <span>Restart</span>
           </button>
         </div>

@@ -51,17 +51,17 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#09090B]/90 backdrop-blur-md border-b border-zinc-200 dark:border-white/[0.08] transition-colors duration-150">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
         {/* Zone 1: Compact Single-Line Brand Mark */}
         <a
           href="/"
           onClick={(e) => handleNavClick(e, 'dashboard')}
           className="flex items-center gap-2.5 text-left shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
-          <span className="w-7 h-7 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950 shrink-0">
+          <span className="w-8 h-8 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950 shrink-0">
             <Keyboard className="w-4 h-4" />
           </span>
-          <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight whitespace-nowrap">
+          <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight whitespace-nowrap">
             TypeCrest
           </span>
         </a>
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Zone 2: Clean Single-Line Navigation Links */}
         <nav
           aria-label="Primary navigation"
-          className="hidden md:flex items-center gap-1 min-w-0"
+          className="hidden md:flex items-center gap-1.5 min-w-0"
         >
           {navItems.map((item) => {
             const isGames = item.id === 'games';
@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.id)}
                 className={`
-                  relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap shrink-0
+                  relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-sm font-medium whitespace-nowrap shrink-0
                   transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500
                   ${
                     isActive
@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }
                 `}
               >
-                {isGames && <Gamepad2 className="w-3.5 h-3.5 shrink-0 text-amber-500 dark:text-amber-400" />}
+                {isGames && <Gamepad2 className="w-4 h-4 shrink-0 text-amber-500 dark:text-amber-400" />}
                 <span>{item.label}</span>
                 {isActive && (
                   <span
@@ -105,13 +105,13 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Zone 3: Theme Toggle + Account Action */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={onToggleTheme}
             aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
             title={theme === 'light' ? 'Light mode (click for dark mode)' : 'Dark mode (click for light mode)'}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-zinc-200 dark:border-white/[0.1] bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-zinc-200 dark:border-white/[0.1] bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
             {theme === 'light' ? (
               <Sun className="w-4 h-4 text-amber-500" />
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenAccount}
-            className={`inline-flex items-center gap-2 h-8 px-3.5 rounded-lg border text-xs font-medium whitespace-nowrap shrink-0 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+            className={`inline-flex items-center gap-2 h-9 px-4 rounded-lg border text-sm font-medium whitespace-nowrap shrink-0 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
               userAccount
                 ? 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-900 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:border-white/[0.1] dark:text-zinc-100'
                 : 'bg-zinc-900 hover:bg-zinc-800 border-transparent text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-semibold'

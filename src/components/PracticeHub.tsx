@@ -40,10 +40,10 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
       <div className="pb-6 border-b border-zinc-200 dark:border-white/[0.08]">
-        <p className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1.5">
+        <p className="text-sm font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1.5">
           Targeted Drills
         </p>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">Practice</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">Practice</h1>
       </div>
 
       {/* Featured Section: Rule-Based Tricky Key Lessons */}
@@ -140,7 +140,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
               className="group bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-zinc-300 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] dark:hover:border-white/[0.16] p-5 rounded-xl shadow-sm dark:shadow-none transition-colors duration-150 cursor-pointer flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-2.5 text-[11px]">
+                <div className="flex items-center justify-between mb-2.5 text-xs">
                   <span className="font-medium capitalize text-zinc-500">
                     {prac.type.replace('_', ' ')}
                   </span>
@@ -149,12 +149,12 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
                     <span>{prac.durationMinutes} min</span>
                   </div>
                 </div>
-                <h3 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
+                <h3 className="text-lg font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
                   {prac.title}
                 </h3>
               </div>
 
-              <div className="mt-5 pt-3.5 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs">
+              <div className="mt-5 pt-3.5 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-sm">
                 <span className="text-zinc-500 capitalize">
                   {prac.guidanceConfig.guidanceLevel === 'none' ? 'No hints' : `${prac.guidanceConfig.guidanceLevel} hints`}
                 </span>

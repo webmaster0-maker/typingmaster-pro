@@ -148,10 +148,10 @@ export const LessonList: React.FC<LessonListProps> = ({
       {/* Compact Studio Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-zinc-200 dark:border-white/[0.08]">
         <div className="space-y-1.5">
-          <p className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+          <p className="text-sm font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
             QWERTY Curriculum
           </p>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">
             Lessons
           </h1>
         </div>
@@ -159,9 +159,9 @@ export const LessonList: React.FC<LessonListProps> = ({
         <button
           type="button"
           onClick={onOpenAssessment}
-          className="inline-flex items-center gap-2 self-start sm:self-auto px-4 py-2 rounded-lg bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.1] dark:text-zinc-200 font-medium text-xs transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
+          className="inline-flex items-center gap-2 self-start sm:self-auto px-4 py-2.5 rounded-lg bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.1] dark:text-zinc-200 font-medium text-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
         >
-          <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span>Placement test</span>
         </button>
       </div>
@@ -203,12 +203,12 @@ export const LessonList: React.FC<LessonListProps> = ({
                 </div>
 
                 <div>
-                  <h3 className="text-base font-semibold text-zinc-950 dark:text-zinc-100">{lvl.title}</h3>
-                  <p className="text-xs text-zinc-500 mt-0.5">{lvl.desc}</p>
+                  <h3 className="text-lg font-semibold text-zinc-950 dark:text-zinc-100">{lvl.title}</h3>
+                  <p className="text-sm text-zinc-500 mt-0.5">{lvl.desc}</p>
                 </div>
               </div>
 
-              <div className="mt-5 pt-3.5 border-t border-zinc-100 dark:border-white/[0.06] w-full flex items-center justify-between text-xs font-medium">
+              <div className="mt-5 pt-3.5 border-t border-zinc-100 dark:border-white/[0.06] w-full flex items-center justify-between text-sm font-medium">
                 <span className={isSelected ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-500 dark:text-zinc-400'}>
                   {isSelected ? 'Active Track' : 'View Track'}
                 </span>
@@ -249,7 +249,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('all')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'all'
                   ? 'bg-white text-zinc-950 shadow-sm dark:shadow-none dark:bg-zinc-800 dark:text-zinc-100'
                   : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
@@ -260,7 +260,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('unbloomed')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'unbloomed'
                   ? 'bg-white text-zinc-950 shadow-sm dark:shadow-none dark:bg-zinc-800 dark:text-zinc-100'
                   : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
@@ -271,7 +271,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('bloomed')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'bloomed'
                   ? 'bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
                   : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
@@ -318,14 +318,14 @@ export const LessonList: React.FC<LessonListProps> = ({
                       {modNum}
                     </div>
                     <div>
-                      <h3 className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">{biome.title}</h3>
-                      <p className="text-xs text-zinc-500 mt-0.5 tabular-nums font-mono">
+                      <h3 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{biome.title}</h3>
+                      <p className="text-sm text-zinc-500 mt-0.5 tabular-nums font-mono">
                         {modCompleted}/{modLessons.length} completed
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">{biome.badge}</span>
+                    <span className="text-sm font-mono text-zinc-500 dark:text-zinc-400">{biome.badge}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-zinc-400 dark:text-zinc-500 transition-transform duration-200 ${
                         isExpanded ? 'rotate-180 text-zinc-700 dark:text-zinc-200' : ''

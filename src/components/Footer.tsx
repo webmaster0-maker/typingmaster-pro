@@ -141,28 +141,28 @@ export const Footer: React.FC<FooterProps> = ({
             <a
               href="/"
               onClick={(e) => handleLinkClick(e, () => onNavigateTab('dashboard'))}
-              className="inline-flex items-center gap-2.5 text-zinc-900 dark:text-zinc-100 font-semibold text-sm tracking-tight hover:text-zinc-950 dark:hover:text-white transition-colors"
+              className="inline-flex items-center gap-2.5 text-zinc-900 dark:text-zinc-100 font-semibold text-base tracking-tight hover:text-zinc-950 dark:hover:text-white transition-colors"
             >
-              <span className="w-6 h-6 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950">
-                <Keyboard className="w-3.5 h-3.5" />
+              <span className="w-7 h-7 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950">
+                <Keyboard className="w-4 h-4" />
               </span>
               <span>TypeCrest</span>
             </a>
-            <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-500 max-w-xs">
-              Free 3D touch typing tutor with 120 lessons, themed speed tests, and local-first privacy.
+            <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-500 max-w-xs">
+              Free 3D touch typing tutor with 128 lessons, themed speed tests, and local-first privacy.
             </p>
-            <div className="inline-flex items-center gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <div className="inline-flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>Local-First · No Sign-Up Required</span>
             </div>
           </div>
 
           {/* Curriculum & Practice */}
           <nav aria-label="Touch typing curriculum links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Curriculum &amp; Practice
             </p>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <a
                   href="/lessons"
@@ -204,10 +204,10 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Tests & Arcade */}
           <nav aria-label="Typing tests and analytics links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Tests, Arcade &amp; Telemetry
             </p>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <a
                   href="/tests"
@@ -240,10 +240,10 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Legal & Support */}
           <nav aria-label="Legal and support links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Legal &amp; Support
             </p>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <button
                   type="button"

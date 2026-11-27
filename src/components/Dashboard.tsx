@@ -109,13 +109,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-3">
-            <p className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+            <p className="text-sm font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
               Touch Typing Studio
             </p>
-            <h1 className="text-3xl sm:text-5xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-[-0.03em] leading-[1.1] text-balance">
+            <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-semibold text-zinc-950 dark:text-zinc-50 tracking-[-0.03em] leading-[1.08] text-balance">
               Stop looking at your keyboard.
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xl">
+            <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xl">
               Learn touch typing through short lessons, real paragraphs, and speed tests.
             </p>
           </div>
@@ -125,7 +125,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <button
                 type="button"
                 onClick={() => onStartLesson(nextLesson)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-zinc-950 font-semibold text-sm transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-zinc-950 font-semibold text-base transition-colors whitespace-nowrap"
               >
                 <span>Start typing</span>
               </button>
@@ -137,10 +137,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 e.preventDefault();
                 setActiveTab('lessons');
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-zinc-700 hover:text-zinc-950 border border-zinc-200 hover:border-zinc-300 bg-white dark:bg-transparent dark:text-zinc-300 dark:hover:text-white dark:border-white/[0.1] dark:hover:border-white/[0.2] font-medium text-sm transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-5 py-3 rounded-lg text-zinc-700 hover:text-zinc-950 border border-zinc-200 hover:border-zinc-300 bg-white dark:bg-transparent dark:text-zinc-300 dark:hover:text-white dark:border-white/[0.1] dark:hover:border-white/[0.2] font-medium text-base transition-colors whitespace-nowrap"
             >
               <span>All lessons</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -148,14 +148,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Live 1-Line Try-It Typing Card */}
         <div
           onClick={() => previewInputRef.current?.focus()}
-          className="lg:col-span-5 bg-white dark:bg-[#111113] border border-zinc-200 hover:border-zinc-300 dark:border-white/[0.08] dark:hover:border-white/[0.15] rounded-xl p-5 space-y-4 cursor-text transition-colors shadow-sm dark:shadow-none"
+          className="lg:col-span-5 bg-white dark:bg-[#111113] border border-zinc-200 hover:border-zinc-300 dark:border-white/[0.08] dark:hover:border-white/[0.15] rounded-xl p-6 space-y-4 cursor-text transition-colors shadow-sm dark:shadow-none"
         >
-          <div className="flex items-center justify-between text-[11px]">
+          <div className="flex items-center justify-between text-xs">
             <span className="font-mono text-zinc-500 dark:text-zinc-400">
               {previewEnd ? 'Completed' : 'Click & type to test'}
             </span>
             <div className="flex items-center gap-3 font-mono tabular-nums">
-              <span className="text-emerald-600 dark:text-emerald-400">{previewWpm} WPM</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium">{previewWpm} WPM</span>
               {previewTyped.length > 0 && (
                 <button
                   type="button"
@@ -166,13 +166,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   aria-label="Reset preview"
                   className="text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-zinc-200 transition-colors"
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
           </div>
 
-          <div className="font-mono text-base sm:text-lg leading-relaxed tracking-wide select-none break-words">
+          <div className="font-mono text-lg sm:text-xl leading-relaxed tracking-wide select-none break-words">
             {PREVIEW_TEXT.split('').map((char, idx) => {
               const typed = previewTyped[idx];
               const isCursor = idx === previewTyped.length;
@@ -212,28 +212,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </section>
 
       {/* Flat Hairline Telemetry Strip with 2px Progress Bar */}
-      <section aria-label="Your typing progress" className="border-y border-zinc-200 dark:border-white/[0.08] py-6">
+      <section aria-label="Your typing progress" className="border-y border-zinc-200 dark:border-white/[0.08] py-7">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.avgWpm}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Average WPM</p>
+            <p className="text-sm text-zinc-500 mt-1">Average WPM</p>
           </div>
 
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.avgAccuracy}%
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Accuracy</p>
+            <p className="text-sm text-zinc-500 mt-1">Accuracy</p>
           </div>
 
           <div className="space-y-1.5">
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {growthProfile.totalBlooms}
-              <span className="text-sm font-normal text-zinc-500">/{lessons.length}</span>
+              <span className="text-base font-normal text-zinc-500">/{lessons.length}</span>
             </p>
-            <p className="text-xs text-zinc-500">Lessons done ({completionPct}%)</p>
+            <p className="text-sm text-zinc-500">Lessons done ({completionPct}%)</p>
             <div className="h-0.5 w-full max-w-[140px] bg-zinc-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 dark:bg-emerald-400 transition-all duration-300"
@@ -243,10 +243,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           <div>
-            <p className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
+            <p className="text-3xl sm:text-4xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               {userStats.xp}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">XP earned</p>
+            <p className="text-sm text-zinc-500 mt-1">XP earned</p>
           </div>
         </div>
       </section>
@@ -256,7 +256,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Left 2 Cols: Recommended Lessons */}
         <div className="lg:col-span-2 space-y-5">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+            <h2 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
               Recommended Lessons
             </h2>
 
@@ -267,10 +267,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 e.preventDefault();
                 setActiveTab('lessons');
               }}
-              className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap transition-colors"
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap transition-colors"
             >
               <span>All lessons</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
@@ -298,7 +298,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   }`}
                 >
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2 text-[11px]">
+                    <div className="flex items-center justify-between gap-2 text-xs">
                       <span
                         className={`font-medium ${
                           isCompleted
@@ -314,23 +314,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         {lesson.targetKeys.slice(0, 4).map((k) => (
                           <kbd
                             key={k}
-                            className="inline-flex items-center justify-center min-w-[18px] h-5 px-1 rounded bg-zinc-100 border border-zinc-200 text-zinc-700 dark:bg-zinc-950 dark:border-white/[0.1] text-[10px] font-mono dark:text-zinc-400 uppercase"
+                            className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-700 dark:bg-zinc-950 dark:border-white/[0.1] text-[11px] font-mono dark:text-zinc-400 uppercase"
                           >
                             {k === ' ' ? 'SPC' : k}
                           </kbd>
                         ))}
                       </div>
                     </div>
-                    <h3 className="text-sm font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
+                    <h3 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
                       {lesson.title}
                     </h3>
                   </div>
 
-                  <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-200">
+                  <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-sm text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-200">
                     <span className="tabular-nums font-mono">
                       {isCompleted ? `${meta.bestWpm} WPM` : 'Start'}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </button>
               );
@@ -341,7 +341,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Right Col: Weak-Key Practice + Arcade Quick Entry */}
         <div className="space-y-5">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+            <h2 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
               Weak-key practice
             </h2>
 
@@ -352,10 +352,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 e.preventDefault();
                 onOpenNourishmentDrills();
               }}
-              className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors"
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors"
             >
               <span>All drills</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
@@ -368,12 +368,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 className="w-full text-left bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-zinc-300 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] dark:hover:border-white/[0.16] p-5 rounded-xl shadow-sm dark:shadow-none transition-colors duration-150 flex items-center justify-between gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                  <div className="flex items-center gap-1.5 text-xs text-zinc-500">
                     <span className="capitalize">{prac.type.replace('_', ' ')}</span>
                     <span aria-hidden="true">·</span>
                     <span className="font-mono tabular-nums">{prac.durationMinutes} min</span>
                   </div>
-                  <h3 className="text-sm font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors truncate">
+                  <h3 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors truncate">
                     {prac.title}
                   </h3>
                 </div>
@@ -388,10 +388,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 className="w-full text-left bg-amber-50 hover:bg-amber-100/80 border border-amber-300 hover:border-amber-400 dark:bg-amber-500/[0.06] dark:hover:bg-amber-500/[0.12] dark:border-amber-500/25 dark:hover:border-amber-400/45 p-5 rounded-xl transition-colors duration-150 flex items-center justify-between gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <Gamepad2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <Gamepad2 className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-mono text-amber-700 dark:text-amber-400">6 Modes</p>
-                    <h3 className="text-sm font-medium text-amber-950 group-hover:text-amber-950 dark:text-amber-100 dark:group-hover:text-white transition-colors truncate">
+                    <p className="text-xs font-mono text-amber-700 dark:text-amber-400">6 Modes</p>
+                    <h3 className="text-base font-medium text-amber-950 group-hover:text-amber-950 dark:text-amber-100 dark:group-hover:text-white transition-colors truncate">
                       Play Typing Arcade
                     </h3>
                   </div>
@@ -409,38 +409,38 @@ export const Dashboard: React.FC<DashboardProps> = ({
         className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-10 border-t border-zinc-200 dark:border-white/[0.08]"
       >
         <div className="lg:col-span-6 space-y-4">
-          <h2 id="typecrest-guide-heading" className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+          <h2 id="typecrest-guide-heading" className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
             Curriculum
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-sm border-collapse">
               <thead>
-                <tr className="border-b border-zinc-200 dark:border-white/[0.08] text-zinc-500 uppercase tracking-wider text-[10px]">
-                  <th className="py-2.5 pr-3 font-medium">Track</th>
-                  <th className="py-2.5 px-3 font-medium">Focus Areas</th>
-                  <th className="py-2.5 pl-3 font-medium text-right">Pass Target</th>
+                <tr className="border-b border-zinc-200 dark:border-white/[0.08] text-zinc-500 uppercase tracking-wider text-xs">
+                  <th className="py-3 pr-3 font-medium">Track</th>
+                  <th className="py-3 px-3 font-medium">Focus Areas</th>
+                  <th className="py-3 pl-3 font-medium text-right">Pass Target</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-white/[0.06] text-zinc-700 dark:text-zinc-300">
                 <tr>
-                  <td className="py-3 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Beginner</td>
-                  <td className="py-3 px-3 text-zinc-600 dark:text-zinc-400">F &amp; J anchors, home row, top &amp; bottom reaches</td>
-                  <td className="py-3 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">90%+ Acc</td>
+                  <td className="py-3.5 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Beginner</td>
+                  <td className="py-3.5 px-3 text-zinc-600 dark:text-zinc-400">F &amp; J anchors, home row, top &amp; bottom reaches</td>
+                  <td className="py-3.5 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">90%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-3 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Intermediate</td>
-                  <td className="py-3 px-3 text-zinc-600 dark:text-zinc-400">Digraph rhythm, Shift capitals, punctuation</td>
-                  <td className="py-3 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">92%+ Acc</td>
+                  <td className="py-3.5 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Intermediate</td>
+                  <td className="py-3.5 px-3 text-zinc-600 dark:text-zinc-400">Digraph rhythm, Shift capitals, punctuation</td>
+                  <td className="py-3.5 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">92%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-3 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Advanced</td>
-                  <td className="py-3 px-3 text-zinc-600 dark:text-zinc-400">Code syntax, numbers, endurance passages</td>
-                  <td className="py-3 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">95%+ Acc</td>
+                  <td className="py-3.5 pr-3 font-medium text-zinc-900 dark:text-zinc-100">Advanced</td>
+                  <td className="py-3.5 px-3 text-zinc-600 dark:text-zinc-400">Code syntax, numbers, endurance passages</td>
+                  <td className="py-3.5 pl-3 font-mono text-right text-zinc-700 dark:text-zinc-300">95%+ Acc</td>
                 </tr>
                 <tr>
-                  <td className="py-3 pr-3 font-medium text-emerald-600 dark:text-emerald-400">Certification</td>
-                  <td className="py-3 px-3 text-zinc-600 dark:text-zinc-400">Timed speed tests &amp; PDF/PNG awards</td>
-                  <td className="py-3 pl-3 font-mono text-right text-emerald-600 dark:text-emerald-400">35+ WPM · 95%</td>
+                  <td className="py-3.5 pr-3 font-medium text-emerald-600 dark:text-emerald-400">Certification</td>
+                  <td className="py-3.5 px-3 text-zinc-600 dark:text-zinc-400">Timed speed tests &amp; PDF/PNG awards</td>
+                  <td className="py-3.5 pl-3 font-mono text-right text-emerald-600 dark:text-emerald-400">35+ WPM · 95%</td>
                 </tr>
               </tbody>
             </table>
@@ -448,19 +448,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         <div className="lg:col-span-6 space-y-4">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+          <h2 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
             Frequently Asked Questions
           </h2>
           <div className="divide-y divide-zinc-200 dark:divide-white/[0.06] border-t border-zinc-200 dark:border-white/[0.06]">
             {faqItems.map((item, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div key={item.q} className="py-3">
+                <div key={item.q} className="py-3.5">
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? -1 : idx)}
                     aria-expanded={isOpen}
-                    className="w-full flex items-center justify-between gap-3 text-left text-xs font-medium text-zinc-800 hover:text-zinc-950 dark:text-zinc-200 dark:hover:text-white transition-colors"
+                    className="w-full flex items-center justify-between gap-3 text-left text-sm font-medium text-zinc-800 hover:text-zinc-950 dark:text-zinc-200 dark:hover:text-white transition-colors"
                   >
                     <span>{item.q}</span>
                     <ChevronDown
@@ -470,7 +470,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     />
                   </button>
                   {isOpen && (
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed pt-2 pr-6">
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-2 pr-6">
                       {item.a}
                     </p>
                   )}

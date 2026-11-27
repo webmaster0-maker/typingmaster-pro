@@ -203,7 +203,7 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
   return (
     <div className="w-full flex flex-col items-center select-none font-sans max-w-5xl mx-auto px-2">
       {/* 1. TOPLINE GUIDANCE & HANDS TOOLBAR */}
-      <div className="w-full flex items-center justify-between pb-2.5 px-2 text-xs">
+      <div className="w-full flex items-center justify-between pb-2.5 px-2 text-sm">
         <div className="flex items-center gap-2 text-zinc-700 dark:text-slate-300 font-medium">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
           <span className="tracking-wide text-zinc-800 dark:text-slate-200">
@@ -217,9 +217,9 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
             type="button"
             onClick={toggleEngineMode}
             title={engineMode === '3d' ? 'Switch to Vector SVG Hands' : 'Switch to 3D Articulated Hands'}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:text-slate-300 dark:hover:text-white transition-all text-[11px]"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:text-slate-300 dark:hover:text-white transition-all text-xs"
           >
-            <Sparkles size={12} className={engineMode === '3d' ? 'text-amber-500 dark:text-amber-400' : 'text-sky-500 dark:text-sky-400'} />
+            <Sparkles size={13} className={engineMode === '3d' ? 'text-amber-500 dark:text-amber-400' : 'text-sky-500 dark:text-sky-400'} />
             <span className="font-medium">{engineMode === '3d' ? '3D Hands' : 'Vector Hands'}</span>
           </button>
 
@@ -228,9 +228,9 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
             type="button"
             onClick={toggleKeyboardTheme}
             title={keyboardTheme === 'light' ? 'Switch to Dark Slate Keyboard' : 'Switch to Silver Keyboard'}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:text-slate-300 dark:hover:text-white transition-all text-[11px]"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:text-slate-300 dark:hover:text-white transition-all text-xs"
           >
-            <Sliders size={12} />
+            <Sliders size={13} />
             <span className="hidden sm:inline font-medium capitalize">{keyboardTheme}</span>
           </button>
 
@@ -240,7 +240,7 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
             onClick={toggleHands}
             aria-pressed={handsEnabled}
             title={handsEnabled ? 'Hide hands guidance' : 'Show hands guidance'}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
               handsEnabled
                 ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300'
                 : 'border-zinc-200 bg-zinc-100 text-zinc-500 hover:text-zinc-800 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-slate-200'
