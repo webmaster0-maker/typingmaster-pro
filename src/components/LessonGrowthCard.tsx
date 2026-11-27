@@ -1,7 +1,7 @@
 import React from 'react';
 import { Lesson, SessionResult } from '../types';
 import { getLessonCompletionMeta } from '../utils/growthEngine';
-import { Sparkles, ArrowRight, Droplets, Leaf, Award, Sprout } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface LessonGrowthCardProps {
   lesson: Lesson;
@@ -21,160 +21,82 @@ export const LessonGrowthCard: React.FC<LessonGrowthCardProps> = ({
   const meta = getLessonCompletionMeta(lesson.id, lesson.title, sessionHistory);
   const isCompleted = meta.isCompleted;
 
-  // Determine botanical icon & theme based on lesson type & module
-  const getGrowthVisual = () => {
-    if (lesson.isTest) {
-      return {
-        icon: Award,
-        stageLabel: isCompleted ? 'Mastered Blossom' : 'Growth Milestone',
-        colorClass: 'amber',
-        symbol: '🏆'
-      };
-    }
-    if (lesson.module === 1) {
-      return {
-        icon: Sprout,
-        stageLabel: isCompleted ? 'Root Anchored' : 'Seedling Plot',
-        colorClass: 'emerald',
-        symbol: '🌱'
-      };
-    }
-    if (lesson.module === 2) {
-      return {
-        icon: Leaf,
-        stageLabel: isCompleted ? 'Stem Flourished' : 'Sprouting Stem',
-        colorClass: 'teal',
-        symbol: '🌿'
-      };
-    }
-    if (lesson.module === 3) {
-      return {
-        icon: Leaf,
-        stageLabel: isCompleted ? 'Canopy Bloomed' : 'Branching Reach',
-        colorClass: 'indigo',
-        symbol: '🍃'
-      };
-    }
-    return {
-      icon: Sparkles,
-      stageLabel: isCompleted ? 'Full Bloom' : 'Blossom Stage',
-      colorClass: 'rose',
-      symbol: '🌸'
-    };
-  };
-
-  const visual = getGrowthVisual();
-
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onStartLesson(lesson)}
-      className={`group relative overflow-hidden p-6 rounded-3xl border cursor-pointer transition-all duration-300 flex flex-col justify-between ${
+      className={`group text-left p-5 rounded-xl border transition-colors duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
         isCompleted
-          ? 'bg-gradient-to-br from-slate-900/95 via-slate-900 to-emerald-950/40 border-emerald-500/50 shadow-xl shadow-emerald-950/30 hover:border-emerald-400 hover:scale-[1.02]'
+          ? 'bg-[#111113] border-emerald-500/30 hover:border-emerald-500/50'
           : isNextToGrow
-          ? 'bg-gradient-to-br from-slate-900/95 via-slate-900 to-indigo-950/40 border-indigo-500/60 ring-2 ring-indigo-500/20 shadow-2xl hover:border-indigo-400 hover:scale-[1.02]'
-          : 'bg-slate-900/70 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700'
+          ? 'bg-[#111113] hover:bg-zinc-900 border-white/[0.2] hover:border-white/[0.3]'
+          : 'bg-[#111113] hover:bg-zinc-900 border-white/[0.08] hover:border-white/[0.16]'
       }`}
     >
-      {/* Decorative leaf water drop background badge */}
-      <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-emerald-500/5 blur-xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
+      <div className="space-y-3 w-full">
+        {/* Top Status & Lesson Number */}
+        <div className="flex items-center justify-between gap-2 text-[11px]">
+          <span
+            className={`font-medium ${
+              isCompleted || isNextToGrow
+                ? 'text-emerald-400'
+                : lesson.isTest
+                ? 'text-amber-400'
+                : 'text-zinc-500'
+            }`}
+          >
+            {isCompleted
+              ? 'Completed'
+              : isNextToGrow
+              ? 'Next up'
+              : lesson.isTest
+              ? 'Checkpoint'
+              : `Lesson ${String(index + 1).padStart(2, '0')}`}
+          </span>
 
-      <div>
-        {/* Top Growth Status Pill & Dewdrops */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-xl border flex items-center gap-1 ${
-                isCompleted
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                  : isNextToGrow
-                  ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                  : lesson.isTest
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                  : 'bg-slate-800 text-slate-400 border-slate-700'
-              }`}
-            >
-              <span>{visual.symbol}</span>
-              <span>{isCompleted ? 'Bloomed' : visual.stageLabel}</span>
-            </span>
-            
-            {lesson.isTest && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                Test
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1 text-[11px] font-mono font-bold tabular-nums text-slate-400">
-            <Droplets className="w-3.5 h-3.5 text-cyan-400" />
-            <span className={isCompleted ? 'text-emerald-300' : 'text-slate-400'}>
-              {isCompleted ? 'Earned' : '+50 XP'}
-            </span>
-          </div>
+          <span className="font-mono text-zinc-500 tabular-nums">
+            {lesson.completionAccuracy}% target
+          </span>
         </div>
 
         {/* Title */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono font-semibold tabular-nums text-slate-400">
-            #{String(index + 1).padStart(2, '0')}
-          </span>
-          <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
-            {lesson.title}
-          </h4>
-        </div>
+        <h4 className="text-sm font-medium text-zinc-100 group-hover:text-white transition-colors leading-snug">
+          {lesson.title}
+        </h4>
 
-        {/* Target Keys Tags */}
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] uppercase font-semibold text-slate-500">Keys:</span>
+        {/* Target Keys Keycaps */}
+        <div className="flex flex-wrap items-center gap-1">
           {lesson.targetKeys.slice(0, 6).map((k, i) => (
-            <span
+            <kbd
               key={i}
-              className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-300 group-hover:border-slate-700"
+              className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded bg-zinc-950 border border-white/[0.1] text-[10px] font-mono text-zinc-400 uppercase"
             >
-              {k === ' ' ? 'SPACE' : k.toUpperCase()}
-            </span>
+              {k === ' ' ? 'SPC' : k}
+            </kbd>
           ))}
           {lesson.targetKeys.length > 6 && (
-            <span className="text-[10px] font-mono text-slate-500">
-              +{lesson.targetKeys.length - 6} more
+            <span className="text-[10px] font-mono text-zinc-500 pl-0.5">
+              +{lesson.targetKeys.length - 6}
             </span>
           )}
         </div>
       </div>
 
-      {/* Card Footer: Growth Result or CTA */}
-      <div className="mt-5 pt-3.5 border-t border-slate-800/80 flex items-center justify-between">
+      {/* Card Footer */}
+      <div className="w-full pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
         {isCompleted ? (
-          <div className="flex items-center gap-3">
-            {/* 3 Leaves rating */}
-            <div className="flex items-center gap-0.5" title={`${meta.leaves} of 3 Leaves Mastery`}>
-              {[1, 2, 3].map(leafIdx => (
-                <span
-                  key={leafIdx}
-                  className={`text-xs ${
-                    leafIdx <= meta.leaves ? 'text-emerald-400 scale-110' : 'text-slate-700'
-                  }`}
-                >
-                  🌿
-                </span>
-              ))}
-            </div>
-            <div className="text-[11px] font-mono tabular-nums text-emerald-400 font-bold">
-              {meta.bestWpm} WPM • {meta.bestAccuracy}%
-            </div>
-          </div>
+          <span className="font-mono tabular-nums text-emerald-400">
+            {meta.bestWpm} WPM · {meta.bestAccuracy}%
+          </span>
         ) : (
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span className="w-2 h-2 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors" />
-            <span className="text-[11px]">Pass: {lesson.completionAccuracy}% Accuracy</span>
-          </div>
+          <span className="text-zinc-500 font-mono tabular-nums">+50 XP</span>
         )}
 
-        <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 group-hover:translate-x-1 transition-all">
-          <span>{isCompleted ? 'Re-Nourish' : isNextToGrow ? 'Sprout Now' : 'Cultivate'}</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </div>
+        <span className="inline-flex items-center gap-1 font-medium text-zinc-400 group-hover:text-zinc-100 transition-colors">
+          <span>{isCompleted ? 'Practice' : 'Start'}</span>
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        </span>
       </div>
-    </div>
+    </button>
   );
 };

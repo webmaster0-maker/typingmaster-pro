@@ -62,7 +62,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-indigo-500/40 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
           >
             <User className="w-4 h-4 text-indigo-400 shrink-0" />
             {userAccount ? (
@@ -83,7 +83,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
           <div
             key={test.id}
             onClick={() => onStartTest(test)}
-            className="group bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
+            className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-emerald-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -100,7 +100,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
               </h3>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-3 font-mono tabular-nums">
                 <span className="text-xs font-semibold text-slate-300">
                   Target: <strong className="text-emerald-400">{test.passWpm} WPM</strong>
@@ -120,7 +120,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
       </section>
 
       {/* Earned Certificates Gallery */}
-      <section id="earned-certificates" className="space-y-4 pt-2 border-t border-slate-800/80">
+      <section id="earned-certificates" className="space-y-4 pt-2 border-t border-white/[0.08]">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
@@ -135,7 +135,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
         </div>
 
         {certificates.length === 0 ? (
-          <div className="bg-slate-900/60 border border-dashed border-slate-800 rounded-2xl p-8 text-center">
+          <div className="bg-[#111113] border border-dashed border-white/[0.08] rounded-xl p-8 text-center">
             <Award className="w-8 h-8 text-slate-600 mx-auto mb-3" />
             <p className="text-sm font-semibold text-slate-300">No certificates earned yet</p>
           </div>
@@ -144,7 +144,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             {certificates.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-5 shadow-lg transition-colors flex flex-col justify-between gap-4"
+                className="bg-[#111113] border border-white/[0.08] hover:border-amber-500/40 rounded-xl p-5 shadow-lg transition-colors flex flex-col justify-between gap-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -158,12 +158,12 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                     </p>
                   </div>
 
-                  <span className="text-[11px] font-mono tabular-nums text-slate-400 bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg shrink-0">
+                  <span className="text-[11px] font-mono tabular-nums text-slate-400 bg-[#09090B] border border-white/[0.08] px-2.5 py-1 rounded-lg shrink-0">
                     {cert.certificateCode}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-slate-300 bg-slate-950/80 border border-slate-800/80 rounded-xl px-4 py-2.5">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-slate-300 bg-[#09090B] border border-white/[0.08] rounded-xl px-4 py-2.5">
                   <span>
                     Speed: <strong className="text-sky-400">{cert.wpm} WPM</strong>
                   </span>

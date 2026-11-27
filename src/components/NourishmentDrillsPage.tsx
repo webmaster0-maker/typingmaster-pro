@@ -83,9 +83,9 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
       {/* Top Bar: Back + Title + Filter Tabs */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div className="space-y-3">
           <button
             type="button"
@@ -112,7 +112,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
         <div
           role="tablist"
           aria-label="Filter nourishment drills"
-          className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start md:self-end"
+          className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#111113] border border-white/[0.08] self-start md:self-end"
         >
           {filterTabs.map((tab) => {
             const isActive = filter === tab.id;
@@ -126,7 +126,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 className={`px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0 transition-colors ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    : 'text-slate-400 hover:text-white hover:bg-zinc-900'
                 }`}
               >
                 <span>{tab.label}</span>
@@ -155,7 +155,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 key={prac.id}
                 type="button"
                 onClick={() => onStartPractice(prac)}
-                className="group text-left bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-purple-500/50 p-6 rounded-2xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+                className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-purple-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
               >
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2 text-xs text-slate-400">
@@ -176,7 +176,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                   </h3>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-purple-400">
+                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-purple-400">
                   <span>Start Drill</span>
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -202,7 +202,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 key={test.id}
                 type="button"
                 onClick={() => onStartTest(test)}
-                className="group text-left bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/50 p-6 rounded-2xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-amber-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
                 <div className="space-y-2.5">
                   <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
@@ -227,7 +227,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                   </h3>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-amber-400">
+                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-amber-400">
                   <span>Start Exam</span>
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -261,7 +261,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                   key={lesson.id}
                   type="button"
                   onClick={() => onStartRemediationLesson(lesson)}
-                  className="group text-left bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-rose-500/50 p-6 rounded-2xl transition-all duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                  className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-rose-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2 text-xs">
@@ -284,7 +284,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                       {lesson.remediationTargetKeys.map((k) => (
                         <span
                           key={k}
-                          className="px-2 py-0.5 rounded bg-slate-950 border border-slate-700 font-mono text-xs font-bold text-slate-100"
+                          className="px-2 py-0.5 rounded bg-[#09090B] border border-slate-700 font-mono text-xs font-bold text-slate-100"
                         >
                           {formatHotspotKeyLabel(k)}
                         </span>
@@ -292,7 +292,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-rose-400">
+                  <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-rose-400">
                     <span className="font-mono tabular-nums text-slate-400">
                       Pass target: {lesson.completionAccuracy}%
                     </span>

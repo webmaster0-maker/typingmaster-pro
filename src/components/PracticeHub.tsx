@@ -54,7 +54,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
         </div>
 
         {ruleLessons.length === 0 ? (
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-[#111113] border border-white/[0.08] rounded-xl p-6">
             <div className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-400">
               <CheckCircle2 className="w-4 h-4" />
               <span>All clear — no tricky keys detected</span>
@@ -69,7 +69,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
                 <div
                   key={lesson.id}
                   onClick={() => onStartRemediationLesson(lesson)}
-                  className="group bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 hover:border-sky-500/50 p-6 rounded-2xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between gap-5"
+                  className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-sky-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between gap-5"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-3 text-xs">
@@ -90,7 +90,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
                       {lesson.remediationTargetKeys.map((k) => (
                         <span
                           key={k}
-                          className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 font-mono text-xs font-bold text-slate-100"
+                          className="px-2.5 py-1 rounded-lg bg-[#09090B] border border-slate-700 font-mono text-xs font-bold text-slate-100"
                         >
                           {formatHotspotKeyLabel(k)}
                         </span>
@@ -98,7 +98,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
+                  <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between gap-3">
                     <span className="text-xs font-medium text-slate-400 tabular-nums">
                       Pass target: {lesson.completionAccuracy}% accuracy
                     </span>
@@ -137,7 +137,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
             <div
               key={prac.id}
               onClick={() => onStartPractice(prac)}
-              className="group bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-purple-500/50 p-6 rounded-2xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
+              className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-purple-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -154,7 +154,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
                 </h3>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-400">
                   Guidance: {prac.guidanceConfig.guidanceLevel}
                 </span>

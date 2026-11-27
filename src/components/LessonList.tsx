@@ -90,45 +90,39 @@ export const LessonList: React.FC<LessonListProps> = ({
     switch (modNum) {
       case 1:
         return {
-          title: 'Module 1: Roots & Anchor Foundation',
-          desc: 'Establish ergonomic hand posture and F & J home-row muscle memory.',
-          badge: 'Biome 1 · Foundation',
+          title: 'Module 1: Foundation & Anchors',
+          badge: 'Foundation',
         };
       case 2:
         return {
-          title: 'Module 2: Home Row Trunk',
-          desc: 'Build 8-finger independence across the complete home row.',
-          badge: 'Biome 2 · Home Row',
+          title: 'Module 2: Home Row Fluency',
+          badge: 'Home Row',
         };
       case 3:
         return {
-          title: 'Module 3: Canopy Reaches',
-          desc: 'Extend accurate reaches to the top, bottom, and number rows.',
-          badge: 'Biome 3 · Extended Rows',
+          title: 'Module 3: Top & Bottom Rows',
+          badge: 'Extended Rows',
         };
       case 4:
         return {
           title: 'Module 4: Sentences, Shift & Endurance',
-          desc: 'Combine all rows into fluid sentences, paragraphs, and graduation tests.',
-          badge: 'Biome 4 · Fluency',
+          badge: 'Fluency',
         };
       case 5:
         return {
           title: 'Module 5: Numbers, Mastery & Graduation',
-          desc: 'Master numbers, symbols, themed paragraphs, and final certification exams.',
-          badge: 'Biome 5 · Mastery',
+          badge: 'Mastery',
         };
       default:
         return {
-          title: `Module ${modNum}: Specialized Growth`,
-          desc: 'Targeted drills to build speed and accuracy.',
-          badge: `Biome ${modNum}`,
+          title: `Module ${modNum}`,
+          badge: `Module ${modNum}`,
         };
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
       {/* Compact Studio Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div className="space-y-1.5">
@@ -166,43 +160,39 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               key={lvl.id}
               type="button"
-              onClick={() => setSelectedLevel(lvl.id)}
-              className={`text-left relative overflow-hidden p-6 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${
+              onClick={() => {
+                setSelectedLevel(lvl.id);
+                setExpandedModule(1);
+              }}
+              className={`text-left relative overflow-hidden p-5 rounded-xl border transition-colors duration-150 flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-slate-800/90 border-emerald-500 ring-2 ring-emerald-500/25 shadow-xl'
-                  : 'bg-slate-900/70 hover:bg-slate-800/60 border-slate-800 hover:border-slate-700'
+                  ? 'bg-[#111113] border-emerald-500/50'
+                  : 'bg-[#111113] hover:bg-zinc-900 border-white/[0.08] hover:border-white/[0.16]'
               }`}
             >
-              <div className="space-y-4 w-full">
+              <div className="space-y-3 w-full">
                 <div className="flex items-center justify-between">
-                  <div
-                    className={`w-11 h-11 rounded-xl flex items-center justify-center border ${
-                      lvl.color === 'emerald'
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                        : lvl.color === 'amber'
-                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                        : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-zinc-950 border border-white/[0.08] text-zinc-300">
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <span className="text-xs font-mono tabular-nums text-emerald-400 font-semibold">
+                  <span className="text-xs font-mono tabular-nums text-emerald-400 font-medium">
                     {bloomedCount}/{levelLessons.length} completed
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-white">{lvl.title}</h3>
+                  <h3 className="text-base font-semibold text-zinc-100">{lvl.title}</h3>
+                  <p className="text-xs text-zinc-500 mt-0.5">{lvl.desc}</p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800 w-full flex items-center justify-between text-xs font-semibold">
-                <span className={isSelected ? 'text-emerald-400' : 'text-slate-400'}>
+              <div className="mt-5 pt-3.5 border-t border-white/[0.06] w-full flex items-center justify-between text-xs font-medium">
+                <span className={isSelected ? 'text-emerald-400' : 'text-zinc-400'}>
                   {isSelected ? 'Active Track' : 'View Track'}
                 </span>
                 <ArrowRight
-                  className={`w-4 h-4 transition-transform ${
-                    isSelected ? 'translate-x-1 text-emerald-400' : 'text-slate-500'
+                  className={`w-3.5 h-3.5 transition-transform ${
+                    isSelected ? 'translate-x-0.5 text-emerald-400' : 'text-zinc-500'
                   }`}
                 />
               </div>
@@ -213,17 +203,19 @@ export const LessonList: React.FC<LessonListProps> = ({
       </section>
 
       {/* Curriculum Filter & Section Header */}
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-white capitalize">
-              {selectedLevel === 'all' ? 'All Curriculum Levels' : `${selectedLevel} Level`}
+            <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+              {selectedLevel === 'all'
+                ? 'All Curriculum Levels'
+                : `${selectedLevel.charAt(0).toUpperCase()}${selectedLevel.slice(1)} Level`}
             </h2>
             {selectedLevel !== 'all' && (
               <button
                 type="button"
                 onClick={() => setSelectedLevel('all')}
-                className="text-xs text-sky-400 hover:text-sky-300 font-semibold underline"
+                className="text-xs text-zinc-400 hover:text-zinc-100 font-medium underline"
               >
                 Show All Levels
               </button>
@@ -231,14 +223,14 @@ export const LessonList: React.FC<LessonListProps> = ({
           </div>
 
           {/* Accurate Segmented Filter Controls */}
-          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-[#111113] p-1 rounded-lg border border-white/[0.08]">
             <button
               type="button"
               onClick={() => setGrowthFilter('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'all'
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-800 text-zinc-100'
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
               All ({levelScopedLessons.length})
@@ -246,10 +238,10 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('unbloomed')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'unbloomed'
-                  ? 'bg-sky-600 text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-800 text-zinc-100'
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
               To Do ({unbloomedCountInScope})
@@ -257,10 +249,10 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('bloomed')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap tabular-nums ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap tabular-nums ${
                 growthFilter === 'bloomed'
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
               Completed ({bloomedCountInScope})
@@ -270,8 +262,8 @@ export const LessonList: React.FC<LessonListProps> = ({
 
         {/* Empty State for Filters */}
         {filteredLessons.length === 0 ? (
-          <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-10 text-center space-y-3">
-            <p className="text-base font-semibold text-white">
+          <div className="bg-[#111113] border border-white/[0.08] rounded-xl p-10 text-center space-y-3">
+            <p className="text-sm font-medium text-zinc-200">
               {growthFilter === 'bloomed'
                 ? 'No completed lessons in this track yet.'
                 : 'Every lesson in this track is already complete!'}
@@ -279,7 +271,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             <button
               type="button"
               onClick={() => setGrowthFilter('all')}
-              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-slate-700 transition-colors"
+              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 border border-white/[0.08] transition-colors"
             >
               Show All Lessons
             </button>
@@ -297,24 +289,24 @@ export const LessonList: React.FC<LessonListProps> = ({
                   type="button"
                   onClick={() => toggleModule(modNum)}
                   aria-expanded={isExpanded}
-                  className="w-full text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 p-4 sm:p-5 rounded-2xl transition-colors"
+                  className="w-full text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-white/[0.16] p-4 sm:p-5 rounded-xl transition-colors"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-base font-mono shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-zinc-950 border border-white/[0.08] flex items-center justify-center text-emerald-400 font-semibold text-sm font-mono shrink-0">
                       {modNum}
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold text-white">{biome.title}</h3>
-                      <p className="text-xs text-slate-400 mt-0.5 tabular-nums">
+                      <h3 className="text-sm sm:text-base font-semibold text-zinc-100">{biome.title}</h3>
+                      <p className="text-xs text-zinc-500 mt-0.5 tabular-nums font-mono">
                         {modCompleted}/{modLessons.length} completed
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                    <span className="text-xs font-mono text-emerald-400">{biome.badge}</span>
+                    <span className="text-xs font-mono text-zinc-400">{biome.badge}</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                        isExpanded ? 'rotate-180' : ''
+                      className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                        isExpanded ? 'rotate-180 text-zinc-200' : ''
                       }`}
                     />
                   </div>
