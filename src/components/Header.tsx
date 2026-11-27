@@ -80,11 +80,13 @@ export const Header: React.FC<HeaderProps> = ({
                   ${
                     isActive
                       ? 'text-zinc-50 bg-white/[0.07]'
+                      : isGames
+                      ? 'text-amber-300 hover:text-amber-200 bg-amber-500/[0.08] hover:bg-amber-500/[0.15] border border-amber-500/25'
                       : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
                   }
                 `}
               >
-                {isGames && <Gamepad2 className="w-3.5 h-3.5 shrink-0 text-zinc-400" />}
+                {isGames && <Gamepad2 className="w-3.5 h-3.5 shrink-0 text-amber-400" />}
                 <span>{item.label}</span>
                 {isActive && (
                   <span
@@ -151,6 +153,8 @@ export const Header: React.FC<HeaderProps> = ({
                 ${
                   isActive
                     ? 'text-emerald-400 font-medium bg-white/[0.06]'
+                    : isGames
+                    ? 'text-amber-400 font-medium'
                     : 'text-zinc-400'
                 }
               `}

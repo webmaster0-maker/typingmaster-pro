@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Lesson, PracticeItem, UserStats, SessionResult } from '../types';
 import { calculateGrowthProfile, getLessonCompletionMeta } from '../utils/growthEngine';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, Gamepad2, RotateCcw } from 'lucide-react';
 
 interface DashboardProps {
   lessons: Lesson[];
@@ -11,8 +11,11 @@ interface DashboardProps {
   onStartLesson: (lesson: Lesson) => void;
   onStartPractice: (practice: PracticeItem) => void;
   onOpenNourishmentDrills: () => void;
+  onOpenArcade?: () => void;
   setActiveTab: (tab: string) => void;
 }
+
+const PREVIEW_TEXT = 'calm fingers glide smoothly across every key';
 
 export const Dashboard: React.FC<DashboardProps> = ({
   lessons,
@@ -22,10 +25,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onStartLesson,
   onStartPractice,
   onOpenNourishmentDrills,
+  onOpenArcade,
   setActiveTab,
 }) => {
   const growthProfile = calculateGrowthProfile(userStats, sessionHistory);
   const [openFaq, setOpenFaq] = useState<number>(0);
+
+  // Interactive 1-line hero typing preview state (no persistence, instant tactile engagement)
+  const [previewTyped, setPreviewTyped] = useState('');
+  const [previewStart, setPreviewStart] = useState<number | null>(null);
+  const [previewEnd, setPreviewEnd] = useState<number | null>(null);
+  const previewInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePreviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.slice(0, PREVIEW_TEXT.length);
+    if (!previewStart && val.length > 0) {
+      setPreviewStart(Date.now());
+    }
+    if (val.length === PREVIEW_TEXT.length && !previewEnd) {
+      setPreviewEnd(Date.now());
+    } else if (val.length < PREVIEW_TEXT.length && previewEnd) {
+      setPreviewEnd(null);
+    }
+    setPreviewTyped(val);
+  };
+
+  const resetPreview = () => {
+    setPreviewTyped('');
+    setPreviewStart(null);
+    setPreviewEnd(null);
+    previewInputRef.current?.focus();
+  };
+
+  const previewCorrect = previewTyped
+    .split('')
+    .filter((ch, idx) => ch === PREVIEW_TEXT[idx]).length;
+  const previewElapsedMin = previewStart
+    ? Math.max(0.02, ((previewEnd ?? Date.now()) - previewStart) / 60000)
+    : 0;
+  const previewWpm = previewStart && previewTyped.length > 1
+    ? Math.round(previewCorrect / 5 / previewElapsedMin)
+    : 0;
 
   const faqItems = [
     {
@@ -65,46 +105,113 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-14 animate-fadeIn">
-      {/* Open Editorial Hero */}
-      <section className="space-y-6 max-w-2xl">
-        <div className="space-y-3">
-          <p className="text-xs font-mono uppercase tracking-widest text-emerald-400">
-            Touch Typing Studio
-          </p>
-          <h1 className="text-3xl sm:text-5xl font-semibold text-zinc-50 tracking-[-0.03em] leading-[1.1] text-balance">
-            Master touch typing with 3D hand guidance.
-          </h1>
-          <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
-            {lessons.length} structured lessons, themed speed tests, and adaptive weak-key drills. Free and local-first.
-          </p>
+      {/* Open Editorial Hero + Instant Typing Preview */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="lg:col-span-7 space-y-6">
+          <div className="space-y-3">
+            <p className="text-xs font-mono uppercase tracking-widest text-emerald-400">
+              Touch Typing Studio
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-semibold text-zinc-50 tracking-[-0.03em] leading-[1.1] text-balance">
+              Master touch typing with 3D hand guidance.
+            </h1>
+            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
+              {lessons.length} structured lessons, themed speed tests, and adaptive weak-key drills. Free and local-first.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            {nextLesson && (
+              <button
+                type="button"
+                onClick={() => onStartLesson(nextLesson)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm transition-colors whitespace-nowrap"
+              >
+                <span>Start typing</span>
+              </button>
+            )}
+            <a
+              href="/lessons"
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                setActiveTab('lessons');
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-zinc-300 hover:text-white border border-white/[0.1] hover:border-white/[0.2] font-medium text-sm transition-colors whitespace-nowrap"
+            >
+              <span>All lessons</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 pt-1">
-          {nextLesson && (
-            <button
-              type="button"
-              onClick={() => onStartLesson(nextLesson)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm transition-colors whitespace-nowrap"
-            >
-              <span>Start typing</span>
-            </button>
-          )}
-          <a
-            href="/lessons"
-            onClick={(e) => {
-              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-              e.preventDefault();
-              setActiveTab('lessons');
-            }}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-zinc-300 hover:text-white border border-white/[0.1] hover:border-white/[0.2] font-medium text-sm transition-colors whitespace-nowrap"
-          >
-            <span>All lessons</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+        {/* Live 1-Line Try-It Typing Card */}
+        <div
+          onClick={() => previewInputRef.current?.focus()}
+          className="lg:col-span-5 bg-[#111113] border border-white/[0.08] hover:border-white/[0.15] rounded-xl p-5 space-y-4 cursor-text transition-colors"
+        >
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-mono text-zinc-400">
+              {previewEnd ? 'Completed' : 'Click & type to test'}
+            </span>
+            <div className="flex items-center gap-3 font-mono tabular-nums">
+              <span className="text-emerald-400">{previewWpm} WPM</span>
+              {previewTyped.length > 0 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetPreview();
+                  }}
+                  aria-label="Reset preview"
+                  className="text-zinc-500 hover:text-zinc-200 transition-colors"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="font-mono text-base sm:text-lg leading-relaxed tracking-wide select-none break-words">
+            {PREVIEW_TEXT.split('').map((char, idx) => {
+              const typed = previewTyped[idx];
+              const isCursor = idx === previewTyped.length;
+              let cls = 'text-zinc-600';
+              if (typed !== undefined) {
+                cls = typed === char ? 'text-emerald-400' : 'text-rose-400 bg-rose-500/15 rounded-sm';
+              } else if (isCursor) {
+                cls = 'text-zinc-100 border-b-2 border-emerald-400';
+              }
+              return (
+                <span key={idx} className={cls}>
+                  {char}
+                </span>
+              );
+            })}
+          </div>
+
+          <input
+            ref={previewInputRef}
+            type="text"
+            value={previewTyped}
+            onChange={handlePreviewChange}
+            aria-label="Quick typing preview"
+            spellCheck={false}
+            autoComplete="off"
+            autoCapitalize="off"
+            className="sr-only"
+          />
+
+          <div className="h-0.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-400 transition-all duration-100"
+              style={{ width: `${(previewTyped.length / PREVIEW_TEXT.length) * 100}%` }}
+            />
+          </div>
         </div>
       </section>
 
-      {/* Flat Hairline Telemetry Strip */}
+      {/* Flat Hairline Telemetry Strip with 2px Progress Bar */}
       <section aria-label="Your typing progress" className="border-y border-white/[0.08] py-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
           <div>
@@ -121,12 +228,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <p className="text-xs text-zinc-500 mt-1">Accuracy</p>
           </div>
 
-          <div>
+          <div className="space-y-1.5">
             <p className="text-2xl sm:text-3xl font-semibold text-zinc-50 font-mono tabular-nums tracking-tight">
               {growthProfile.totalBlooms}
               <span className="text-sm font-normal text-zinc-500">/{lessons.length}</span>
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Lessons done ({completionPct}%)</p>
+            <p className="text-xs text-zinc-500">Lessons done ({completionPct}%)</p>
+            <div className="h-0.5 w-full max-w-[140px] bg-white/[0.06] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-400 transition-all duration-300"
+                style={{ width: `${completionPct}%` }}
+              />
+            </div>
           </div>
 
           <div>
@@ -169,6 +282,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 sessionHistory
               );
               const isCompleted = meta.isCompleted;
+              const isNextUp = nextLesson?.id === lesson.id && !isCompleted;
 
               return (
                 <button
@@ -178,21 +292,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   className={`group text-left p-5 rounded-xl border transition-colors duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                     isCompleted
                       ? 'bg-[#111113] border-emerald-500/30 hover:border-emerald-500/50'
+                      : isNextUp
+                      ? 'bg-[#111113] hover:bg-zinc-900 border-white/[0.18]'
                       : 'bg-[#111113] hover:bg-zinc-900 border-white/[0.08] hover:border-white/[0.16]'
                   }`}
                 >
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2 text-[11px]">
                       <span
                         className={`font-medium ${
-                          isCompleted ? 'text-emerald-400' : 'text-zinc-500'
+                          isCompleted
+                            ? 'text-emerald-400'
+                            : isNextUp
+                            ? 'text-emerald-400'
+                            : 'text-zinc-500'
                         }`}
                       >
-                        {isCompleted ? 'Completed' : `Module ${lesson.module}`}
+                        {isCompleted ? 'Completed' : isNextUp ? 'Next up' : `Module ${lesson.module}`}
                       </span>
-                      <span className="font-mono text-zinc-500">
-                        {lesson.targetKeys.slice(0, 4).join(' ').toUpperCase()}
-                      </span>
+                      <div className="flex items-center gap-1">
+                        {lesson.targetKeys.slice(0, 4).map((k) => (
+                          <kbd
+                            key={k}
+                            className="inline-flex items-center justify-center min-w-[18px] h-5 px-1 rounded bg-zinc-950 border border-white/[0.1] text-[10px] font-mono text-zinc-400 uppercase"
+                          >
+                            {k === ' ' ? 'SPC' : k}
+                          </kbd>
+                        ))}
+                      </div>
                     </div>
                     <h3 className="text-sm font-medium text-zinc-100 group-hover:text-white transition-colors">
                       {lesson.title}
@@ -211,7 +338,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Right Col: Weak-Key Practice */}
+        {/* Right Col: Weak-Key Practice + Arcade Quick Entry */}
         <div className="space-y-5">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-zinc-100 tracking-tight">
@@ -253,6 +380,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0" />
               </button>
             ))}
+
+            {onOpenArcade && (
+              <button
+                type="button"
+                onClick={onOpenArcade}
+                className="w-full text-left bg-amber-500/[0.06] hover:bg-amber-500/[0.12] border border-amber-500/25 hover:border-amber-400/45 p-5 rounded-xl transition-colors duration-150 flex items-center justify-between gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <Gamepad2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-mono text-amber-400">6 Modes</p>
+                    <h3 className="text-sm font-medium text-amber-100 group-hover:text-white transition-colors truncate">
+                      Play Typing Arcade
+                    </h3>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </button>
+            )}
           </div>
         </div>
       </div>

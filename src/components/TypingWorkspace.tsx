@@ -707,7 +707,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
           typingInputRef.current?.focus({ preventScroll: true });
         }
       }}
-      className="min-h-[100dvh] h-[100dvh] w-full bg-slate-950 text-slate-100 flex flex-col overflow-hidden select-none font-sans"
+      className="min-h-[100dvh] h-[100dvh] w-full bg-[#09090B] text-zinc-100 flex flex-col overflow-hidden select-none font-sans"
     >
       {/* AUTO-FADING CORNER UTILITY CONTROLS (Zero layout space · Hidden while typing · Revealed on pointer move) */}
       {!isFinished && (
@@ -749,7 +749,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
       {/* POST-COMPLETION DETAILS SCREEN (Keyboard, Text & Input Hidden · Clean Centered Results) */}
       {isFinished ? (
         <main className="flex-1 min-h-0 w-full flex items-center justify-center p-5 sm:p-8 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-fadeIn">
+          <div className="w-full max-w-2xl bg-[#111113] border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-fadeIn">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 text-xs font-semibold">
                 {isPassed ? (
@@ -764,37 +764,33 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
                   </span>
                 )}
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{title}</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-zinc-100 tracking-tight">{title}</h2>
             </div>
 
-            <div className="w-full grid grid-cols-2 sm:grid-cols-5 gap-2.5 font-mono tabular-nums">
-              <div className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3">
-                <div className="text-[11px] font-sans text-slate-400">Speed</div>
-                <div className="mt-0.5 text-lg font-bold text-sky-400">{wpm} WPM</div>
+            {/* Hero WPM Spotlight */}
+            <div className="space-y-1">
+              <div className="text-5xl sm:text-6xl font-semibold font-mono tabular-nums text-zinc-50 tracking-tight">
+                {wpm} <span className="text-xl font-normal text-zinc-400">WPM</span>
               </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3">
-                <div className="text-[11px] font-sans text-slate-400">Accuracy</div>
-                <div
-                  className={`mt-0.5 text-lg font-bold ${
-                    isPassed ? 'text-emerald-400' : 'text-amber-400'
-                  }`}
-                >
-                  {accuracy}%
-                </div>
+              <p className={`text-sm font-mono tabular-nums ${isPassed ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {accuracy}% accuracy
+              </p>
+            </div>
+
+            <div className="w-full grid grid-cols-3 gap-2.5 font-mono tabular-nums">
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
+                <div className="text-[11px] font-sans text-zinc-500">Errors</div>
+                <div className="mt-0.5 text-base font-semibold text-rose-400">{errors}</div>
               </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3">
-                <div className="text-[11px] font-sans text-slate-400">Errors</div>
-                <div className="mt-0.5 text-lg font-bold text-rose-400">{errors}</div>
-              </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3">
-                <div className="text-[11px] font-sans text-slate-400">Time</div>
-                <div className="mt-0.5 text-lg font-bold text-slate-200">
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
+                <div className="text-[11px] font-sans text-zinc-500">Time</div>
+                <div className="mt-0.5 text-base font-semibold text-zinc-200">
                   {formatTime(Math.max(1, Math.round(elapsedMs / 1000)))}
                 </div>
               </div>
-              <div className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 col-span-2 sm:col-span-1">
-                <div className="text-[11px] font-sans text-slate-400">Earned</div>
-                <div className="mt-0.5 text-lg font-bold text-emerald-400">+{xpEarned} XP</div>
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
+                <div className="text-[11px] font-sans text-zinc-500">Earned</div>
+                <div className="mt-0.5 text-base font-semibold text-emerald-400">+{xpEarned} XP</div>
               </div>
             </div>
 

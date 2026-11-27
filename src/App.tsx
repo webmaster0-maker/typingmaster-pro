@@ -806,6 +806,7 @@ export default function App() {
               onStartLesson={handleStartLesson}
               onStartPractice={handleStartPractice}
               onOpenNourishmentDrills={() => setActiveTab('drills')}
+              onOpenArcade={() => setIsArcadeOpen(true)}
               setActiveTab={setActiveTab}
             />
           )}
