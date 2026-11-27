@@ -1246,21 +1246,21 @@ export const ArcadeArena: React.FC<ArcadeArenaProps> = ({
         </div>
       )}
 
-      {/* Main 2D Game World Stage + Left/Right Fullscreen Ad Rails */}
+      {/* Main 2D Game World Stage + Left/Right Ad Rails */}
       <div
         className={
           isImmersive
             ? 'relative flex-1 min-h-0 flex flex-row overflow-hidden bg-[#070A12]'
-            : `relative rounded-2xl border ${themeTokens.surface} ${themeTokens.border} p-4 sm:p-6 shadow-2xl`
+            : `relative flex flex-row items-stretch gap-3 rounded-2xl border ${themeTokens.surface} ${themeTokens.border} p-4 sm:p-6 shadow-2xl`
         }
       >
-        {isImmersive && <GameAdRail placement="left" gameMode={mode} />}
+        <GameAdRail placement="left" gameMode={mode} />
 
         <div
           className={
             isImmersive
               ? 'relative flex-1 min-w-0 min-h-0 flex flex-col'
-              : 'relative'
+              : 'relative flex-1 min-w-0'
           }
         >
           <ArcadeGameCanvas
@@ -1461,7 +1461,7 @@ export const ArcadeArena: React.FC<ArcadeArenaProps> = ({
           )}
         </div>
 
-        {isImmersive && <GameAdRail placement="right" gameMode={mode} />}
+        <GameAdRail placement="right" gameMode={mode} />
       </div>
     </div>
   );

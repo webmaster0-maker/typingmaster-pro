@@ -1285,21 +1285,21 @@ export const FightingArena: React.FC<FightingArenaProps> = ({
           )}
         </div>
 
-        {/* 60FPS 2D FIGHTING ARENA STAGE + LEFT/RIGHT FULLSCREEN AD RAILS */}
+        {/* 60FPS 2D FIGHTING ARENA STAGE + LEFT/RIGHT AD RAILS */}
         <div
           className={
             isImmersive
               ? 'flex-1 min-h-0 flex flex-row overflow-hidden bg-[#070A12]'
-              : 'contents'
+              : 'flex flex-row items-stretch gap-3'
           }
         >
-          {isImmersive && <GameAdRail placement="left" gameMode="classic" />}
+          <GameAdRail placement="left" gameMode="classic" />
 
           <div
             className={
               isImmersive
                 ? 'relative flex-1 min-w-0 min-h-0 flex flex-col'
-                : 'relative'
+                : 'relative flex-1 min-w-0'
             }
           >
             <div
@@ -1533,7 +1533,7 @@ export const FightingArena: React.FC<FightingArenaProps> = ({
           )}
           </div>
 
-          {isImmersive && <GameAdRail placement="right" gameMode="classic" />}
+          <GameAdRail placement="right" gameMode="classic" />
         </div>
 
         {/* Mobile Virtual Keyboard Focus Trigger (only rendered on narrow touch screens while playing) */}
