@@ -116,15 +116,9 @@ export const AdSlot: React.FC<AdSlotProps> = ({
     );
   }
 
-  // 2. BLANK RESERVED SPACE (Zero-CLS)
+  // 2. BLANK (remain invisible/blank until an ad or custom banner is added)
   if (config.provider === 'blank') {
-    return (
-      <div
-        className={`overflow-hidden select-none pointer-events-none ${className}`}
-        style={{ minWidth: `${slot.width}px`, minHeight: `${slot.height}px` }}
-        aria-hidden="true"
-      />
-    );
+    return null;
   }
 
   // 3. PREVIEW PLACEHOLDER BOX (Visual Layout Shift Inspection)

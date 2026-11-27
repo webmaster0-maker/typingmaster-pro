@@ -56,7 +56,9 @@ export const GameAdRail: React.FC<GameAdRailProps> = ({
     }
   }, [shouldRenderAdSense]);
 
-  if (!slot) return null;
+  if (!slot || (!customCreative && !shouldRenderAdSense && !customHtml && !config.showSlotGuides)) {
+    return null;
+  }
 
   const dividerClass =
     placement === 'left'
@@ -117,14 +119,14 @@ export const GameAdRail: React.FC<GameAdRailProps> = ({
             tabIndex={-1}
             className="w-full h-full border-0 bg-transparent"
           />
-        ) : (
-          <div className="px-2 text-center font-mono tabular-nums text-[10px] text-zinc-600 space-y-1 pointer-events-none">
-            <div className="text-zinc-500">Sponsored</div>
+        ) : config.showSlotGuides ? (
+          <div className="px-2 text-center font-mono tabular-nums text-[10px] text-slate-600 space-y-1 pointer-events-none">
+            <div className="truncate">{slot.id}</div>
             <div>
               {slot.width}×{slot.height}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </aside>
   );

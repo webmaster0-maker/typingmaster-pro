@@ -37,7 +37,7 @@ export const SITE_ADS_CONFIG: SiteAdsConfig = {
   // 'preview': Shows clean visual placeholder boxes labeled with dimensions
   // 'adsense': Inserts real Google AdSense <ins class="adsbygoogle"> tags
   // 'blank':   Reserves the exact pixel space without visual borders
-  provider: 'preview',
+  provider: 'blank',
   clientId: '', // Paste your 'ca-pub-XXXXXXXXXXXXXXXX' here
   showDimensions: true,
   slots: {
