@@ -746,51 +746,51 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
         </div>
       )}
 
-      {/* POST-COMPLETION DETAILS SCREEN (Keyboard, Text & Input Hidden · Clean Centered Results) */}
+      {/* POST-COMPLETION DETAILS SCREEN (Compact Single-Screen Results · Zero Scroll) */}
       {isFinished ? (
-        <main className="flex-1 min-h-0 w-full flex items-center justify-center p-5 sm:p-8 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-[#111113] border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-fadeIn">
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold">
+        <main className="flex-1 min-h-0 w-full flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-lg bg-[#111113] border border-white/[0.08] rounded-2xl p-5 shadow-2xl flex flex-col items-center text-center gap-3.5 animate-fadeIn">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold">
                 {isPassed ? (
-                  <span className="inline-flex items-center gap-1.5 text-emerald-400">
-                    <CheckCircle2 className="w-4 h-4" />
+                  <span className="inline-flex items-center gap-1 text-emerald-400">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{mode === 'test' ? 'Test Passed' : 'Completed'}</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 text-amber-400">
-                    <AlertCircle className="w-4 h-4" />
+                  <span className="inline-flex items-center gap-1 text-amber-400">
+                    <AlertCircle className="w-3.5 h-3.5" />
                     <span>{mode === 'test' ? 'Target Not Reached' : 'Below Accuracy Target'}</span>
                   </span>
                 )}
               </div>
-              <h2 className="text-lg sm:text-xl font-semibold text-zinc-100 tracking-tight">{title}</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-zinc-100 tracking-tight leading-snug">{title}</h2>
             </div>
 
-            {/* Hero WPM Spotlight */}
-            <div className="space-y-1">
-              <div className="text-5xl sm:text-6xl font-semibold font-mono tabular-nums text-zinc-50 tracking-tight">
-                {wpm} <span className="text-xl font-normal text-zinc-400">WPM</span>
+            {/* Compact Hero WPM Spotlight */}
+            <div className="py-1">
+              <div className="text-4xl font-semibold font-mono tabular-nums text-zinc-50 tracking-tight leading-none">
+                {wpm} <span className="text-base font-normal text-zinc-400">WPM</span>
               </div>
-              <p className={`text-sm font-mono tabular-nums ${isPassed ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <p className={`text-xs font-mono tabular-nums mt-1 ${isPassed ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {accuracy}% accuracy
               </p>
             </div>
 
-            <div className="w-full grid grid-cols-3 gap-2.5 font-mono tabular-nums">
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
-                <div className="text-[11px] font-sans text-zinc-500">Errors</div>
-                <div className="mt-0.5 text-base font-semibold text-rose-400">{errors}</div>
+            <div className="w-full grid grid-cols-3 gap-2 font-mono tabular-nums">
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+                <div className="text-[10px] font-sans text-zinc-500">Errors</div>
+                <div className="mt-0.5 text-sm font-semibold text-rose-400">{errors}</div>
               </div>
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
-                <div className="text-[11px] font-sans text-zinc-500">Time</div>
-                <div className="mt-0.5 text-base font-semibold text-zinc-200">
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+                <div className="text-[10px] font-sans text-zinc-500">Time</div>
+                <div className="mt-0.5 text-sm font-semibold text-zinc-200">
                   {formatTime(Math.max(1, Math.round(elapsedMs / 1000)))}
                 </div>
               </div>
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-xl px-3 py-2.5">
-                <div className="text-[11px] font-sans text-zinc-500">Earned</div>
-                <div className="mt-0.5 text-base font-semibold text-emerald-400">+{xpEarned} XP</div>
+              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+                <div className="text-[10px] font-sans text-zinc-500">Earned</div>
+                <div className="mt-0.5 text-sm font-semibold text-emerald-400">+{xpEarned} XP</div>
               </div>
             </div>
 
@@ -895,21 +895,14 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               </p>
             )}
 
-            {/* Results Screen AdSlot */}
-            {isSiteAdSlotVisible(SITE_ADS_CONFIG.slots.resultsCard.id, adSettings) && (
-              <div className="w-full flex justify-center py-1">
-                <AdSlot slot={SITE_ADS_CONFIG.slots.resultsCard} />
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={restartSession}
-                className={`px-5 py-2.5 rounded-xl font-semibold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+                className={`px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                   !isPassed
                     ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                    : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                    : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-white/[0.1]'
                 }`}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -920,21 +913,21 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
                 <button
                   type="button"
                   onClick={onNextLesson}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                     isPassed
-                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                      ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950'
+                      : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-white/[0.1]'
                   }`}
                 >
                   <span>Next Lesson</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               )}
 
               <button
                 type="button"
                 onClick={onBack}
-                className="px-5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition-colors whitespace-nowrap"
+                className="px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 font-medium text-xs transition-colors whitespace-nowrap"
               >
                 {mode === 'test'
                   ? 'Back to Tests'
