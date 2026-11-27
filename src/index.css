@@ -167,15 +167,6 @@ html.dark body {
   user-select: none;
 }
 
-.keyboard-stage.mode-3d {
-  perspective: 1100px;
-}
-
-.keyboard-stage.mode-3d .keyboard {
-  transform: rotateX(10deg);
-  transform-origin: center top;
-}
-
 .keyboard {
   position: absolute;
   left: 0;

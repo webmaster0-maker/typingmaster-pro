@@ -366,17 +366,17 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
     (async () => {
       try {
         const scene = new THREE.Scene();
-        const initialWidth = host.current?.clientWidth || 900;
-        const initialHeight = host.current?.clientHeight || 420;
-        const camera = new THREE.PerspectiveCamera(
-          32,
-          initialWidth / Math.max(1, initialHeight),
+        const camera = new THREE.OrthographicCamera(
+          -1.5,
+          1.5,
+          0.7,
+          -0.7,
           0.1,
           100
         );
-        camera.position.set(0, 2.35, 1.45);
-        camera.up.set(0, 1, 0);
-        camera.lookAt(0, -0.02, -0.05);
+        camera.position.set(0, 5, 0);
+        camera.up.set(0, 0, -1);
+        camera.lookAt(0, 0, 0);
 
         renderer = new THREE.WebGLRenderer({
           alpha: true,
@@ -405,8 +405,6 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
           if (host.current && renderer) {
             const w = host.current.clientWidth || 900;
             const h = host.current.clientHeight || 420;
-            camera.aspect = w / Math.max(1, h);
-            camera.updateProjectionMatrix();
             renderer.setSize(w, h, false);
           }
         };
@@ -417,14 +415,16 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
         }
         resize();
 
-        scene.add(new THREE.HemisphereLight(0xfff5eb, 0x334155, 1.25));
-        const target = new THREE.Vector3(0, 0, -0.25);
+        scene.add(new THREE.HemisphereLight(0xfff5eb, 0x334155, 1.45));
+        const target = new THREE.Vector3(0, 0, -0.825);
         for (const [color, intensity, position] of [
-          [0xffffff, 2.1, [-1.8, 3.2, 1.8]],
-          [0x93c5fd, 0.95, [2.0, 1.4, -2.5]],
+          [0xffffff, 2.2, [0, 0.8, -3]],
+          [0xb8d4ff, 0.85, [0, 0.45, 1.9]],
         ] as [number, number, [number, number, number]][]) {
           const light = new THREE.DirectionalLight(color, intensity);
-          light.position.set(...position);
+          const v = new THREE.Vector3(...position).sub(target);
+          v.setLength(v.length() + 1);
+          light.position.copy(target).add(v);
           light.target.position.copy(target);
           scene.add(light, light.target);
         }
@@ -478,12 +478,12 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
           const pressed = keyPose(latest.current.pressedKey).pose;
           for (const hand of hands) {
             hand.update(delta);
-            const tap =
+            const pulse =
               pressed?.side === hand.side && age >= 0 && age < 180
-                ? Math.sin((Math.PI * age) / 180) * 0.055
+                ? Math.sin((Math.PI * age) / 180) * 0.015
                 : 0;
-            hand.group.position.y = -tap;
-            hand.group.position.z = hand.baseZ + tap * 0.4;
+            hand.group.position.y = 0;
+            hand.group.position.z = hand.baseZ + pulse;
           }
           renderer.render(scene, camera);
         });
