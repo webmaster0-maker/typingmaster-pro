@@ -259,7 +259,7 @@ export const TypingHandsKeyboard: React.FC<TypingHandsKeyboardProps> = ({
 
       {/* 2. KEYFLOW KEYBOARD STAGE (900x420 aspect-ratio container) */}
       <div
-        className="keyboard-stage relative w-full aspect-[900/420] max-h-[66vh] rounded-2xl overflow-hidden p-1 shadow-2xl border border-slate-800/80 bg-slate-950/60"
+        className={`keyboard-stage ${engineMode === '3d' ? 'mode-3d' : ''} relative w-full aspect-[900/420] max-h-[66vh] rounded-2xl overflow-hidden p-1 shadow-2xl border border-slate-800/80 bg-slate-950/60`}
       >
         {/* PHYSICAL KEYBOARD CHASSIS & KEYS */}
         <div className={`keyboard ${keyboardTheme === 'dark' ? 'dark-theme' : ''}`}>

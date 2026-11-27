@@ -12,6 +12,9 @@ export default defineConfig(() => {
       },
     },
     build: {
+      target: ['es2020', 'chrome87', 'edge88', 'firefox78', 'safari14'],
+      cssTarget: 'chrome87',
+      cssMinify: 'lightningcss' as const,
       rollupOptions: {
         output: {
           manualChunks: {

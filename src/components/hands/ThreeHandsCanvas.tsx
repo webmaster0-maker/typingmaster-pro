@@ -85,11 +85,11 @@ interface CustomMaterialUniforms {
 function createMaterial(texture: THREE.Texture): THREE.MeshStandardMaterial {
   const material = new THREE.MeshStandardMaterial({
     map: texture,
-    roughness: 0.55,
-    metalness: 0,
+    roughness: 0.52,
+    metalness: 0.04,
     color: 0xffffff,
     side: THREE.DoubleSide,
-    toneMapped: false,
+    toneMapped: true,
   });
 
   const uniforms: CustomMaterialUniforms = {
@@ -362,30 +362,36 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
     (async () => {
       try {
         const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(
-          -1.5,
-          1.5,
-          0.7,
-          -0.7,
+        const initialWidth = host.current?.clientWidth || 900;
+        const initialHeight = host.current?.clientHeight || 420;
+        const camera = new THREE.PerspectiveCamera(
+          32,
+          initialWidth / Math.max(1, initialHeight),
           0.1,
           100
         );
-        camera.position.set(0, 5, 0);
-        camera.up.set(0, 0, -1);
-        camera.lookAt(0, 0, 0);
+        camera.position.set(0, 2.35, 1.45);
+        camera.up.set(0, 1, 0);
+        camera.lookAt(0, -0.02, -0.05);
 
         renderer = new THREE.WebGLRenderer({
           alpha: true,
           antialias: true,
-          powerPreference: 'low-power',
+          powerPreference: 'default',
+          failIfMajorPerformanceCaveat: false,
         });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.05;
         renderer.setClearColor(0x000000, 0);
         renderer.domElement.setAttribute('aria-hidden', 'true');
         renderer.domElement.style.width = '100%';
         renderer.domElement.style.height = '100%';
         renderer.domElement.style.display = 'block';
+        renderer.domElement.addEventListener('webglcontextlost', (event) => {
+          event.preventDefault();
+        });
 
         if (host.current) {
           host.current.appendChild(renderer.domElement);
@@ -395,6 +401,8 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
           if (host.current && renderer) {
             const w = host.current.clientWidth || 900;
             const h = host.current.clientHeight || 420;
+            camera.aspect = w / Math.max(1, h);
+            camera.updateProjectionMatrix();
             renderer.setSize(w, h, false);
           }
         };
@@ -405,16 +413,14 @@ export const ThreeHandsCanvas: React.FC<ThreeHandsCanvasProps> = ({
         }
         resize();
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x607068, 1.83));
-        const target = new THREE.Vector3(0, 0, -0.825);
+        scene.add(new THREE.HemisphereLight(0xfff5eb, 0x334155, 1.25));
+        const target = new THREE.Vector3(0, 0, -0.25);
         for (const [color, intensity, position] of [
-          [0xffffff, 2.28, [0, 0.8, -3]],
-          [0xb8d4ff, 0.78, [0, 0.45, 1.9]],
+          [0xffffff, 2.1, [-1.8, 3.2, 1.8]],
+          [0x93c5fd, 0.95, [2.0, 1.4, -2.5]],
         ] as [number, number, [number, number, number]][]) {
           const light = new THREE.DirectionalLight(color, intensity);
-          const v = new THREE.Vector3(...position).sub(target);
-          v.setLength(v.length() + 1);
-          light.position.copy(target).add(v);
+          light.position.set(...position);
           light.target.position.copy(target);
           scene.add(light, light.target);
         }

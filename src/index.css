@@ -7,9 +7,16 @@
   --font-pixel: "JetBrains Mono", ui-monospace, monospace;
 }
 
+html,
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+  min-height: 100%;
+}
+
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    opacity: 0.92;
     transform: translateY(4px);
   }
   to {
@@ -142,6 +149,15 @@
   aspect-ratio: 900 / 420;
   isolation: isolate;
   user-select: none;
+}
+
+.keyboard-stage.mode-3d {
+  perspective: 1100px;
+}
+
+.keyboard-stage.mode-3d .keyboard {
+  transform: rotateX(10deg);
+  transform-origin: center top;
 }
 
 .keyboard {
