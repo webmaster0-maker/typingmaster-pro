@@ -113,10 +113,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
               Touch Typing Studio
             </p>
             <h1 className="text-3xl sm:text-5xl font-semibold text-zinc-50 tracking-[-0.03em] leading-[1.1] text-balance">
-              Master touch typing with 3D hand guidance.
+              Stop looking at your keyboard.
             </h1>
             <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
-              {lessons.length} structured lessons, themed speed tests, and adaptive weak-key drills. Free and local-first.
+              Learn touch typing through short lessons, real paragraphs, and speed tests.
             </p>
           </div>
 
