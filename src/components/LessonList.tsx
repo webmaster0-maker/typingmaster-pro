@@ -22,10 +22,10 @@ export const LessonList: React.FC<LessonListProps> = ({
 }) => {
   const [selectedLevel, setSelectedLevel] = useState<SkillLevel | 'all'>(initialLevel);
   const [growthFilter, setGrowthFilter] = useState<'all' | 'bloomed' | 'unbloomed'>('all');
-  const [expandedModules, setExpandedModules] = useState<Record<number, boolean>>({ 1: true });
+  const [expandedModule, setExpandedModule] = useState<number | null>(1);
 
   const toggleModule = (modNum: number) => {
-    setExpandedModules((prev) => ({ ...prev, [modNum]: !prev[modNum] }));
+    setExpandedModule((prev) => (prev === modNum ? null : modNum));
   };
 
   useEffect(() => {
@@ -289,7 +289,7 @@ export const LessonList: React.FC<LessonListProps> = ({
             const modLessons = filteredLessons.filter((l) => l.module === modNum);
             const biome = getBiomeMeta(modNum);
             const modCompleted = modLessons.filter(isLessonCompleted).length;
-            const isExpanded = expandedModules[modNum] ?? false;
+            const isExpanded = expandedModule === modNum;
 
             return (
               <div key={modNum} className="space-y-4">
