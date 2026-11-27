@@ -86,39 +86,61 @@ export const LessonList: React.FC<LessonListProps> = ({
 
   const modules: number[] = Array.from(new Set(filteredLessons.map((l) => l.module)));
 
-  const getBiomeMeta = (modNum: number) => {
-    switch (modNum) {
-      case 1:
-        return {
-          title: 'Foundation',
-          badge: 'Module 1',
-        };
-      case 2:
-        return {
-          title: 'Home Row',
-          badge: 'Module 2',
-        };
-      case 3:
-        return {
-          title: 'Top & Bottom Rows',
-          badge: 'Module 3',
-        };
-      case 4:
-        return {
-          title: 'Shift & Punctuation',
-          badge: 'Module 4',
-        };
-      case 5:
-        return {
-          title: 'Numbers & Mastery',
-          badge: 'Module 5',
-        };
-      default:
-        return {
-          title: `Module ${modNum}`,
-          badge: `Module ${modNum}`,
-        };
+  const getBiomeMeta = (modNum: number, level: SkillLevel | 'all') => {
+    if (level === 'beginner') {
+      switch (modNum) {
+        case 1:
+          return { title: 'Foundation', badge: 'Module 1' };
+        case 2:
+          return { title: 'Home Row', badge: 'Module 2' };
+        case 3:
+          return { title: 'Top Row', badge: 'Module 3' };
+        case 4:
+          return { title: 'Bottom Row', badge: 'Module 4' };
+        case 5:
+          return { title: 'Shift & Punctuation', badge: 'Module 5' };
+        case 6:
+          return { title: 'Numbers & Mastery', badge: 'Module 6' };
+        default:
+          return { title: `Module ${modNum}`, badge: `Module ${modNum}` };
+      }
     }
+    if (level === 'intermediate') {
+      switch (modNum) {
+        case 1:
+          return { title: 'Fluency & Rhythm', badge: 'Module 1' };
+        case 2:
+          return { title: 'Hand & Row Balance', badge: 'Module 2' };
+        case 3:
+          return { title: 'Shift & Punctuation', badge: 'Module 3' };
+        case 4:
+          return { title: 'Numbers & Symbols', badge: 'Module 4' };
+        case 5:
+          return { title: 'Applied Mastery', badge: 'Module 5' };
+        default:
+          return { title: `Module ${modNum}`, badge: `Module ${modNum}` };
+      }
+    }
+    if (level === 'advanced') {
+      switch (modNum) {
+        case 1:
+          return { title: 'Speed & Bigrams', badge: 'Module 1' };
+        case 2:
+          return { title: 'Code & Syntax', badge: 'Module 2' };
+        case 3:
+          return { title: 'Technical Prose', badge: 'Module 3' };
+        case 4:
+          return { title: 'Editorial Essays', badge: 'Module 4' };
+        case 5:
+          return { title: 'Mastery Sprints', badge: 'Module 5' };
+        default:
+          return { title: `Module ${modNum}`, badge: `Module ${modNum}` };
+      }
+    }
+    return {
+      title: `Module ${modNum}`,
+      badge: `Module ${modNum}`,
+    };
   };
 
   return (
@@ -279,7 +301,7 @@ export const LessonList: React.FC<LessonListProps> = ({
         ) : (
           modules.map((modNum) => {
             const modLessons = filteredLessons.filter((l) => l.module === modNum);
-            const biome = getBiomeMeta(modNum);
+            const biome = getBiomeMeta(modNum, selectedLevel);
             const modCompleted = modLessons.filter(isLessonCompleted).length;
             const isExpanded = expandedModule === modNum;
 
