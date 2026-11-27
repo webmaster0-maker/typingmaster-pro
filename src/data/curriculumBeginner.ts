@@ -217,7 +217,7 @@ export const BEGINNER_LESSONS: Lesson[] = [
     isTest: true
   }),
 
-  // ==================== MODULE 3: TOP & BOTTOM ROW REACHES (8 LESSONS) ====================
+  // ==================== MODULE 3: TOP ROW (8 LESSONS) ====================
   makeLesson({
     id: 'b-07',
     level: 'beginner',
@@ -257,6 +257,30 @@ export const BEGINNER_LESSONS: Lesson[] = [
     description: 'Train index fingers to reach upward and return to F and J.'
   }),
   makeLesson({
+    id: 'b-36',
+    level: 'beginner',
+    module: 3,
+    moduleTitle: 'Top Row',
+    title: 'Ring Reaches: W & O',
+    objective: 'Develop accurate ring-finger upward reaches to W and O.',
+    targetKeys: ['w', 'o', 's', 'l'],
+    exercises: ['sw lo sw lo slow wool owl', 'wood wool solo word world work'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Guide left and right ring fingers cleanly from S and L to W and O.'
+  }),
+  makeLesson({
+    id: 'b-37',
+    level: 'beginner',
+    module: 3,
+    moduleTitle: 'Top Row',
+    title: 'Pinky Reaches: Q & P',
+    objective: 'Strengthen outer pinky extensions to Q and P.',
+    targetKeys: ['q', 'p', 'a', ';'],
+    exercises: ['aq ;p aq ;p quip pale loop', 'aqua quip play plot quip opal'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Build steady pinky control for Q and P without lifting your wrists.'
+  }),
+  makeLesson({
     id: 'b-08',
     level: 'beginner',
     module: 3,
@@ -269,6 +293,35 @@ export const BEGINNER_LESSONS: Lesson[] = [
     completionAccuracy: 90,
     description: 'Practice common words built with top and home row letters.'
   }),
+  makeLesson({
+    id: 'b-38',
+    level: 'beginner',
+    module: 3,
+    moduleTitle: 'Top Row',
+    title: 'Top & Home Fluency',
+    objective: 'Link multi-word phrases across the home and top rows.',
+    targetKeys: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    exercises: ['quiet owls wait outside our door', 'your quiet guitar plays soft folk'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Maintain smooth rhythm while alternating between top and home row letters.'
+  }),
+  makeLesson({
+    id: 'b-test-top',
+    level: 'beginner',
+    module: 3,
+    moduleTitle: 'Top Row',
+    title: 'Module 3 Checkpoint',
+    objective: 'Test speed and accuracy across all top and home row keys.',
+    targetKeys: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    exercises: ['two proud poets write quiet stories', 'fresh water flows toward your quiet shore'],
+    assessmentRepetitions: 30,
+    completionAccuracy: 90,
+    guidanceConfig: GUIDANCE_NONE,
+    description: 'Assess complete Top Row and Home Row proficiency without visual hints.',
+    isTest: true
+  }),
+
+  // ==================== MODULE 4: BOTTOM ROW (8 LESSONS) ====================
   makeLesson({
     id: 'b-09',
     level: 'beginner',
@@ -296,6 +349,42 @@ export const BEGINNER_LESSONS: Lesson[] = [
     description: 'Build smooth downward reach accuracy for central bottom-row keys.'
   }),
   makeLesson({
+    id: 'b-39',
+    level: 'beginner',
+    module: 4,
+    moduleTitle: 'Bottom Row',
+    title: 'Bottom Index: V, B, N, M',
+    objective: 'Master downward index-finger reaches to V, B, N, and M.',
+    targetKeys: ['v', 'b', 'n', 'm', 'f', 'j'],
+    exercises: ['fv fb jn jm vine beam name', 'move brave noble banner member'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Keep index fingers anchored on F and J while reaching down to V, B, N, and M.'
+  }),
+  makeLesson({
+    id: 'b-40',
+    level: 'beginner',
+    module: 4,
+    moduleTitle: 'Bottom Row',
+    title: 'Middle Reach: C & Comma',
+    objective: 'Train middle fingers to reach C and comma cleanly.',
+    targetKeys: ['c', ',', 'd', 'k'],
+    exercises: ['dc k, dc k, cold, calm, deck,', 'music, science, cloud, card, clock,'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Coordinate left and right middle fingers for C and comma punctuation.'
+  }),
+  makeLesson({
+    id: 'b-41',
+    level: 'beginner',
+    module: 4,
+    moduleTitle: 'Bottom Row',
+    title: 'Ring Reach: X & Period',
+    objective: 'Build precision on ring-finger downward reaches to X and period.',
+    targetKeys: ['x', '.', 's', 'l'],
+    exercises: ['sx l. sx l. six. wax. fox.', 'next. text. relax. index. pixel.'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Guide ring fingers smoothly from S and L down to X and period.'
+  }),
+  makeLesson({
     id: 'b-23',
     level: 'beginner',
     module: 4,
@@ -306,6 +395,18 @@ export const BEGINNER_LESSONS: Lesson[] = [
     exercises: ['zero zone maze, exit next.', 'exact jazz, size six, wax box.'],
     guidanceConfig: GUIDANCE_BEGINNER,
     description: 'Eliminate hesitation on outer bottom-row letters and punctuation.'
+  }),
+  makeLesson({
+    id: 'b-42',
+    level: 'beginner',
+    module: 4,
+    moduleTitle: 'Bottom Row',
+    title: 'Bottom & Home Fluency',
+    objective: 'Combine all bottom-row letters with home and top row vocabulary.',
+    targetKeys: ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    exercises: ['calm breezes move across dark valleys.', 'seven nimble foxes climb mossy banks.'],
+    guidanceConfig: GUIDANCE_BEGINNER,
+    description: 'Connect smooth downward reaches into natural full-keyboard typing flow.'
   }),
   makeLesson({
     id: 'b-test-03',
