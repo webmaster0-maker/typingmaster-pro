@@ -655,13 +655,13 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
                 charClasses +=
                   'inline-block bg-rose-600/90 text-white border-rose-400 rounded-[3px] animate-error-shake';
               } else if (isActive) {
-                charClasses += 'bg-sky-500/25 text-white border-sky-400 rounded-[2px]';
+                charClasses += 'bg-sky-500/20 text-zinc-950 dark:bg-sky-500/25 dark:text-white border-sky-500 dark:border-sky-400 rounded-[2px]';
               } else if (isCorrect) {
-                charClasses += 'text-emerald-400 border-transparent';
+                charClasses += 'text-emerald-600 dark:text-emerald-400 border-transparent';
               } else if (isWrong) {
-                charClasses += 'text-rose-400 bg-rose-500/20 border-rose-500 rounded-[2px]';
+                charClasses += 'text-rose-600 dark:text-rose-400 bg-rose-500/15 dark:bg-rose-500/20 border-rose-500 rounded-[2px]';
               } else {
-                charClasses += 'text-slate-400 border-transparent';
+                charClasses += 'text-zinc-400 dark:text-slate-400 border-transparent';
               }
 
               return (
@@ -707,7 +707,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
           typingInputRef.current?.focus({ preventScroll: true });
         }
       }}
-      className="min-h-[100dvh] h-[100dvh] w-full bg-[#09090B] text-zinc-100 flex flex-col overflow-hidden select-none font-sans"
+      className="min-h-[100dvh] h-[100dvh] w-full bg-zinc-50 dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 flex flex-col overflow-hidden select-none font-sans transition-colors duration-150"
     >
       {/* AUTO-FADING CORNER UTILITY CONTROLS (Zero layout space · Hidden while typing · Revealed on pointer move) */}
       {!isFinished && (
@@ -723,7 +723,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               e.stopPropagation();
               onBack();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
             title="Back (Esc)"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -737,7 +737,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               e.stopPropagation();
               restartSession();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 text-xs font-medium backdrop-blur-sm transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
             title="Restart"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -749,48 +749,48 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
       {/* POST-COMPLETION DETAILS SCREEN (Compact Single-Screen Results · Zero Scroll) */}
       {isFinished ? (
         <main className="flex-1 min-h-0 w-full flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-lg bg-[#111113] border border-white/[0.08] rounded-2xl p-5 shadow-2xl flex flex-col items-center text-center gap-3.5 animate-fadeIn">
+          <div className="w-full max-w-lg bg-white dark:bg-[#111113] border border-zinc-200 dark:border-white/[0.08] rounded-2xl p-5 shadow-2xl flex flex-col items-center text-center gap-3.5 animate-fadeIn">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold">
                 {isPassed ? (
-                  <span className="inline-flex items-center gap-1 text-emerald-400">
+                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{mode === 'test' ? 'Test Passed' : 'Completed'}</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-amber-400">
+                  <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
                     <AlertCircle className="w-3.5 h-3.5" />
                     <span>{mode === 'test' ? 'Target Not Reached' : 'Below Accuracy Target'}</span>
                   </span>
                 )}
               </div>
-              <h2 className="text-base sm:text-lg font-semibold text-zinc-100 tracking-tight leading-snug">{title}</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-snug">{title}</h2>
             </div>
 
             {/* Compact Hero WPM Spotlight */}
             <div className="py-1">
-              <div className="text-4xl font-semibold font-mono tabular-nums text-zinc-50 tracking-tight leading-none">
-                {wpm} <span className="text-base font-normal text-zinc-400">WPM</span>
+              <div className="text-4xl font-semibold font-mono tabular-nums text-zinc-950 dark:text-zinc-50 tracking-tight leading-none">
+                {wpm} <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">WPM</span>
               </div>
-              <p className={`text-xs font-mono tabular-nums mt-1 ${isPassed ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <p className={`text-xs font-mono tabular-nums mt-1 ${isPassed ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
                 {accuracy}% accuracy
               </p>
             </div>
 
             <div className="w-full grid grid-cols-3 gap-2 font-mono tabular-nums">
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+              <div className="bg-zinc-50 dark:bg-[#09090B] border border-zinc-200 dark:border-white/[0.07] rounded-lg px-2.5 py-2">
                 <div className="text-[10px] font-sans text-zinc-500">Errors</div>
-                <div className="mt-0.5 text-sm font-semibold text-rose-400">{errors}</div>
+                <div className="mt-0.5 text-sm font-semibold text-rose-600 dark:text-rose-400">{errors}</div>
               </div>
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+              <div className="bg-zinc-50 dark:bg-[#09090B] border border-zinc-200 dark:border-white/[0.07] rounded-lg px-2.5 py-2">
                 <div className="text-[10px] font-sans text-zinc-500">Time</div>
-                <div className="mt-0.5 text-sm font-semibold text-zinc-200">
+                <div className="mt-0.5 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
                   {formatTime(Math.max(1, Math.round(elapsedMs / 1000)))}
                 </div>
               </div>
-              <div className="bg-[#09090B] border border-white/[0.07] rounded-lg px-2.5 py-2">
+              <div className="bg-zinc-50 dark:bg-[#09090B] border border-zinc-200 dark:border-white/[0.07] rounded-lg px-2.5 py-2">
                 <div className="text-[10px] font-sans text-zinc-500">Earned</div>
-                <div className="mt-0.5 text-sm font-semibold text-emerald-400">+{xpEarned} XP</div>
+                <div className="mt-0.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">+{xpEarned} XP</div>
               </div>
             </div>
 
@@ -888,10 +888,10 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
             })()}
 
             {isCertificateEligibleMode && !isPassed && (
-              <p className="text-xs text-slate-400 font-mono tabular-nums">
+              <p className="text-xs text-zinc-500 dark:text-slate-400 font-mono tabular-nums">
                 Pass target for certificate:{' '}
-                <strong className="text-slate-200">{passWpm ?? 35} WPM</strong> &amp;{' '}
-                <strong className="text-slate-200">{passAccuracy ?? 95}%</strong> accuracy.
+                <strong className="text-zinc-800 dark:text-slate-200">{passWpm ?? 35} WPM</strong> &amp;{' '}
+                <strong className="text-zinc-800 dark:text-slate-200">{passAccuracy ?? 95}%</strong> accuracy.
               </p>
             )}
 
@@ -902,7 +902,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
                 className={`px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                   !isPassed
                     ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                    : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-white/[0.1]'
+                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-100 dark:border-white/[0.1]'
                 }`}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -915,8 +915,8 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
                   onClick={onNextLesson}
                   className={`px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                     isPassed
-                      ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950'
-                      : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-white/[0.1]'
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-zinc-950'
+                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 dark:border-white/[0.1]'
                   }`}
                 >
                   <span>Next Lesson</span>
@@ -927,7 +927,7 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               <button
                 type="button"
                 onClick={onBack}
-                className="px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 font-medium text-xs transition-colors whitespace-nowrap"
+                className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:border-white/[0.08] dark:text-zinc-300 font-medium text-xs transition-colors whitespace-nowrap"
               >
                 {mode === 'test'
                   ? 'Back to Tests'
@@ -953,10 +953,10 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               {renderHiddenInputCapture()}
 
               <div
-                className={`w-full max-w-5xl mx-auto flex-none bg-slate-900/95 border rounded-2xl px-6 py-4 sm:px-10 sm:py-5 shadow-xl transition-colors ${
+                className={`w-full max-w-5xl mx-auto flex-none bg-white dark:bg-slate-900/95 border rounded-2xl px-6 py-4 sm:px-10 sm:py-5 shadow-md dark:shadow-xl transition-colors ${
                   isErrorState
                     ? 'border-rose-500/80 ring-2 ring-rose-500/20'
-                    : 'border-slate-800'
+                    : 'border-zinc-200 dark:border-slate-800'
                 }`}
               >
                 {renderTypingParagraph()}
@@ -979,10 +979,10 @@ export const TypingWorkspace: React.FC<TypingWorkspaceProps> = ({
               {renderHiddenInputCapture()}
 
               <div
-                className={`w-full bg-slate-900/95 border rounded-2xl px-7 py-8 sm:px-12 sm:py-10 shadow-2xl transition-colors ${
+                className={`w-full bg-white dark:bg-slate-900/95 border rounded-2xl px-7 py-8 sm:px-12 sm:py-10 shadow-lg dark:shadow-2xl transition-colors ${
                   isErrorState
                     ? 'border-rose-500/80 ring-2 ring-rose-500/20'
-                    : 'border-slate-800'
+                    : 'border-zinc-200 dark:border-slate-800'
                 }`}
               >
                 {renderTypingParagraph()}

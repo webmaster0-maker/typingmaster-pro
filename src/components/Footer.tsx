@@ -133,7 +133,7 @@ export const Footer: React.FC<FooterProps> = ({
   const currentTopic = activeLegal ? LEGAL_TOPICS[activeLegal] : null;
 
   return (
-    <footer className="border-t border-white/[0.08] bg-[#09090B] text-zinc-400">
+    <footer className="border-t border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#09090B] text-zinc-600 dark:text-zinc-400 transition-colors duration-150">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand & Trust Summary */}
@@ -141,25 +141,25 @@ export const Footer: React.FC<FooterProps> = ({
             <a
               href="/"
               onClick={(e) => handleLinkClick(e, () => onNavigateTab('dashboard'))}
-              className="inline-flex items-center gap-2.5 text-zinc-100 font-semibold text-sm tracking-tight hover:text-white transition-colors"
+              className="inline-flex items-center gap-2.5 text-zinc-900 dark:text-zinc-100 font-semibold text-sm tracking-tight hover:text-zinc-950 dark:hover:text-white transition-colors"
             >
-              <span className="w-6 h-6 rounded-md bg-zinc-100 flex items-center justify-center text-zinc-950">
+              <span className="w-6 h-6 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950">
                 <Keyboard className="w-3.5 h-3.5" />
               </span>
               <span>TypeCrest</span>
             </a>
-            <p className="text-xs leading-relaxed text-zinc-500 max-w-xs">
+            <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-500 max-w-xs">
               Free 3D touch typing tutor with 120 lessons, themed speed tests, and local-first privacy.
             </p>
-            <div className="inline-flex items-center gap-1.5 text-[11px] text-zinc-400 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+            <div className="inline-flex items-center gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>Local-First · No Sign-Up Required</span>
             </div>
           </div>
 
           {/* Curriculum & Practice */}
           <nav aria-label="Touch typing curriculum links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-300">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Curriculum &amp; Practice
             </p>
             <ul className="space-y-2 text-xs">
@@ -167,7 +167,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/lessons"
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('lessons'))}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   120 Touch Typing Lessons
                 </a>
@@ -176,7 +176,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/practice"
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('practice'))}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Weak-key practice
                 </a>
@@ -185,7 +185,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/drills"
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('drills'))}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Practice drills
                 </a>
@@ -194,7 +194,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/assessment"
                   onClick={(e) => handleLinkClick(e, onOpenAssessment)}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Skill Placement Assessment
                 </a>
@@ -204,7 +204,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Tests & Arcade */}
           <nav aria-label="Typing tests and analytics links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-300">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Tests, Arcade &amp; Telemetry
             </p>
             <ul className="space-y-2 text-xs">
@@ -212,7 +212,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/tests"
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('tests'))}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Speed tests &amp; Certificates
                 </a>
@@ -221,7 +221,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/arcade"
                   onClick={(e) => handleLinkClick(e, onOpenArcade)}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Retro Typing Arcade Games
                 </a>
@@ -230,7 +230,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   href="/analytics"
                   onClick={(e) => handleLinkClick(e, () => onNavigateTab('analytics'))}
-                  className="hover:text-zinc-100 transition-colors"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
                 >
                   Analytics &amp; Key Hotspots
                 </a>
@@ -240,7 +240,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Legal & Support */}
           <nav aria-label="Legal and support links" className="space-y-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-300">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-300">
               Legal &amp; Support
             </p>
             <ul className="space-y-2 text-xs">
@@ -248,7 +248,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLegal('privacy')}
-                  className="hover:text-zinc-100 transition-colors text-left"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors text-left"
                 >
                   Privacy Policy
                 </button>
@@ -257,7 +257,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLegal('terms')}
-                  className="hover:text-zinc-100 transition-colors text-left"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors text-left"
                 >
                   Terms of Service
                 </button>
@@ -266,7 +266,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLegal('cookies')}
-                  className="hover:text-zinc-100 transition-colors text-left"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors text-left"
                 >
                   Cookie &amp; Ad Disclosure
                 </button>
@@ -275,7 +275,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLegal('accessibility')}
-                  className="hover:text-zinc-100 transition-colors text-left"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors text-left"
                 >
                   Accessibility &amp; Keyboard Help
                 </button>
@@ -284,7 +284,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLegal('contact')}
-                  className="hover:text-zinc-100 transition-colors text-left"
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors text-left"
                 >
                   Contact &amp; Support
                 </button>
@@ -293,7 +293,7 @@ export const Footer: React.FC<FooterProps> = ({
           </nav>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
+        <div className="mt-10 pt-6 border-t border-zinc-200 dark:border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
           <span>© 2026 TypeCrest. All rights reserved.</span>
           <span>QWERTY 3D Tutor · PDF &amp; PNG Certificates · 100% Free ($0)</span>
         </div>
@@ -302,28 +302,28 @@ export const Footer: React.FC<FooterProps> = ({
       {/* Legal / Info Modal */}
       {currentTopic && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/60 dark:bg-slate-950/80 backdrop-blur-sm p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="legal-modal-title"
           onClick={() => setActiveLegal(null)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 text-slate-300"
+            className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 border border-zinc-200 dark:border-slate-800 shadow-2xl p-6 space-y-4 text-zinc-700 dark:text-slate-300"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-3">
+            <div className="flex items-start justify-between gap-4 border-b border-zinc-200 dark:border-slate-800 pb-3">
               <div>
-                <h2 id="legal-modal-title" className="text-lg font-bold text-white">
+                <h2 id="legal-modal-title" className="text-lg font-bold text-zinc-950 dark:text-white">
                   {currentTopic.title}
                 </h2>
-                <p className="text-[11px] text-slate-400 mt-0.5">{currentTopic.updated}</p>
+                <p className="text-[11px] text-zinc-500 dark:text-slate-400 mt-0.5">{currentTopic.updated}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveLegal(null)}
                 aria-label="Close legal details"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -332,17 +332,17 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1 text-xs leading-relaxed">
               {currentTopic.sections.map((sec) => (
                 <div key={sec.heading} className="space-y-1">
-                  <h3 className="font-semibold text-slate-100">{sec.heading}</h3>
-                  <p className="text-slate-400">{sec.body}</p>
+                  <h3 className="font-semibold text-zinc-900 dark:text-slate-100">{sec.heading}</h3>
+                  <p className="text-zinc-600 dark:text-slate-400">{sec.body}</p>
                 </div>
               ))}
             </div>
 
-            <div className="pt-2 border-t border-slate-800 flex justify-end">
+            <div className="pt-2 border-t border-zinc-200 dark:border-slate-800 flex justify-end">
               <button
                 type="button"
                 onClick={() => setActiveLegal(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition-colors"
+                className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-white transition-colors"
               >
                 Close
               </button>

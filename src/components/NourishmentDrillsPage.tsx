@@ -85,23 +85,23 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
       {/* Top Bar: Back + Title + Filter Tabs */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-200 dark:border-white/[0.08]">
         <div className="space-y-3">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-950 dark:text-slate-400 dark:hover:text-white transition-colors whitespace-nowrap"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Dashboard</span>
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 border border-purple-200 text-purple-600 dark:bg-purple-600/20 dark:border-purple-500/30 flex items-center justify-center dark:text-purple-400 shrink-0">
               <Dumbbell className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
                 Practice drills
               </h1>
             </div>
@@ -112,7 +112,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
         <div
           role="tablist"
           aria-label="Filter nourishment drills"
-          className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#111113] border border-white/[0.08] self-start md:self-end"
+          className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-100 border border-zinc-200 dark:bg-[#111113] dark:border-white/[0.08] self-start md:self-end"
         >
           {filterTabs.map((tab) => {
             const isActive = filter === tab.id;
@@ -126,7 +126,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 className={`px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0 transition-colors ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-zinc-900'
+                    : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-zinc-900'
                 }`}
               >
                 <span>{tab.label}</span>
@@ -143,8 +143,8 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
       {showPractice && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Practice Drills</h2>
-            <span className="text-xs text-slate-400 font-mono tabular-nums">
+            <h2 className="text-lg font-bold text-zinc-950 dark:text-white">Practice Drills</h2>
+            <span className="text-xs text-zinc-500 dark:text-slate-400 font-mono tabular-nums">
               {practiceItems.length} drills
             </span>
           </div>
@@ -155,11 +155,11 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 key={prac.id}
                 type="button"
                 onClick={() => onStartPractice(prac)}
-                className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-purple-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+                className="group text-left bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-purple-400 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] dark:hover:border-purple-500/50 p-6 rounded-xl shadow-sm dark:shadow-none transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
               >
                 <div className="space-y-2.5">
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <span className="font-semibold text-purple-400 capitalize">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-slate-400">
+                    <span className="font-semibold text-purple-600 dark:text-purple-400 capitalize">
                       {prac.type.replace('_', ' ')} Drill
                     </span>
                     <span aria-hidden="true">·</span>
@@ -171,12 +171,12 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                     <span className="font-mono tabular-nums">+35 XP</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
+                  <h3 className="text-lg font-bold text-zinc-900 group-hover:text-purple-700 dark:text-white dark:group-hover:text-purple-300 transition-colors">
                     {prac.title}
                   </h3>
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-purple-400">
+                <div className="pt-4 border-t border-zinc-100 dark:border-white/[0.08] flex items-center justify-between text-xs font-semibold text-purple-600 dark:text-purple-400">
                   <span>Start Drill</span>
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -190,8 +190,8 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
       {showExams && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Mastery Exams</h2>
-            <span className="text-xs text-slate-400 font-mono tabular-nums">
+            <h2 className="text-lg font-bold text-zinc-950 dark:text-white">Mastery Exams</h2>
+            <span className="text-xs text-zinc-500 dark:text-slate-400 font-mono tabular-nums">
               {testItems.length} exams
             </span>
           </div>
@@ -202,11 +202,11 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                 key={test.id}
                 type="button"
                 onClick={() => onStartTest(test)}
-                className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-amber-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                className="group text-left bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-amber-400 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] dark:hover:border-amber-500/50 p-6 rounded-xl shadow-sm dark:shadow-none transition-all duration-150 flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
                 <div className="space-y-2.5">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                    <span className="inline-flex items-center gap-1 font-semibold text-amber-400">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-slate-400">
+                    <span className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400">
                       <Award className="w-3.5 h-3.5" />
                       Mastery Exam
                     </span>
@@ -222,12 +222,12 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                     <span className="font-mono tabular-nums">+75 XP</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
+                  <h3 className="text-lg font-bold text-zinc-900 group-hover:text-amber-700 dark:text-white dark:group-hover:text-amber-300 transition-colors">
                     {test.title}
                   </h3>
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-amber-400">
+                <div className="pt-4 border-t border-zinc-100 dark:border-white/[0.08] flex items-center justify-between text-xs font-semibold text-amber-600 dark:text-amber-400">
                   <span>Start Exam</span>
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -242,12 +242,12 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-rose-400" />
-              <h2 className="text-lg font-bold text-white">
+              <Layers className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white">
                 Tricky Key Recovery
               </h2>
             </div>
-            <span className="text-xs text-slate-400 font-mono tabular-nums">
+            <span className="text-xs text-zinc-500 dark:text-slate-400 font-mono tabular-nums">
               {recoveryLessons.length} active
             </span>
           </div>
@@ -261,11 +261,11 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                   key={lesson.id}
                   type="button"
                   onClick={() => onStartRemediationLesson(lesson)}
-                  className="group text-left bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-rose-500/50 p-6 rounded-xl transition-all duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                  className="group text-left bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-rose-400 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] dark:hover:border-rose-500/50 p-6 rounded-xl shadow-sm dark:shadow-none transition-all duration-150 flex flex-col justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2 text-xs">
-                      <span className="font-semibold text-rose-400">
+                      <span className="font-semibold text-rose-600 dark:text-rose-400">
                         {lesson.ruleName}
                       </span>
                       <span
@@ -276,7 +276,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-white group-hover:text-rose-300 transition-colors">
+                    <h3 className="text-lg font-bold text-zinc-900 group-hover:text-rose-700 dark:text-white dark:group-hover:text-rose-300 transition-colors">
                       {lesson.title}
                     </h3>
 
@@ -284,7 +284,7 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                       {lesson.remediationTargetKeys.map((k) => (
                         <span
                           key={k}
-                          className="px-2 py-0.5 rounded bg-[#09090B] border border-slate-700 font-mono text-xs font-bold text-slate-100"
+                          className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 dark:bg-[#09090B] dark:border-slate-700 font-mono text-xs font-bold dark:text-slate-100"
                         >
                           {formatHotspotKeyLabel(k)}
                         </span>
@@ -292,8 +292,8 @@ export const NourishmentDrillsPage: React.FC<NourishmentDrillsPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-semibold text-rose-400">
-                    <span className="font-mono tabular-nums text-slate-400">
+                  <div className="pt-4 border-t border-zinc-100 dark:border-white/[0.08] flex items-center justify-between text-xs font-semibold text-rose-600 dark:text-rose-400">
+                    <span className="font-mono tabular-nums text-zinc-500 dark:text-slate-400">
                       Pass target: {lesson.completionAccuracy}%
                     </span>
                     <span className="inline-flex items-center gap-1.5">

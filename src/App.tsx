@@ -94,6 +94,7 @@ import {
   resolveRouteFromLocation,
   syncHeadCanonicalAndUrl,
 } from './utils/seoRouting';
+import { ThemeMode, applyTheme, getInitialTheme, saveTheme } from './utils/theme';
 
 function getTodayIsoDate(): string {
   const d = new Date();
@@ -122,6 +123,19 @@ function computeNextStreak(prevStreak: number, lastPracticeDate?: string): { str
 
 export default function App() {
   const adSettings = useAdVisibilitySettings();
+  const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme());
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
+  const handleToggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next: ThemeMode = prev === 'light' ? 'dark' : 'light';
+      saveTheme(next);
+      return next;
+    });
+  }, []);
   const [isAdminPortalOpen, setIsAdminPortalOpen] = useState<boolean>(
     () => getAdminSession().authenticated
   );
@@ -706,7 +720,7 @@ export default function App() {
   );
 
   const routeFallback = (
-    <div className="min-h-[60vh] flex items-center justify-center bg-[#09090B] text-zinc-400 text-sm">
+    <div className="min-h-[60vh] flex items-center justify-center bg-zinc-50 dark:bg-[#09090B] text-zinc-600 dark:text-zinc-400 text-sm">
       Loading TypeCrest workspace...
     </div>
   );
@@ -805,13 +819,15 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/25 selection:text-emerald-900 dark:selection:bg-emerald-500/30 dark:selection:text-emerald-200 transition-colors duration-150">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         userAccount={userAccount}
         onOpenAccount={() => openAccountModal('default')}
         onOpenArcade={() => setIsArcadeOpen(true)}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       <main className="flex-1 pb-16">

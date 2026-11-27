@@ -28,7 +28,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
 }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 animate-fadeIn">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-zinc-200 dark:border-white/[0.08]">
         <div className="space-y-2">
           <a
             href="/"
@@ -37,12 +37,12 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
               e.preventDefault();
               onBackHome();
             }}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-100 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors whitespace-nowrap"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
           </a>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">Speed tests</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight">Speed tests</h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
@@ -53,7 +53,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                 const pick = testItems[Math.floor(Math.random() * testItems.length)];
                 if (pick) onStartTest(pick);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-xs font-semibold text-emerald-300 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 dark:border-emerald-500/40 text-xs font-semibold dark:text-emerald-300 transition-colors whitespace-nowrap"
             >
               <Shuffle className="w-3.5 h-3.5 shrink-0" />
               <span>Random test</span>
@@ -62,12 +62,12 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-indigo-500/40 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] hover:border-indigo-500/40 text-xs font-semibold dark:text-slate-200 transition-colors whitespace-nowrap shadow-sm dark:shadow-none"
           >
-            <User className="w-4 h-4 text-indigo-400 shrink-0" />
+            <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
             {userAccount ? (
               <span>
-                Certificates auto-issued to <strong className="text-white">{userAccount.fullName}</strong>
+                Certificates auto-issued to <strong className="text-zinc-950 dark:text-white">{userAccount.fullName}</strong>
               </span>
             ) : (
               <span>Set Account Name for Auto-Certificates</span>
@@ -83,11 +83,11 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
           <div
             key={test.id}
             onClick={() => onStartTest(test)}
-            className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-emerald-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
+            className="group bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-emerald-500/50 dark:bg-[#111113] dark:hover:bg-zinc-900 dark:border-white/[0.08] p-6 rounded-xl shadow-sm dark:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-2.5 text-[11px]">
-                <span className={test.scoring === 'strict' ? 'font-medium text-amber-400' : 'font-medium text-zinc-500'}>
+                <span className={test.scoring === 'strict' ? 'font-medium text-amber-600 dark:text-amber-400' : 'font-medium text-zinc-500'}>
                   {test.scoring === 'strict' ? 'Strict' : 'Standard'}
                 </span>
                 <div className="flex items-center gap-1 text-zinc-500 font-mono tabular-nums">
@@ -95,21 +95,21 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                   <span>{test.durationMinutes} min</span>
                 </div>
               </div>
-              <h3 className="text-base font-medium text-zinc-100 group-hover:text-white transition-colors">
+              <h3 className="text-base font-medium text-zinc-900 group-hover:text-zinc-950 dark:text-zinc-100 dark:group-hover:text-white transition-colors">
                 {test.title}
               </h3>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-3 font-mono tabular-nums">
-                <span className="text-xs font-semibold text-slate-300">
-                  Target: <strong className="text-emerald-400">{test.passWpm} WPM</strong>
+                <span className="text-xs font-semibold text-zinc-600 dark:text-slate-300">
+                  Target: <strong className="text-emerald-600 dark:text-emerald-400">{test.passWpm} WPM</strong>
                 </span>
-                <span className="text-xs font-semibold text-slate-300">
-                  Accuracy: <strong className="text-emerald-400">{test.passAccuracy}%</strong>
+                <span className="text-xs font-semibold text-zinc-600 dark:text-slate-300">
+                  Accuracy: <strong className="text-emerald-600 dark:text-emerald-400">{test.passAccuracy}%</strong>
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
+              <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
                 <span>Start Test</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
@@ -120,57 +120,57 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
       </section>
 
       {/* Earned Certificates Gallery */}
-      <section id="earned-certificates" className="space-y-4 pt-2 border-t border-white/[0.08]">
+      <section id="earned-certificates" className="space-y-4 pt-6 border-t border-zinc-200 dark:border-white/[0.08]">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
               <Award className="w-5 h-5" />
             </div>
-            <h2 className="text-xl font-bold text-white">Earned Certificates</h2>
+            <h2 className="text-xl font-bold text-zinc-950 dark:text-white">Earned Certificates</h2>
           </div>
 
-          <span className="text-xs font-mono tabular-nums font-semibold text-slate-400 whitespace-nowrap">
+          <span className="text-xs font-mono tabular-nums font-semibold text-zinc-500 dark:text-slate-400 whitespace-nowrap">
             {certificates.length} {certificates.length === 1 ? 'Certificate' : 'Certificates'}
           </span>
         </div>
 
         {certificates.length === 0 ? (
-          <div className="bg-[#111113] border border-dashed border-white/[0.08] rounded-xl p-8 text-center">
-            <Award className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-300">No certificates earned yet</p>
+          <div className="bg-white dark:bg-[#111113] border border-dashed border-zinc-300 dark:border-white/[0.08] rounded-xl p-8 text-center">
+            <Award className="w-8 h-8 text-zinc-400 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-zinc-600 dark:text-slate-300">No certificates earned yet</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {certificates.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-[#111113] border border-white/[0.08] hover:border-amber-500/40 rounded-xl p-5 shadow-lg transition-colors flex flex-col justify-between gap-4"
+                className="bg-white dark:bg-[#111113] border border-zinc-200 dark:border-white/[0.08] hover:border-amber-500/40 rounded-xl p-5 shadow-sm dark:shadow-lg transition-colors flex flex-col justify-between gap-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2 text-[11px] font-semibold text-amber-400 uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                       <Award className="w-3.5 h-3.5 shrink-0" />
                       <span>{cert.scoring === 'strict' ? 'Strict Exam' : 'Standard Test'}</span>
                     </div>
-                    <h3 className="mt-1 text-lg font-bold text-white truncate">{cert.testTitle}</h3>
-                    <p className="text-sm font-medium text-zinc-300 mt-0.5 truncate">
+                    <h3 className="mt-1 text-lg font-bold text-zinc-950 dark:text-white truncate">{cert.testTitle}</h3>
+                    <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300 mt-0.5 truncate">
                       Awarded to {cert.recipientName}
                     </p>
                   </div>
 
-                  <span className="text-[11px] font-mono tabular-nums text-slate-400 bg-[#09090B] border border-white/[0.08] px-2.5 py-1 rounded-lg shrink-0">
+                  <span className="text-[11px] font-mono tabular-nums text-zinc-600 dark:text-slate-400 bg-zinc-100 dark:bg-[#09090B] border border-zinc-200 dark:border-white/[0.08] px-2.5 py-1 rounded-lg shrink-0">
                     {cert.certificateCode}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-slate-300 bg-[#09090B] border border-white/[0.08] rounded-xl px-4 py-2.5">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-zinc-700 dark:text-slate-300 bg-zinc-50 dark:bg-[#09090B] border border-zinc-200 dark:border-white/[0.08] rounded-xl px-4 py-2.5">
                   <span>
-                    Speed: <strong className="text-sky-400">{cert.wpm} WPM</strong>
+                    Speed: <strong className="text-sky-600 dark:text-sky-400">{cert.wpm} WPM</strong>
                   </span>
                   <span>
-                    Accuracy: <strong className="text-emerald-400">{cert.accuracy}%</strong>
+                    Accuracy: <strong className="text-emerald-600 dark:text-emerald-400">{cert.accuracy}%</strong>
                   </span>
-                  <span className="text-slate-400 ml-auto font-sans">
+                  <span className="text-zinc-500 dark:text-slate-400 ml-auto font-sans">
                     {formatCertificateDate(cert.issuedAt)}
                   </span>
                 </div>
@@ -188,7 +188,7 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
                   <button
                     type="button"
                     onClick={() => onDownloadCertificate(cert)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold transition-colors whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors whitespace-nowrap"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>PNG</span>

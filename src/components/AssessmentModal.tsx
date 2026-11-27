@@ -158,7 +158,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
           inputRef.current?.focus({ preventScroll: true });
         }
       }}
-      className="relative min-h-[100dvh] h-[100dvh] w-full bg-slate-950 text-slate-100 flex flex-col overflow-hidden select-none"
+      className="relative min-h-[100dvh] h-[100dvh] w-full bg-zinc-50 dark:bg-slate-950 text-zinc-900 dark:text-slate-100 flex flex-col overflow-hidden select-none transition-colors duration-150"
       role="main"
       aria-label="Skill Placement Assessment"
     >
@@ -172,7 +172,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               onClose();
             }}
             aria-label="Back to lessons"
-            className={`fixed top-5 left-5 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800/80 text-slate-300 hover:text-white text-xs font-medium transition-opacity duration-300 ${
+            className={`fixed top-5 left-5 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 dark:bg-slate-900/80 dark:hover:bg-slate-800 dark:border-slate-800/80 dark:text-slate-300 dark:hover:text-white text-xs font-medium transition-opacity duration-300 ${
               controlsVisible
                 ? 'opacity-90 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
@@ -189,7 +189,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               restartAssessment();
             }}
             aria-label="Restart assessment"
-            className={`fixed top-5 right-5 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800/80 text-slate-300 hover:text-white text-xs font-medium transition-opacity duration-300 ${
+            className={`fixed top-5 right-5 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 dark:bg-slate-900/80 dark:hover:bg-slate-800 dark:border-slate-800/80 dark:text-slate-300 dark:hover:text-white text-xs font-medium transition-opacity duration-300 ${
               controlsVisible
                 ? 'opacity-90 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
@@ -240,14 +240,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               return (
                 <span key={`w-${tIdx}`} className="inline-block whitespace-nowrap">
                   {token.chars.map(({ char, index: charIdx }) => {
-                    let cls = 'text-slate-400 border-b-2 border-transparent';
+                    let cls = 'text-zinc-400 dark:text-slate-400 border-b-2 border-transparent';
                     if (charIdx < typed.length) {
                       cls =
                         typed[charIdx] === char
-                          ? 'text-emerald-400 border-b-2 border-transparent'
-                          : 'text-rose-300 bg-rose-500/25 border-b-2 border-rose-500 rounded-[2px]';
+                          ? 'text-emerald-600 dark:text-emerald-400 border-b-2 border-transparent'
+                          : 'text-rose-600 bg-rose-500/15 dark:text-rose-300 dark:bg-rose-500/25 border-b-2 border-rose-500 rounded-[2px]';
                     } else if (charIdx === typed.length) {
-                      cls = 'text-white bg-sky-500/25 border-b-2 border-sky-400 rounded-[2px]';
+                      cls = 'text-zinc-950 bg-sky-500/20 dark:text-white dark:bg-sky-500/25 border-b-2 border-sky-500 dark:border-sky-400 rounded-[2px]';
                     }
                     return (
                       <span key={`c-${charIdx}`} className={`${cls} transition-colors duration-75`}>
@@ -277,7 +277,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               spellCheck={false}
               placeholder="Type the sentence above..."
               aria-label="Skill placement typing input"
-              className={`w-full min-h-[76px] max-h-[30vh] px-6 py-4 rounded-2xl bg-slate-900/95 border-2 font-mono text-xl sm:text-2xl leading-[1.7] text-center tracking-wide text-emerald-300 placeholder:text-slate-500 focus:outline-none transition-colors shadow-xl resize-none overflow-y-auto ${
+              className={`w-full min-h-[76px] max-h-[30vh] px-6 py-4 rounded-2xl bg-white dark:bg-slate-900/95 border-2 font-mono text-xl sm:text-2xl leading-[1.7] text-center tracking-wide text-emerald-700 dark:text-emerald-300 placeholder:text-zinc-400 dark:placeholder:text-slate-500 focus:outline-none transition-colors shadow-lg dark:shadow-xl resize-none overflow-y-auto ${
                 hasCurrentMistake
                   ? 'border-rose-500 ring-2 ring-rose-500/25'
                   : 'border-sky-500/70 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/25'
@@ -287,20 +287,20 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
         </div>
       ) : (
         <div className="flex-1 w-full overflow-y-auto flex items-center justify-center px-6 py-10">
-          <div className="w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-8 text-center animate-fadeIn">
+          <div className="w-full max-w-3xl bg-white dark:bg-slate-900/90 border border-zinc-200 dark:border-slate-800 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-8 text-center animate-fadeIn">
             <div className="space-y-3">
-              <div className="w-14 h-14 bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto">
+              <div className="w-14 h-14 bg-emerald-500/15 border border-emerald-500/35 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto">
                 <Award className="w-7 h-7" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
                 Skill Placement Complete
               </h1>
-              <div className="flex items-center justify-center gap-4 text-sm text-slate-300 font-mono tabular-nums">
-                <span className="text-sky-400 font-bold text-lg">{wpmResult} WPM</span>
-                <span className="text-slate-600" aria-hidden="true">
+              <div className="flex items-center justify-center gap-4 text-sm text-zinc-600 dark:text-slate-300 font-mono tabular-nums">
+                <span className="text-sky-600 dark:text-sky-400 font-bold text-lg">{wpmResult} WPM</span>
+                <span className="text-zinc-400 dark:text-slate-600" aria-hidden="true">
                   ·
                 </span>
-                <span className="text-emerald-400 font-bold text-lg">
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold text-lg">
                   {accResult}% Accuracy
                 </span>
               </div>
@@ -313,19 +313,19 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                     id: 'beginner' as SkillLevel,
                     title: 'Beginner',
                     desc: 'Foundational home row & finger placement',
-                    accent: 'text-emerald-400',
+                    accent: 'text-emerald-600 dark:text-emerald-400',
                   },
                   {
                     id: 'intermediate' as SkillLevel,
                     title: 'Intermediate',
                     desc: 'Fluency, Shift capitalization & punctuation',
-                    accent: 'text-amber-400',
+                    accent: 'text-amber-600 dark:text-amber-400',
                   },
                   {
                     id: 'advanced' as SkillLevel,
                     title: 'Advanced',
                     desc: 'High-speed prose, code syntax & exams',
-                    accent: 'text-rose-400',
+                    accent: 'text-rose-600 dark:text-rose-400',
                   },
                 ] as const
               ).map((tier) => {
@@ -337,15 +337,15 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                     onClick={() => onAssignLevel(tier.id, wpmResult, accResult)}
                     className={`p-5 rounded-2xl border flex flex-col items-center justify-between text-center gap-3 transition-colors ${
                       isRec
-                        ? 'bg-sky-950/60 hover:bg-sky-900/60 border-sky-500 shadow-lg'
-                        : 'bg-slate-950/60 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700'
+                        ? 'bg-sky-50 hover:bg-sky-100/80 border-sky-400 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 dark:border-sky-500 shadow-md dark:shadow-lg'
+                        : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 dark:bg-slate-950/60 dark:hover:bg-slate-800/80 dark:border-slate-800 dark:hover:border-slate-700'
                     }`}
                   >
                     <span className={`text-sm font-bold ${tier.accent}`}>
                       {tier.title}
                       {isRec ? ' · Recommended' : ''}
                     </span>
-                    <span className="text-xs font-semibold text-sky-400">
+                    <span className="text-xs font-semibold text-sky-600 dark:text-sky-400">
                       Start Track →
                     </span>
                   </button>
@@ -357,7 +357,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               <button
                 type="button"
                 onClick={restartAssessment}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Retake Assessment</span>
@@ -365,7 +365,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-700 dark:bg-slate-950 dark:hover:bg-slate-800 dark:border-slate-800 dark:text-slate-300 text-xs font-semibold transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back to Lessons</span>

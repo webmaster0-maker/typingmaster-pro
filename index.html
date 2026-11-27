@@ -142,14 +142,30 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       html, body {
-        background-color: #09090b;
-        color: #f4f4f5;
+        background-color: #fafafa;
+        color: #09090b;
         margin: 0;
         min-height: 100%;
       }
+      html.dark, html.dark body {
+        background-color: #09090b;
+        color: #f4f4f5;
+      }
     </style>
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('typecrest_theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body style="background-color:#09090b;color:#f4f4f5;">
+  <body>
     <div id="root"></div>
     <noscript>
       <main style="font-family: system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 24px; color: #f4f4f5;">
