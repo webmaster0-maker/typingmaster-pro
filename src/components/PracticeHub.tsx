@@ -132,35 +132,35 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
             </button>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {practiceItems.map((prac) => (
             <div
               key={prac.id}
               onClick={() => onStartPractice(prac)}
-              className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-purple-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
+              className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-white/[0.16] p-5 rounded-xl transition-colors duration-150 cursor-pointer flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                <div className="flex items-center justify-between mb-2.5 text-[11px]">
+                  <span className="font-medium capitalize text-zinc-500">
                     {prac.type.replace('_', ' ')}
                   </span>
-                  <div className="flex items-center gap-1 text-xs text-slate-400 tabular-nums">
+                  <div className="flex items-center gap-1 text-zinc-500 font-mono tabular-nums">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{prac.durationMinutes} min</span>
                   </div>
                 </div>
-                <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
+                <h3 className="text-base font-medium text-zinc-100 group-hover:text-white transition-colors">
                   {prac.title}
                 </h3>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400">
-                  Guidance: {prac.guidanceConfig.guidanceLevel}
+              <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                <span className="text-zinc-500 capitalize">
+                  {prac.guidanceConfig.guidanceLevel === 'none' ? 'No hints' : `${prac.guidanceConfig.guidanceLevel} hints`}
                 </span>
-                <div className="flex items-center gap-1 text-xs font-bold text-purple-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
-                  <span>Start Drill</span>
-                  <ArrowRight className="w-4 h-4" />
+                <div className="flex items-center gap-1 font-medium text-zinc-400 group-hover:text-zinc-100 transition-colors whitespace-nowrap">
+                  <span>Start</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
             </div>

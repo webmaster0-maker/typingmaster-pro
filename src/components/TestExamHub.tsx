@@ -86,16 +86,16 @@ export const TestExamHub: React.FC<TestExamHubProps> = ({
             className="group bg-[#111113] hover:bg-zinc-900 border border-white/[0.08] hover:border-emerald-500/50 p-6 rounded-xl shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  {test.scoring.toUpperCase()} SCORING
+              <div className="flex items-center justify-between mb-2.5 text-[11px]">
+                <span className={test.scoring === 'strict' ? 'font-medium text-amber-400' : 'font-medium text-zinc-500'}>
+                  {test.scoring === 'strict' ? 'Strict' : 'Standard'}
                 </span>
-                <div className="flex items-center gap-1 text-xs text-slate-400 font-mono tabular-nums">
+                <div className="flex items-center gap-1 text-zinc-500 font-mono tabular-nums">
                   <Timer className="w-3.5 h-3.5" />
                   <span>{test.durationMinutes} min</span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors">
+              <h3 className="text-base font-medium text-zinc-100 group-hover:text-white transition-colors">
                 {test.title}
               </h3>
             </div>
