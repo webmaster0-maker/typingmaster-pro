@@ -34,7 +34,7 @@ interface AccountModalProps {
   context?: AccountModalContext;
   initialTab?: AccountAuthTab;
   hasSavedLocalAccounts?: boolean;
-  onAccountUpdated: (account: UserAccount) => void;
+  onAccountUpdated: (account: UserAccount, isReturningSignIn?: boolean) => void;
   onSignOut: () => void;
   onViewCertificates: () => void;
   onClose: () => void;
@@ -149,7 +149,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
         setError(result.error || 'Unable to sign in.');
         return;
       }
-      onAccountUpdated(result.account);
+      onAccountUpdated(result.account, true);
     } finally {
       setSubmitting(false);
     }

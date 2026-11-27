@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Dashboard } from './components/Dashboard';
 import { AccountModal, AccountModalContext } from './components/AccountModal';
+import { WelcomeBackModal } from './components/WelcomeBackModal';
 const LessonList = React.lazy(() =>
   import('./components/LessonList').then((m) => ({ default: m.LessonList }))
 );
@@ -351,6 +352,7 @@ export default function App() {
     context: 'default',
     pendingCertificateSession: null,
   });
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
   const pendingLeaderboardCallbackRef = useRef<(() => void) | null>(null);
 
   const [activeCertificateModal, setActiveCertificateModal] = useState<TypingCertificate | null>(null);
@@ -444,7 +446,7 @@ export default function App() {
   );
 
   const handleAccountUpdated = useCallback(
-    (account: UserAccount) => {
+    (account: UserAccount, isReturningSignIn?: boolean) => {
       const wasUnnamed = !userAccount;
       saveActiveUserAccount(account);
       setUserAccount(account);
@@ -459,6 +461,12 @@ export default function App() {
         const cb = pendingLeaderboardCallbackRef.current;
         closeAccountModal();
         cb();
+        return;
+      }
+
+      if (isReturningSignIn) {
+        closeAccountModal();
+        setShowWelcomeBack(true);
         return;
       }
 
@@ -661,23 +669,41 @@ export default function App() {
     setActiveTab('lessons');
   }, []);
 
-  const accountModalNode = accountModalState.open ? (
-    <AccountModal
-      userAccount={userAccount}
-      certificateCount={certificates.length}
-      context={accountModalState.context}
-      hasSavedLocalAccounts={loadLocalAccounts().length > 0}
-      onAccountUpdated={handleAccountUpdated}
-      onSignOut={handleSignOutAccount}
-      onViewCertificates={() => {
-        closeAccountModal();
-        setIsArcadeOpen(false);
-        setActiveWorkspace(null);
-        setActiveTab('tests');
-      }}
-      onClose={closeAccountModal}
-    />
-  ) : null;
+  const accountModalNode = (
+    <>
+      {accountModalState.open && (
+        <AccountModal
+          userAccount={userAccount}
+          certificateCount={certificates.length}
+          context={accountModalState.context}
+          hasSavedLocalAccounts={loadLocalAccounts().length > 0}
+          onAccountUpdated={handleAccountUpdated}
+          onSignOut={handleSignOutAccount}
+          onViewCertificates={() => {
+            closeAccountModal();
+            setIsArcadeOpen(false);
+            setActiveWorkspace(null);
+            setActiveTab('tests');
+          }}
+          onClose={closeAccountModal}
+        />
+      )}
+      {showWelcomeBack && userAccount && (
+        <WelcomeBackModal
+          userAccount={userAccount}
+          lessons={COURSES_DATA}
+          sessionHistory={sessionHistory}
+          userStats={userStats}
+          onResumeLesson={(lesson) => {
+            setShowWelcomeBack(false);
+            setIsArcadeOpen(false);
+            handleStartLesson(lesson);
+          }}
+          onClose={() => setShowWelcomeBack(false)}
+        />
+      )}
+    </>
+  );
 
   const routeFallback = (
     <div className="min-h-[60vh] flex items-center justify-center bg-[#09090B] text-zinc-400 text-sm">
